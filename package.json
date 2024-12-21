@@ -57,6 +57,7 @@
     "babel-plugin-ember-template-compilation": "^2.3.0",
     "choices.js": "^11.0.2",
     "concurrently": "^9.1.0",
+    "daisyui": "^4.12.22",
     "decorator-transforms": "^2.3.0",
     "ember-auto-import": "^2.10.0",
     "ember-cli": "~6.0.1",
