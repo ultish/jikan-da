@@ -7,10 +7,13 @@ const NavLinks: TOC<object> = <template>
       <a href="/">Home</a>
     </li>
     <li>
-      <NavSubLink @burgerMenu={{@burgerMenu}} />
+      <a href="/time-tracking">Time Tracking</a>
     </li>
     <li>
       <a href="/charge-codes">Chage Codes</a>
+    </li>
+    <li>
+      <NavSubLink @burgerMenu={{@burgerMenu}} />
     </li>
     <li>
       <a href="/login">Login</a>

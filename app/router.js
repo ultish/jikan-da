@@ -9,7 +9,9 @@ export default class Router extends EmberRouter {
 }
 
 Router.map(function () {
-  this.route('test');
+  this.route('time-tracking', function () {
+    this.route('day');
+  });
   this.route('charge-codes');
   this.route('login');
 });
