@@ -10,6 +10,12 @@
     ]
   },
   "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "schema.graphql"
+      }
+    ],
     "allowJs": true,
     /**
       https://www.typescriptlang.org/tsconfig#noEmitOnError

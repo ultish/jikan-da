@@ -23,9 +23,13 @@
     "lint:types": "glint",
     "start": "vite",
     "test": "concurrently \"pnpm:lint\" \"pnpm:test:*\" --names \"lint,test:\"",
-    "test:ember": "vite build --mode test && ember test --path dist"
+    "test:ember": "vite build --mode test && ember test --path dist",
+    "generate": "graphql-codegen --config codegen.ts",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.12.16",
+    "@apollo/client": "^3.12.4",
     "@babel/core": "^7.26.0",
     "@babel/eslint-parser": "^7.25.9",
     "@babel/plugin-transform-runtime": "^7.25.9",
@@ -45,6 +49,9 @@
     "@glint/environment-ember-loose": "1.4.1-unstable.34c4510",
     "@glint/environment-ember-template-imports": "1.4.1-unstable.34c4510",
     "@glint/template": "1.4.1-unstable.34c4510",
+    "@graphql-codegen/cli": "5.0.3",
+    "@graphql-codegen/schema-ast": "^4.1.0",
+    "@parcel/watcher": "^2.5.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@tailwindcss/typography": "^0.5.15",
     "@tsconfig/ember": "^3.0.8",
@@ -84,6 +91,8 @@
     "glimmer-apollo": "^0.6.6",
     "glimmer-scoped-css": "^0.7.0",
     "globals": "^15.14.0",
+    "graphql": "^16.10.0",
+    "graphql-ws": "^5.16.0",
     "loader.js": "^4.7.0",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
@@ -113,5 +122,8 @@
   "exports": {
     "./tests/*": "./tests/*",
     "./*": "./app/*"
+  },
+  "dependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0"
   }
 }

@@ -1,14 +1,33 @@
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
+import { useQuery } from 'glimmer-apollo';
+import { GET_TRACKED_DAYS_BY_MONTH } from 'jikan-da/graphql/queries/tracked-days';
+import type {
+  QueryTrackedDaysForMonthArgs,
+  TrackedDaysForMonthQuery,
+} from '../../graphql/types/graphql';
 
 export default class StepDays extends Component {
+  trackedDays = useQuery<
+    TrackedDaysForMonthQuery,
+    QueryTrackedDaysForMonthArgs
+  >(this, () => [
+    GET_TRACKED_DAYS_BY_MONTH,
+    {
+      variables: {
+        month: new Date().getMonth() + 1,
+      },
+    },
+  ]);
+
   centerToday = modifier((element) => {
     const today = element.querySelector('.step-accent');
     if (today) {
+      const todayEle = today as HTMLElement;
       // Get the position of the element
-      const elementPosition = today.offsetLeft;
-      const elementWidth = today.offsetWidth;
-      const containerWidth = today.offsetWidth;
+      const elementPosition = todayEle.offsetLeft;
+      const elementWidth = todayEle.offsetWidth;
+      const containerWidth = todayEle.offsetWidth;
 
       // Calculate the scroll position to center the element
       const scrollPosition =
@@ -19,8 +38,6 @@ export default class StepDays extends Component {
         left: scrollPosition,
         behavior: 'smooth',
       });
-
-      // today.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   });
 
