@@ -15,6 +15,9 @@ export const GET_TRACKED_DAYS_BY_MONTH = gql`
     trackedDaysForMonth(month: $month) {
       id
       date
+      mode
+      week
+      year
     }
   }
 `;

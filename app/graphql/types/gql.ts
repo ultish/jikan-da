@@ -16,7 +16,7 @@ import * as types from './graphql';
  */
 const documents = {
     "\n  query users {\n    users {\n      id\n      username\n    }\n  }\n": types.UsersDocument,
-    "\n  query trackedDaysForMonth($month: Int) {\n    trackedDaysForMonth(month: $month) {\n      id\n      date\n    }\n  }\n": types.TrackedDaysForMonthDocument,
+    "\n  query trackedDaysForMonth($month: Int) {\n    trackedDaysForMonth(month: $month) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDaysForMonthDocument,
 };
 
 /**
@@ -26,7 +26,7 @@ export function graphql(source: "\n  query users {\n    users {\n      id\n     
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query trackedDaysForMonth($month: Int) {\n    trackedDaysForMonth(month: $month) {\n      id\n      date\n    }\n  }\n"): typeof import('./graphql').TrackedDaysForMonthDocument;
+export function graphql(source: "\n  query trackedDaysForMonth($month: Int) {\n    trackedDaysForMonth(month: $month) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n"): typeof import('./graphql').TrackedDaysForMonthDocument;
 
 
 export function graphql(source: string) {

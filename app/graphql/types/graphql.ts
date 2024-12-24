@@ -550,7 +550,7 @@ export type TrackedDaysForMonthQueryVariables = Exact<{
 }>;
 
 
-export type TrackedDaysForMonthQuery = { __typename?: 'Query', trackedDaysForMonth?: Array<{ __typename?: 'TrackedDay', id: string, date: number }> | null };
+export type TrackedDaysForMonthQuery = { __typename?: 'Query', trackedDaysForMonth?: Array<{ __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number }> | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -580,6 +580,9 @@ export const TrackedDaysForMonthDocument = new TypedDocumentString(`
   trackedDaysForMonth(month: $month) {
     id
     date
+    mode
+    week
+    year
   }
 }
     `) as unknown as TypedDocumentString<TrackedDaysForMonthQuery, TrackedDaysForMonthQueryVariables>;

@@ -1,3 +1,6 @@
+// needed for Vite + glimmer-apollo, see https://github.com/josemarluedke/glimmer-apollo/issues/97
+import "glimmer-apollo/environment-ember";
+
 import { setClient } from 'glimmer-apollo';
 import {
   ApolloClient,

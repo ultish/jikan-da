@@ -1,14 +1,42 @@
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { useQuery } from 'glimmer-apollo';
-import { GET_TRACKED_DAYS_BY_MONTH } from 'jikan-da/graphql/queries/tracked-days';
+import { GET_TRACKED_DAYS_BY_MONTH } from '../../graphql/queries/tracked-days';
 import type {
   QueryTrackedDaysForMonthArgs,
+  TrackedDay,
   TrackedDaysForMonthQuery,
 } from '../../graphql/types/graphql';
+import { action } from '@ember/object';
+import { on } from '@ember/modifier';
+
+class Day {
+  date: number;
+  isToday: boolean;
+  pastDate: boolean;
+  firstDay: boolean;
+  lastDay: boolean;
+  hasTrackedDay: boolean;
+
+  constructor(
+    date: number,
+    isToday: boolean,
+    pastDate: boolean,
+    firstDay: boolean,
+    lastDay: boolean,
+    hasTrackedDay: boolean
+  ) {
+    this.date = date;
+    this.isToday = isToday;
+    this.pastDate = pastDate;
+    this.firstDay = firstDay;
+    this.lastDay = lastDay;
+    this.hasTrackedDay = hasTrackedDay;
+  }
+}
 
 export default class StepDays extends Component {
-  trackedDays = useQuery<
+  trackedDaysQuery = useQuery<
     TrackedDaysForMonthQuery,
     QueryTrackedDaysForMonthArgs
   >(this, () => [
@@ -56,6 +84,25 @@ export default class StepDays extends Component {
     return lastDayOfCurrentMonth.getDate();
   }
 
+  get trackedDays() {
+    if (this.trackedDaysQuery.loading) {
+      return [];
+    } else {
+      return this.trackedDaysQuery.data?.trackedDaysForMonth ?? [];
+    }
+  }
+
+  #trackedDaysMap = new Map<Number, TrackedDay>();
+
+  get trackedDaysMap() {
+    this.trackedDays.forEach((day) => {
+      const date = new Date(day.date).getDate();
+      this.#trackedDaysMap.set(date, day);
+    });
+
+    return this.#trackedDaysMap;
+  }
+
   get todaysDay() {
     // get the day of the month, eg 1-31
     return new Date().getDate();
@@ -66,17 +113,31 @@ export default class StepDays extends Component {
   }
 
   get steps() {
+    console.log('steps', this.trackedDaysMap);
+
     const steps = [];
     for (let i = 1; i <= this.getDaysInCurrentMonth; i++) {
-      steps.push({
-        date: i,
-        isToday: i === this.todaysDay,
-        pastDate: i < this.todaysDay,
-        firstDay: i === 1,
-        lastDay: i === this.getDaysInCurrentMonth,
-      });
+      steps.push(
+        new Day(
+          i,
+          i === this.todaysDay,
+          i < this.todaysDay,
+          i === 1,
+          i === this.getDaysInCurrentMonth,
+          this.trackedDaysMap.has(i)
+        )
+      );
     }
     return steps;
+  }
+
+  @action
+  openDay(day: Day) {
+    if (day.hasTrackedDay) {
+      // transition to route
+    } else {
+      // create day
+    }
   }
 
   <template>
@@ -93,8 +154,11 @@ export default class StepDays extends Component {
             <li
               class="step
                 {{if step.pastDate 'step-neutral'}}
-                {{if step.isToday 'step-accent'}}"
+                {{if step.isToday 'step-accent'}}
+                {{if step.hasTrackedDay 'step-primary'}}"
               data-day={{step.date}}
+              role="button"
+              {{on "click" this.openDay step}}
             >
               {{#if step.firstDay}}
                 {{this.todaysMonthAsText}}

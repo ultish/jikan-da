@@ -7,6 +7,7 @@ export default class TimeTrackingDayRoute extends Component {
   <template>
     {{pageTitle "Time Tracking Day"}}
 
+    A DAY
     {{outlet}}
   </template>
 }
