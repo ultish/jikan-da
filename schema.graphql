@@ -299,7 +299,7 @@ type Query {
   timeChargeTotals(weekOfYear: WeekOfYear): [TimeChargeTotal!]
   timeCharges(chargeCodeId: ID, timeSlot: Int, trackedDayId: String): [TimeCharge!]
   trackedDay(id: ID): TrackedDay
-  trackedDaysForMonth(month: Int): [TrackedDay!]
+  trackedDaysForMonthYear(month: Int, year: Int): [TrackedDay!]
   trackedDaysPaginated(after: String, first: Int): TrackedDayConnection
   trackedTasks(trackedDayId: ID): [TrackedTask!]
   users(username: String): [User!]
@@ -307,6 +307,7 @@ type Query {
 
 type Subscription {
   timeChargeTotalChanged(userId: String!): TimeChargeTotal
+  trackedDayChanged(userId: String!): TrackedDay
 }
 
 type TimeCharge {

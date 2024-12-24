@@ -22,9 +22,9 @@ export const GET_TRACKED_DAY_BY_ID = gql`
   }
 `;
 
-export const GET_TRACKED_DAYS_BY_MONTH = gql`
-  query trackedDaysForMonth($month: Int) {
-    trackedDaysForMonth(month: $month) {
+export const GET_TRACKED_DAYS_BY_MONTH_YEAR = gql`
+  query trackedDaysForMonthYear($month: Int, $year: Int) {
+    trackedDaysForMonthYear(month: $month, year: $year) {
       id
       date
       mode
