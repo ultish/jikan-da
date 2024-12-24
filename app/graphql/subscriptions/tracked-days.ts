@@ -1,8 +1,8 @@
 import { gql } from 'glimmer-apollo';
 
 export const SUBSCRIBE_TRACKED_DAY_CHANGES = gql`
-  subscription trackedDayChanged($userId: String!) {
-    trackedDayChanged(userId: $userId) {
+  subscription trackedDayChanged($month: Int, $year: Int, $userId: String!) {
+    trackedDayChanged(month: $month, year: $year, userId: $userId) {
       id
       date
       mode

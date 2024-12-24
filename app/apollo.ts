@@ -1,5 +1,5 @@
 // needed for Vite + glimmer-apollo, see https://github.com/josemarluedke/glimmer-apollo/issues/97
-import "glimmer-apollo/environment-ember";
+import 'glimmer-apollo/environment-ember';
 
 import { setClient } from 'glimmer-apollo';
 import {
@@ -7,20 +7,25 @@ import {
   InMemoryCache,
   createHttpLink,
   split,
-  HttpLink
+  HttpLink,
 } from '@apollo/client/core';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { createClient } from "graphql-ws";
-
-
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
 
 export default function setupApolloClient(context: object): void {
   // WebSocket connection to the API
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "ws://localhost:8080/graphql",
-    }),
+      url: 'ws://localhost:8080/graphql',
+
+      // TODO doesn't work https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api/4361358#4361358
+      connectionParams: {
+        headers: {
+          'user-id': '6768f8e49ce0e819a8f73dfb',
+        },
+      },
+    })
   );
 
   // HTTP connection to the API

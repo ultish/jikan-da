@@ -18,9 +18,6 @@ import { fn } from '@ember/helper';
 
 import { inject as service } from '@ember/service';
 import type RouterService from '@ember/routing/router-service';
-// import Velcro from 'ember-velcro/components/velcro/index';
-// import { FloatingUI } from 'ember-primitives/floating-ui';
-// import Tooltip from 'jikan-da/components/tooltip';
 
 import dayjs, { Dayjs } from 'dayjs';
 import { tracked } from '@glimmer/tracking';
@@ -114,6 +111,17 @@ export default class StepDays extends Component<Signature> {
 
   #unsubscribe: (() => void) | undefined;
 
+  /**
+   * this modifier will call subscribeToMore against the graphql query
+   * using our subscription that notifies us when a new tracked day is
+   * created.
+   *
+   * This will notify the app if you opened the app in 2 tabs for and
+   * add to the cache in both tabs.
+   *
+   * Whereas the mutation function below modifies the cache, it only
+   * works if the current tab is making that modification.
+   */
   subscribeToTrackedDays = modifier((element) => {
     console.log('SUBBBING');
     this.#unsubscribe = this.trackedDaysQuery.subscribeToMore<
@@ -122,8 +130,33 @@ export default class StepDays extends Component<Signature> {
     >({
       document: SUBSCRIBE_TRACKED_DAY_CHANGES,
       variables: {
-        userId: '6768f8e49ce0e819a8f73dfb',
+        month: this.args.month,
+        year: this.args.year,
+        userId: '6768f8e49ce0e819a8f73dfb', // TODO deal with this, can't pass a header via ws. see https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api/4361358#4361358
       },
+      updateQuery: (prevQueryResult, { subscriptionData, variables }) => {
+        if (!subscriptionData.data.trackedDayChanged) {
+          return prevQueryResult;
+        }
+
+        const newDay = subscriptionData.data.trackedDayChanged;
+        const prevResults = prevQueryResult.trackedDaysForMonthYear || [];
+
+        const found = prevResults.find((d) => d.id === newDay.id);
+        debugger;
+        if (found) {
+          // dont need to do anything
+          return prevQueryResult;
+        } else {
+          return {
+            trackedDaysForMonthYear: [newDay, ...prevResults],
+          };
+        }
+      },
+      onError: (error: Error) => {
+        console.error('💥 goes the subscription', error);
+      },
+      context: this,
     });
 
     return () => {
@@ -218,7 +251,6 @@ export default class StepDays extends Component<Signature> {
     CREATE_TRACKED_DAY,
     {
       update: (cache, result) => {
-        debugger;
         this.updateCache(cache, result);
       },
     },

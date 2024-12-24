@@ -466,7 +466,9 @@ export type SubscriptionTimeChargeTotalChangedArgs = {
 
 
 export type SubscriptionTrackedDayChangedArgs = {
+  month?: InputMaybe<Scalars['Int']['input']>;
   userId: Scalars['String']['input'];
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type TimeCharge = {
@@ -576,6 +578,8 @@ export type TrackedDaysForMonthYearQueryVariables = Exact<{
 export type TrackedDaysForMonthYearQuery = { __typename?: 'Query', trackedDaysForMonthYear?: Array<{ __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number }> | null };
 
 export type TrackedDayChangedSubscriptionVariables = Exact<{
+  month?: InputMaybe<Scalars['Int']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
   userId: Scalars['String']['input'];
 }>;
 
@@ -639,8 +643,8 @@ export const TrackedDaysForMonthYearDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<TrackedDaysForMonthYearQuery, TrackedDaysForMonthYearQueryVariables>;
 export const TrackedDayChangedDocument = new TypedDocumentString(`
-    subscription trackedDayChanged($userId: String!) {
-  trackedDayChanged(userId: $userId) {
+    subscription trackedDayChanged($month: Int, $year: Int, $userId: String!) {
+  trackedDayChanged(month: $month, year: $year, userId: $userId) {
     id
     date
     mode

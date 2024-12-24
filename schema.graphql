@@ -307,7 +307,7 @@ type Query {
 
 type Subscription {
   timeChargeTotalChanged(userId: String!): TimeChargeTotal
-  trackedDayChanged(userId: String!): TrackedDay
+  trackedDayChanged(month: Int, userId: String!, year: Int): TrackedDay
 }
 
 type TimeCharge {
