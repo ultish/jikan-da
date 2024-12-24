@@ -34,10 +34,10 @@
     */
     "allowImportingTsExtensions": true,
     "paths": {
-      "ember-vite-ts/tests/*": [
+      "jikan-da/tests/*": [
         "./tests/*"
       ],
-      "ember-vite-ts/*": [
+      "jikan-da/*": [
         "./app/*"
       ],
       "*": [

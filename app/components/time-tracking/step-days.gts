@@ -1,22 +1,26 @@
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { useQuery } from 'glimmer-apollo';
-import { GET_TRACKED_DAYS_BY_MONTH } from '../../graphql/queries/tracked-days';
+import { GET_TRACKED_DAYS_BY_MONTH } from 'jikan-da/graphql/queries/tracked-days';
 import type {
   QueryTrackedDaysForMonthArgs,
   TrackedDay,
   TrackedDaysForMonthQuery,
-} from '../../graphql/types/graphql';
+} from 'jikan-da/graphql/types/graphql';
 import { action } from '@ember/object';
 import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+
+import { inject as service } from '@ember/service';
+import type RouterService from '@ember/routing/router-service';
 
 class Day {
-  date: number;
-  isToday: boolean;
-  pastDate: boolean;
-  firstDay: boolean;
-  lastDay: boolean;
-  hasTrackedDay: boolean;
+  date;
+  isToday;
+  pastDate;
+  firstDay;
+  lastDay;
+  trackedDay;
 
   constructor(
     date: number,
@@ -24,18 +28,24 @@ class Day {
     pastDate: boolean,
     firstDay: boolean,
     lastDay: boolean,
-    hasTrackedDay: boolean
+    trackedDay: TrackedDay | undefined
   ) {
     this.date = date;
     this.isToday = isToday;
     this.pastDate = pastDate;
     this.firstDay = firstDay;
     this.lastDay = lastDay;
-    this.hasTrackedDay = hasTrackedDay;
+    this.trackedDay = trackedDay;
   }
 }
 
-export default class StepDays extends Component {
+interface Signature {
+  Element: HTMLDivElement;
+}
+
+export default class StepDays extends Component<Signature> {
+  @service declare router: RouterService;
+
   trackedDaysQuery = useQuery<
     TrackedDaysForMonthQuery,
     QueryTrackedDaysForMonthArgs
@@ -124,7 +134,7 @@ export default class StepDays extends Component {
           i < this.todaysDay,
           i === 1,
           i === this.getDaysInCurrentMonth,
-          this.trackedDaysMap.has(i)
+          this.trackedDaysMap.get(i)
         )
       );
     }
@@ -133,10 +143,12 @@ export default class StepDays extends Component {
 
   @action
   openDay(day: Day) {
-    if (day.hasTrackedDay) {
+    if (day.trackedDay) {
       // transition to route
+      this.router.transitionTo('time-tracking.day', day.trackedDay.id);
     } else {
       // create day
+      console.log('no tracked day', day);
     }
   }
 
@@ -155,10 +167,10 @@ export default class StepDays extends Component {
               class="step
                 {{if step.pastDate 'step-neutral'}}
                 {{if step.isToday 'step-accent'}}
-                {{if step.hasTrackedDay 'step-primary'}}"
+                {{if step.trackedDay 'step-primary'}}"
               data-day={{step.date}}
               role="button"
-              {{on "click" this.openDay step}}
+              {{on "click" (fn this.openDay step)}}
             >
               {{#if step.firstDay}}
                 {{this.todaysMonthAsText}}
