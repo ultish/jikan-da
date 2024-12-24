@@ -165,9 +165,9 @@ importers:
       ember-resolver:
         specifier: ^13.1.0
         version: 13.1.0(ember-source@6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@5.97.1))
-      ember-route-template:
-        specifier: ^1.0.3
-        version: 1.0.3
+      ember-routable-component:
+        specifier: ^1.2.0
+        version: 1.2.0(ember-source@6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@5.97.1))
       ember-source:
         specifier: ~6.0.0
         version: 6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@5.97.1)
@@ -3840,8 +3840,10 @@ packages:
   ember-rfc176-data@0.3.18:
     resolution: {integrity: sha512-JtuLoYGSjay1W3MQAxt3eINWXNYYQliK90tLwtb8aeCuQK8zKGCRbBodVIrkcTqshULMnRuTOS6t1P7oQk3g6Q==}
 
-  ember-route-template@1.0.3:
-    resolution: {integrity: sha512-p//Nk4g4Wu9F8cZdjB69rKxTRi6RRW32a8K5sYsi5cofTcJtPBXRWUXWpQEjJX6qcucgxooQwEm9+7MOy4lwNw==}
+  ember-routable-component@1.2.0:
+    resolution: {integrity: sha512-BzDt/RUkQp0oyKQPrMCPrqGEgj8/f+z2Sp/BWy9vFaI3dEaNI58H9sC1RSzrWXcqGHNwIZbCA79YbLTsu9nEWg==}
+    peerDependencies:
+      ember-source: '*'
 
   ember-router-generator@2.0.0:
     resolution: {integrity: sha512-89oVHVJwmLDvGvAUWgS87KpBoRhy3aZ6U0Ql6HOmU4TrPkyaa8pM0W81wj9cIwjYprcQtN9EwzZMHnq46+oUyw==}
@@ -12320,9 +12322,10 @@ snapshots:
 
   ember-rfc176-data@0.3.18: {}
 
-  ember-route-template@1.0.3:
+  ember-routable-component@1.2.0(ember-source@6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@5.97.1)):
     dependencies:
       '@embroider/addon-shim': 1.9.0
+      ember-source: 6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@5.97.1)
     transitivePeerDependencies:
       - supports-color
 

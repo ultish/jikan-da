@@ -9,6 +9,7 @@ import type {
 } from '../../graphql/types/graphql';
 import { action } from '@ember/object';
 import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
 
 class Day {
   date: number;
@@ -158,7 +159,7 @@ export default class StepDays extends Component {
                 {{if step.hasTrackedDay 'step-primary'}}"
               data-day={{step.date}}
               role="button"
-              {{on "click" this.openDay step}}
+              {{on "click" (fn this.openDay step)}}
             >
               {{#if step.firstDay}}
                 {{this.todaysMonthAsText}}

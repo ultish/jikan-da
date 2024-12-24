@@ -19,4 +19,6 @@ export type RouteTemplateSignature<
       };
     };
 
-export { default as RouteTemplate } from 'ember-route-template';
+export { default as Route } from  'ember-routable-component';
+
+
