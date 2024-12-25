@@ -18,6 +18,9 @@ export default class ApplicationTemplate extends Component {
   <template>
     {{! prettier-ignore}}
     <style>
+      .navbar {
+        color: oklch(var(--bc))
+      }
       .container {
         perspective: 50px;
         width: 20px;

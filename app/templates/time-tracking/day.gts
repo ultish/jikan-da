@@ -7,6 +7,7 @@ import Component from '@glimmer/component';
 import type TimeTrackingDayRoute from 'jikan-da/routes/time-tracking/day';
 
 import dayjs from 'dayjs';
+import DayLayout from 'jikan-da/components/time-tracking/day/layout';
 
 type Signature = RouteTemplateSignature<TimeTrackingDayRoute>;
 
@@ -17,15 +18,19 @@ export default class TimeTrackingDayTemplate extends Component<Signature> {
   }
   get date() {
     return dayjs(this.args.model.data?.trackedDay?.date).format('YYYY-MM-DD');
-    // return this.args.model.data?.trackedDay?.date;
   }
+
+  get day() {
+    return this.args.model.data?.trackedDay;
+  }
+
   <template>
     {{pageTitle "Time Tracking Day"}}
+    {{#if this.day}}
+      <DayLayout @day={{this.day}}>
 
-    A DAY
-
-    {{this.id}}
-    {{this.date}}
-    {{outlet}}
+        {{outlet}}
+      </DayLayout>
+    {{/if}}
   </template>
 }

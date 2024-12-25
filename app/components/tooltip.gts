@@ -36,7 +36,6 @@ export default class Tooltip extends Component<Signature> {
   }
 
   setupElements = modifier((element: HTMLElement) => {
-    debugger;
     this.tooltipElement = element;
   });
 

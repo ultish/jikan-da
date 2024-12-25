@@ -20,6 +20,10 @@ const documents = {
     "\n  query trackedDay($id: ID!) {\n    trackedDay(id: $id) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayDocument,
     "\n  query trackedDaysForMonthYear($month: Int, $year: Int) {\n    trackedDaysForMonthYear(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDaysForMonthYearDocument,
     "\n  subscription trackedDayChanged($month: Int, $year: Int) {\n    trackedDayChanged(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayChangedDocument,
+    "\n  query trackedTasks($trackedDayId: ID) {\n    trackedTasks(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.TrackedTasksDocument,
+    "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n    }\n  }\n": types.ChargeCodesDocument,
+    "\n  mutation createTrackedTask($trackedDayId: ID!) {\n    createTrackedTask(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.CreateTrackedTaskDocument,
+    "\n  mutation UpdateTrackedTask(\n    $id: ID!\n    $notes: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    updateTrackedTask(\n      id: $id\n      notes: $notes\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.UpdateTrackedTaskDocument,
 };
 
 /**
@@ -42,6 +46,22 @@ export function graphql(source: "\n  query trackedDaysForMonthYear($month: Int, 
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  subscription trackedDayChanged($month: Int, $year: Int) {\n    trackedDayChanged(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n"): typeof import('./graphql').TrackedDayChangedDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query trackedTasks($trackedDayId: ID) {\n    trackedTasks(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').TrackedTasksDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n    }\n  }\n"): typeof import('./graphql').ChargeCodesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createTrackedTask($trackedDayId: ID!) {\n    createTrackedTask(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').CreateTrackedTaskDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateTrackedTask(\n    $id: ID!\n    $notes: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    updateTrackedTask(\n      id: $id\n      notes: $notes\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').UpdateTrackedTaskDocument;
 
 
 export function graphql(source: string) {

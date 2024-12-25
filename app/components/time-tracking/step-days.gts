@@ -142,7 +142,7 @@ export default class StepDays extends Component<Signature> {
         const prevResults = prevQueryResult.trackedDaysForMonthYear || [];
 
         const found = prevResults.find((d) => d.id === newDay.id);
-        debugger;
+
         if (found) {
           // dont need to do anything
           return prevQueryResult;
@@ -281,7 +281,7 @@ export default class StepDays extends Component<Signature> {
 
     if (data && result?.data?.createTrackedDay) {
       const existingDays = data.trackedDaysForMonthYear;
-      const newDay = result.data?.createTrackedDay;
+      const newDay = result.data.createTrackedDay;
       if (existingDays) {
         cache.writeQuery({
           query: GET_TRACKED_DAYS_BY_MONTH_YEAR,
