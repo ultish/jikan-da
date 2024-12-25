@@ -79,7 +79,6 @@ export default class ApplicationTemplate extends Component {
           >
             <div class="w-10 rounded-full">
               <PhPaintRoller class="w-10 h-10" />
-
             </div>
           </div>
 

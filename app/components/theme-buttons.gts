@@ -67,7 +67,7 @@ export default class ThemeButtons extends Component<Signature> {
   <template>
     <ul
       tabindex="0"
-      class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[2] mt-3 w-52 p-2 shadow"
+      class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
     >
       {{#each this.themeOptions as |themeOption|}}
         <li>
