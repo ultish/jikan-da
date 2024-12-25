@@ -22,8 +22,10 @@ export type ChargeCode = {
   code: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
   expired: Scalars['Boolean']['output'];
+  group?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  sortOrder?: Maybe<Scalars['Int']['output']>;
 };
 
 export enum DayMode {
@@ -276,7 +278,6 @@ export enum ErrorType {
 export type Mutation = {
   __typename?: 'Mutation';
   createChargeCode?: Maybe<ChargeCode>;
-  createTimeCharge: TimeCharge;
   createTrackedDay?: Maybe<TrackedDay>;
   createTrackedTask: TrackedTask;
   createUser?: Maybe<User>;
@@ -285,7 +286,6 @@ export type Mutation = {
   deleteTrackedTask?: Maybe<Scalars['Boolean']['output']>;
   deleteUser?: Maybe<Scalars['Boolean']['output']>;
   updateChargeCode?: Maybe<ChargeCode>;
-  updateTimeCharge: TimeCharge;
   updateTrackedDay?: Maybe<TrackedDay>;
   updateTrackedTask: TrackedTask;
   updateUser?: Maybe<User>;
@@ -296,16 +296,9 @@ export type MutationCreateChargeCodeArgs = {
   code: Scalars['String']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   expired?: InputMaybe<Scalars['Boolean']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
-};
-
-
-export type MutationCreateTimeChargeArgs = {
-  chargeCodeAppearance?: InputMaybe<Scalars['Int']['input']>;
-  chargeCodeId: Scalars['ID']['input'];
-  timeSlot: Scalars['Int']['input'];
-  totalChargeCodesForSlot?: InputMaybe<Scalars['Int']['input']>;
-  trackedDayId: Scalars['ID']['input'];
+  sortOrder?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -351,15 +344,10 @@ export type MutationUpdateChargeCodeArgs = {
   code?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   expired?: InputMaybe<Scalars['Boolean']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationUpdateTimeChargeArgs = {
-  chargeCodeAppearance?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['ID']['input'];
-  totalChargeCodesForSlot?: InputMaybe<Scalars['Int']['input']>;
+  sortOrder?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -470,6 +458,14 @@ export type SubscriptionTrackedDayChangedArgs = {
   year?: InputMaybe<Scalars['Int']['input']>;
 };
 
+/**
+ *     updateTimeCharge(
+ *         id: ID!,
+ *         chargeCodeAppearance: Int,
+ *         totalChargeCodesForSlot: Int
+ *     ): TimeCharge!
+ * }
+ */
 export type TimeCharge = {
   __typename?: 'TimeCharge';
   chargeCode?: Maybe<ChargeCode>;
@@ -548,6 +544,36 @@ export type _Service = {
   sdl: Scalars['String']['output'];
 };
 
+export type ChargeCodesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ChargeCodesQuery = { __typename?: 'Query', chargeCodes?: Array<{ __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean, group?: string | null, sortOrder?: number | null }> | null };
+
+export type CreateChargeCodeMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  code: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  expired?: InputMaybe<Scalars['Boolean']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  sortOrder?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type CreateChargeCodeMutation = { __typename?: 'Mutation', createChargeCode?: { __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean, group?: string | null, sortOrder?: number | null } | null };
+
+export type UpdateChargeCodeMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  expired?: InputMaybe<Scalars['Boolean']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  sortOrder?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type UpdateChargeCodeMutation = { __typename?: 'Mutation', updateChargeCode?: { __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean, group?: string | null, sortOrder?: number | null } | null };
+
 export type CreateTrackedDayMutationVariables = Exact<{
   date: Scalars['Float']['input'];
   mode?: InputMaybe<Scalars['String']['input']>;
@@ -591,11 +617,6 @@ export type TrackedTasksQueryVariables = Exact<{
 
 export type TrackedTasksQuery = { __typename?: 'Query', trackedTasks?: Array<{ __typename?: 'TrackedTask', id: string, notes?: string | null, timeSlots?: Array<number> | null, chargeCodes?: Array<{ __typename?: 'ChargeCode', id: string, name: string }> | null }> | null };
 
-export type ChargeCodesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ChargeCodesQuery = { __typename?: 'Query', chargeCodes?: Array<{ __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean }> | null };
-
 export type CreateTrackedTaskMutationVariables = Exact<{
   trackedDayId: Scalars['ID']['input'];
 }>;
@@ -628,6 +649,60 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const ChargeCodesDocument = new TypedDocumentString(`
+    query chargeCodes {
+  chargeCodes {
+    id
+    name
+    code
+    description
+    expired
+    group
+    sortOrder
+  }
+}
+    `) as unknown as TypedDocumentString<ChargeCodesQuery, ChargeCodesQueryVariables>;
+export const CreateChargeCodeDocument = new TypedDocumentString(`
+    mutation createChargeCode($name: String!, $code: String!, $description: String, $expired: Boolean, $group: String, $sortOrder: Int) {
+  createChargeCode(
+    name: $name
+    code: $code
+    description: $description
+    expired: $expired
+    group: $group
+    sortOrder: $sortOrder
+  ) {
+    id
+    name
+    code
+    description
+    expired
+    group
+    sortOrder
+  }
+}
+    `) as unknown as TypedDocumentString<CreateChargeCodeMutation, CreateChargeCodeMutationVariables>;
+export const UpdateChargeCodeDocument = new TypedDocumentString(`
+    mutation updateChargeCode($id: ID!, $name: String, $code: String, $description: String, $expired: Boolean, $group: String, $sortOrder: Int) {
+  updateChargeCode(
+    id: $id
+    name: $name
+    code: $code
+    description: $description
+    expired: $expired
+    group: $group
+    sortOrder: $sortOrder
+  ) {
+    id
+    name
+    code
+    description
+    expired
+    group
+    sortOrder
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateChargeCodeMutation, UpdateChargeCodeMutationVariables>;
 export const CreateTrackedDayDocument = new TypedDocumentString(`
     mutation createTrackedDay($date: Float!, $mode: String) {
   createTrackedDay(date: $date, mode: $mode) {
@@ -693,17 +768,6 @@ export const TrackedTasksDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<TrackedTasksQuery, TrackedTasksQueryVariables>;
-export const ChargeCodesDocument = new TypedDocumentString(`
-    query chargeCodes {
-  chargeCodes {
-    id
-    name
-    code
-    description
-    expired
-  }
-}
-    `) as unknown as TypedDocumentString<ChargeCodesQuery, ChargeCodesQueryVariables>;
 export const CreateTrackedTaskDocument = new TypedDocumentString(`
     mutation createTrackedTask($trackedDayId: ID!) {
   createTrackedTask(trackedDayId: $trackedDayId) {

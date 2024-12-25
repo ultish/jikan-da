@@ -1,6 +1,9 @@
 import Component from '@glimmer/component';
 import type {
+  ChargeCode,
+  ChargeCodesQuery,
   MutationUpdateTrackedTaskArgs,
+  QueryChargeCodesArgs,
   QueryTrackedTasksArgs,
   TrackedDay,
   TrackedTask,
@@ -28,6 +31,9 @@ import type Prefs from 'jikan-da/services/prefs';
 import { fn } from '@ember/helper';
 
 import { cached, localCopy } from 'tracked-toolbox';
+import TooManyChoices from 'jikan-da/components/choices';
+import { GET_CHARGE_CODES } from 'jikan-da/graphql/chargecodes';
+import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
 
 const TRACKED_TASKS_WIDTH = 300;
 const TIMEBLOCK_WIDTH = 60;
@@ -92,14 +98,11 @@ export default class Task extends Component<Signature> {
       // squares.push(new TimeBlock(timeBlock, checked));
     }
 
-    console.log('squares', squares);
-
     return squares;
   }
 
   @action
   clicked(timeBlock: TimeBlock) {
-    debugger;
     if (this.lastBlockClicked === -1) {
       timeBlock.checked = !timeBlock.checked;
       this.lastBlockClicked = timeBlock.timeBlock;
@@ -133,8 +136,6 @@ export default class Task extends Component<Signature> {
   ]);
 
   async updateTimeBlocks() {
-    debugger;
-
     const timeSlots = this.squares
       .filter((s) => s.checked)
       .map((s) => s.timeBlock);
@@ -159,6 +160,61 @@ export default class Task extends Component<Signature> {
       notes: this.notes,
     });
   }
+
+  chargeCodesQuery = useQuery<ChargeCodesQuery, QueryChargeCodesArgs>(
+    this,
+    () => [GET_CHARGE_CODES]
+  );
+
+  get chargeCodes() {
+    const selected = this.selectedChargeCodes;
+
+    return (this.chargeCodesQuery.data?.chargeCodes ?? []).map((cc) => {
+      return {
+        chargeCode: cc,
+        selected: selected.has(cc.id),
+      };
+    });
+  }
+
+  get selectedChargeCodes() {
+    const map = new Map<String, ChargeCode>();
+    this.args.trackedTask?.chargeCodes?.forEach((cc) => {
+      map.set(cc.id, cc);
+    });
+    return map;
+  }
+
+  @action
+  async addCC(detail: any) {
+    const chargeCodeIds =
+      this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? [];
+
+    const id = detail.value;
+    if (!chargeCodeIds.includes(id)) {
+      chargeCodeIds.push(id);
+    }
+
+    await this.updateTrackedTaskMutation.mutate({
+      id: this.args.trackedTask.id,
+      chargeCodeIds: chargeCodeIds,
+    });
+  }
+
+  @action
+  async removeCC(detail: any) {
+    const chargeCodeIds =
+      this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? [];
+
+    const id = detail.value;
+    const newChargeCodeIds = chargeCodeIds.filter((ccId) => ccId !== id);
+
+    await this.updateTrackedTaskMutation.mutate({
+      id: this.args.trackedTask.id,
+      chargeCodeIds: newChargeCodeIds,
+    });
+  }
+
   <template>
     {{!prettier-ignore}}
     <style>
@@ -180,11 +236,22 @@ export default class Task extends Component<Signature> {
       }
       .tracked-task-details {
         width: 300px;
-        height: 50px;
+        height: 150px;
       }
     </style>
     <div class="tracked-task relative border-b-2">
       <div class="tracked-task-details">
+        <TooManyChoices
+          @choices={{this.chargeCodes}}
+          @onAdd={{this.addCC}}
+          @onRemove={{this.removeCC}}
+          as |cc|
+        >
+          <option
+            selected={{if cc.selected "selected"}}
+            value={{cc.chargeCode.id}}
+          >{{cc.chargeCode.name}}</option>
+        </TooManyChoices>
         {{!-- <PowerSelectMultiple
           @searchEnabled={{true}}
           @options={{this.chargeCodes}}
@@ -194,20 +261,26 @@ export default class Task extends Component<Signature> {
         >
           {{chargeCode.name}}
         </PowerSelectMultiple> --}}
-        <input
-          aria-label="notes"
-          value={{this.notes}}
-          placeholder="Notes..."
-          {{on "focusout" this.updateNotes}}
-          {{on "input" this.handleInput}}
-        />
 
+        <label class="input input-bordered flex items-center gap-2 input-sm">
+          <PhPencil @weight="duotone" class="h-4 w-4 opacity-70 inline-block" />
+          <input
+            type="text"
+            placeholder="Notes"
+            class="grow"
+            aria-label="notes"
+            value={{this.notes}}
+            {{on "focusout" this.updateNotes}}
+            {{on "input" this.handleInput}}
+          />
+
+        </label>
       </div>
       <div class="tracked-time flex">
         {{#each this.squares as |block|}}
           <div
-            class="square bg-base-100 text-[5px] border-r-[1px]
-              {{if block.checked 'bg-accent' 'odd:bg-base-200'}}"
+            class="square text-[5px] border-r-[1px]
+              {{if block.checked 'bg-accent' 'odd:bg-base-200 bg-base-100 '}}"
             role="button"
             {{on "click" (fn this.clicked block)}}
           >

@@ -15,17 +15,31 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
+    "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n": types.ChargeCodesDocument,
+    "\n  mutation createChargeCode(\n    $name: String!\n    $code: String!\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    createChargeCode(\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n": types.CreateChargeCodeDocument,
+    "\n  mutation updateChargeCode(\n    $id: ID!\n    $name: String\n    $code: String\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    updateChargeCode(\n      id: $id\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n": types.UpdateChargeCodeDocument,
     "\n  mutation createTrackedDay($date: Float!, $mode: String) {\n    createTrackedDay(date: $date, mode: $mode) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.CreateTrackedDayDocument,
     "\n  query users {\n    users {\n      id\n      username\n    }\n  }\n": types.UsersDocument,
     "\n  query trackedDay($id: ID!) {\n    trackedDay(id: $id) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayDocument,
     "\n  query trackedDaysForMonthYear($month: Int, $year: Int) {\n    trackedDaysForMonthYear(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDaysForMonthYearDocument,
     "\n  subscription trackedDayChanged($month: Int, $year: Int) {\n    trackedDayChanged(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayChangedDocument,
     "\n  query trackedTasks($trackedDayId: ID) {\n    trackedTasks(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.TrackedTasksDocument,
-    "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n    }\n  }\n": types.ChargeCodesDocument,
     "\n  mutation createTrackedTask($trackedDayId: ID!) {\n    createTrackedTask(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.CreateTrackedTaskDocument,
     "\n  mutation UpdateTrackedTask(\n    $id: ID!\n    $notes: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    updateTrackedTask(\n      id: $id\n      notes: $notes\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.UpdateTrackedTaskDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n"): typeof import('./graphql').ChargeCodesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createChargeCode(\n    $name: String!\n    $code: String!\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    createChargeCode(\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n"): typeof import('./graphql').CreateChargeCodeDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation updateChargeCode(\n    $id: ID!\n    $name: String\n    $code: String\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    updateChargeCode(\n      id: $id\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n"): typeof import('./graphql').UpdateChargeCodeDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -50,10 +64,6 @@ export function graphql(source: "\n  subscription trackedDayChanged($month: Int,
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query trackedTasks($trackedDayId: ID) {\n    trackedTasks(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').TrackedTasksDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n    }\n  }\n"): typeof import('./graphql').ChargeCodesDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

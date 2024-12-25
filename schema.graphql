@@ -18,8 +18,10 @@ type ChargeCode {
   code: String!
   description: String
   expired: Boolean!
+  group: String
   id: ID!
   name: String!
+  sortOrder: Int
 }
 
 enum DayMode {
@@ -270,8 +272,7 @@ enum ErrorType {
 }
 
 type Mutation {
-  createChargeCode(code: String!, description: String, expired: Boolean = false, name: String!): ChargeCode
-  createTimeCharge(chargeCodeAppearance: Int, chargeCodeId: ID!, timeSlot: Int!, totalChargeCodesForSlot: Int, trackedDayId: ID!): TimeCharge!
+  createChargeCode(code: String!, description: String, expired: Boolean = false, group: String, name: String!, sortOrder: Int): ChargeCode
   createTrackedDay(date: Float!, mode: String): TrackedDay
   createTrackedTask(notes: String, trackedDayId: ID!): TrackedTask!
   createUser(password: String!, username: String!): User
@@ -279,8 +280,7 @@ type Mutation {
   deleteTrackedDay(id: ID!): Boolean
   deleteTrackedTask(id: ID): Boolean
   deleteUser(username: String!): Boolean
-  updateChargeCode(code: String, description: String, expired: Boolean, id: ID!, name: String): ChargeCode
-  updateTimeCharge(chargeCodeAppearance: Int, id: ID!, totalChargeCodesForSlot: Int): TimeCharge!
+  updateChargeCode(code: String, description: String, expired: Boolean, group: String, id: ID!, name: String, sortOrder: Int): ChargeCode
   updateTrackedDay(date: Float, id: ID!, mode: DayMode, trackedTaskIds: [String!]): TrackedDay
   updateTrackedTask(chargeCodeIds: [ID!], id: ID!, notes: String, timeSlots: [Int!]): TrackedTask!
   updateUser(trackedDayIds: [String], userId: ID!): User
@@ -310,6 +310,14 @@ type Subscription {
   trackedDayChanged(month: Int, year: Int): TrackedDay
 }
 
+"""
+    updateTimeCharge(
+        id: ID!,
+        chargeCodeAppearance: Int,
+        totalChargeCodesForSlot: Int
+    ): TimeCharge!
+}
+"""
 type TimeCharge {
   chargeCode: ChargeCode
   """The number of times this charge code appears at this timeslot"""

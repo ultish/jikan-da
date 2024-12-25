@@ -119,7 +119,6 @@ export default class TaskListLayout extends Component<Signature> {
     CREATE_TRACKED_TASK,
     {
       update: (cache, result) => {
-        debugger;
         const vars = {
           trackedDayId: this.args.trackedDay.id,
         };
