@@ -5,7 +5,6 @@ import { setClient } from 'glimmer-apollo';
 import {
   ApolloClient,
   InMemoryCache,
-  createHttpLink,
   split,
   HttpLink,
 } from '@apollo/client/core';
@@ -19,11 +18,13 @@ export default function setupApolloClient(context: object): void {
     createClient({
       url: 'ws://localhost:8080/graphql',
 
-      // TODO doesn't work https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api/4361358#4361358
-      connectionParams: {
-        headers: {
-          'user-id': '6768f8e49ce0e819a8f73dfb',
-        },
+      // this is used to add user-id to the websocket header on init
+      connectionParams: () => {
+        return {
+          headers: {
+            'user-id': '6768f8e49ce0e819a8f73dfb',
+          },
+        };
       },
     })
   );

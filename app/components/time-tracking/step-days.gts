@@ -132,7 +132,6 @@ export default class StepDays extends Component<Signature> {
       variables: {
         month: this.args.month,
         year: this.args.year,
-        userId: '6768f8e49ce0e819a8f73dfb', // TODO deal with this, can't pass a header via ws. see https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api/4361358#4361358
       },
       updateQuery: (prevQueryResult, { subscriptionData, variables }) => {
         if (!subscriptionData.data.trackedDayChanged) {

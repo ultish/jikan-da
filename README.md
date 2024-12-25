@@ -28,3 +28,4 @@ You will need the following things properly installed on your computer.
 ### GQL Code Generators
 - `pnpm run generate`
 - see codegen.ts for graphql config
+- this will verify your graphql queries, mutations, subscriptions match whats in the graphql schema on the server (as defined by codegen.ts config)
