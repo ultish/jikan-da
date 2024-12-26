@@ -1,3 +1,4 @@
+import { action } from '@ember/object';
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
@@ -18,6 +19,7 @@ export default class Prefs extends Service {
     });
   }
 
+  @action
   setStartTimeNum(val: number) {
     this.startTimeNum = val;
     localStorage.setItem('jga-start-time', val.toString());

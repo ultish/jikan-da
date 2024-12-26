@@ -23,6 +23,10 @@ import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
 import { min } from '@ember/object/lib/computed/reduce_computed_macros';
 import { tracked } from '@glimmer/tracking';
 
+import PhHourglassHigh from 'ember-phosphor-icons/components/ph-hourglass-high';
+import PhHourglassMedium from 'ember-phosphor-icons/components/ph-hourglass-medium';
+import PhHourglassLow from 'ember-phosphor-icons/components/ph-hourglass-low';
+
 class TimesheetRow {
   chargecode: ChargeCode | string;
   monday = 0;
@@ -251,10 +255,52 @@ export default class TimeChargeTotal extends Component<Signature> {
     }
   }
 
+  get stats() {
+    const good = ['やった！', 'もう帰られるよ', 'まだ働いてるの', '外行けな'];
+    const start = ['これからね', '頑張れ', 'まだまだ'];
+    const half = ['後ちょっと', 'もう少し', 'お腹空いた'];
+
+    const left = ((2280 - this.dailyTotal.total) / 60).toFixed(1);
+    if (this.dailyTotal.total > 2280) {
+      return {
+        left: left,
+        msg: good[Math.floor(Math.random() * good.length)],
+        icon: 'low',
+      };
+    } else if (this.dailyTotal.total > 1140) {
+      return {
+        left: left,
+        msg: half[Math.floor(Math.random() * half.length)],
+        icon: 'med',
+      };
+    } else {
+      return {
+        left: left,
+        msg: start[Math.floor(Math.random() * start.length)],
+        icon: 'high',
+      };
+    }
+  }
+
+  iconHigh(icon: string) {
+    return icon === 'high';
+  }
+  iconMed(icon: string) {
+    return icon === 'med';
+  }
+  iconLow(icon: string) {
+    return icon === 'low';
+  }
+
+  get getTrackerHeaderEle() {
+    return document.getElementById('time-tracker-header');
+  }
+
   <template>
-    <main class="prose" {{this.subscribeToTimeChargeTotals}}>
-      <h2><PhClockCountdown class="inline" />Timesheet</h2>
-      <div class="">
+    <main class="" {{this.subscribeToTimeChargeTotals}}>
+      <h2 class="text-lg font-semibold mb-4">
+        <PhClockCountdown class="inline" />Timesheet</h2>
+      <div class="flx gap-4 pr-4">
         <table class="table">
           <thead>
             <tr>
@@ -350,6 +396,32 @@ export default class TimeChargeTotal extends Component<Signature> {
             </tr>
           </tbody>
         </table>
+
+        {{#if this.getTrackerHeaderEle}}
+          {{#in-element this.getTrackerHeaderEle}}
+            <div class="stats shadow">
+              <div class="stat p-[0.5rem]">
+                <div class="stat-figure text-secondary">
+                  {{#if (this.iconHigh this.stats.icon)}}
+                    <PhHourglassHigh class="inline h-8 w-8" @weight="duotone" />
+                  {{else if (this.iconMed this.stats.icon)}}
+                    <PhHourglassMedium
+                      class="inline h-8 w-8"
+                      @weight="duotone"
+                    />
+                  {{else}}
+                    <PhHourglassLow class="inline h-8 w-8" @weight="duotone" />
+                  {{/if}}
+                </div>
+                <div class="stat-title text-[0.7rem]">Hours Left</div>
+                <div
+                  class="stat-value text-[1.2rem] leading-[1.2rem]"
+                >{{this.stats.left}}</div>
+                <div class="stat-desc">{{this.stats.msg}}</div>
+              </div>
+            </div>
+          {{/in-element}}
+        {{/if}}
       </div>
     </main>
   </template>

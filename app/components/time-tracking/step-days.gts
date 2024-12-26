@@ -54,6 +54,10 @@ class Day {
   get day() {
     return this.date.format('D');
   }
+
+  get dayOfWeek() {
+    return this.date.format('ddd');
+  }
 }
 
 interface Signature {
@@ -295,13 +299,9 @@ export default class StepDays extends Component<Signature> {
   //TODO this creates a new date, but it doesnt update the original query for steps so you never see the date change colour
   @action
   async createDayAndTransition(day: Day) {
-    console.log('create');
-
     const newDate = await this.createTrackedDay.mutate({
       date: day.date.valueOf(),
     });
-
-    console.log(newDate);
 
     if (newDate?.createTrackedDay?.id) {
       this.router.transitionTo(
@@ -347,6 +347,7 @@ export default class StepDays extends Component<Signature> {
                 {{this.todaysMonthAsText}}
               {{else}}
                 {{step.day}}
+                <span class="text-[7px]">{{step.dayOfWeek}}</span>
               {{/if}}
             </li>
           {{/each}}

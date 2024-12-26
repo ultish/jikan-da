@@ -47,9 +47,28 @@ export default class TaskListLayout extends Component<Signature> {
   @service declare prefs: Prefs;
   @tracked containerWidth = 0;
 
+  @tracked headerHeight = 0;
+
+  setHeaderHeight = modifier((element) => {
+    this.headerHeight = element.clientHeight;
+  });
+
+  //  return `height: calc(100% - ${this.bottomHeight}px)`;
+  setMainHeight = modifier((element: HTMLElement) => {
+    element.style.height = `calc(100% - ${this.headerHeight}px)`;
+  });
+
+  setTickHeight = modifier((element: HTMLElement) => {
+    const mainEle = document.getElementById('container-main');
+    if (mainEle) {
+      element.style.height = `${mainEle.clientHeight}px`;
+    }
+  });
+
   @action
   onResize({ contentRect: { width } }) {
-    this.containerWidth = width ?? 0;
+    this.containerWidth = (width ?? 0) - 300;
+    console.log('containerWidth', this.containerWidth);
   }
 
   trackedTasksQuery = useQuery<TrackedTasksQuery, QueryTrackedTasksArgs>(
@@ -77,16 +96,18 @@ export default class TaskListLayout extends Component<Signature> {
   get numBlocks() {
     // only showing 18hrs max
     const maxWidth = 18 * TIMEBLOCK_WIDTH;
-    const availableWidth = Math.min(
-      this.containerWidth - TRACKED_TASKS_WIDTH,
-      maxWidth
-    );
+    const availableWidth = Math.min(this.containerWidth, maxWidth);
 
-    return Math.floor(availableWidth / TIMEBLOCK_WIDTH);
+    const blocks = Math.floor(availableWidth / TIMEBLOCK_WIDTH) - 1;
+
+    console.log('blocks', blocks);
+    return blocks;
   }
 
   get startTime() {
-    return dayjs().startOf('day').add(this.prefs.startTimeNum, 'hour');
+    const start = dayjs().startOf('day').add(this.prefs.startTimeNum, 'hour');
+    console.log(start);
+    return start;
   }
 
   get endTime() {
@@ -153,18 +174,17 @@ export default class TaskListLayout extends Component<Signature> {
     {{!prettier-ignore}}
     <style>
       #tick-container {
-        position: absolute;
+        {{!-- position: absolute;
         top: 0;
         bottom: 0;
         right: 0;
         left: 300px;
         display: flex;
-        flex-direction: row;
+        flex-direction: row; --}}
 
         .tick-hour {
           width: 100px;
           min-width: 100px;
-          height: $containerHeight;
           display: inline-block;
           user-select: none;
           text-align: center;
@@ -175,41 +195,48 @@ export default class TaskListLayout extends Component<Signature> {
         }
       }
       #time-container {
-        position: absolute;
+        {{!-- position: absolute;
         left: 0;
-        width: 300px;
+        width: 300px; --}}
       }
     </style>
-    <div {{onResize this.onResize}}>
-      <h2 class="text-lg font-semibold mb-4 flex items-center w-[300px] px-2">
-        <PhKanban
-          class="inline-block -rotate-90"
-          @weight="duotone"
-          @color="darkorchid"
-        />
-        <span class="grow">Tracked Tasks</span>
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          {{on "click" this.createTask}}
+    <div {{onResize this.onResize}} class="h-full relative" ...attributes>
+      <header {{this.setHeaderHeight}}>
+        <h2 class="text-lg font-semibold flex items-center w-[300px] px-2">
+          <PhKanban
+            class="inline-block -rotate-90"
+            @weight="duotone"
+            @color="darkorchid"
+          />
+          <span class="grow">Tracked Tasks</span>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            {{on "click" this.createTask}}
+          >
+            <PhListPlus class="inline-block" />
+            Add Task
+          </button>
+        </h2>
+      </header>
+      <main id="container-main" class="relative" {{this.setMainHeight}}>
+        <div
+          id="tick-container"
+          class="absolute left-[300px] top-[-32px] flex pointer-events-none"
         >
-          <PhListPlus class="inline-block" />
-          Add Task
-        </button>
-      </h2>
-      <div id="tick-container" class="">
-        {{#each this.formattedTicks as |tick|}}
-          <div class="tick-hour text-base">
-            {{tick}}
-          </div>
-        {{/each}}
-      </div>
-      <div id="time-container">
-        {{#each this.tasks as |task|}}
-          <Task @trackedTask={{task}} @ticks={{this.ticks}} />
+          {{#each this.formattedTicks as |tick|}}
+            <div class="tick-hour text-base" {{this.setTickHeight}}>
+              {{tick}}
+            </div>
+          {{/each}}
+        </div>
+        <div id="time-container" class="overflow-y-auto h-full">
+          {{#each this.tasks as |task|}}
+            <Task @trackedTask={{task}} @ticks={{this.ticks}} />
 
-        {{/each}}
-      </div>
+          {{/each}}
+        </div>
+      </main>
       {{!-- {{#each this.items as |num|}}
         <div class="mb-4 p-4 bg-gray-50 rounded shadow">
           Top Section Content

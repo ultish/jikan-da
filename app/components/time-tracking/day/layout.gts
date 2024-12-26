@@ -10,6 +10,11 @@ import TaskListLayout from './task-list/layout';
 
 import PhCalendarDot from 'ember-phosphor-icons/components/ph-calendar-dot';
 import TimeChargeTotal from './time-charge-total';
+import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
+import { inject as service } from '@ember/service';
+import type Prefs from 'jikan-da/services/prefs';
+
+import { cached, localCopy } from 'tracked-toolbox';
 
 interface Signature {
   Args: {
@@ -23,6 +28,8 @@ interface Signature {
 export default class DayLayout extends Component<Signature> {
   @tracked bottomHeight = 384; // Initial height in pixels
   @tracked isDragging = false;
+
+  @service declare prefs: Prefs;
 
   minBottomHeight = 200;
   minTopHeight = 200;
@@ -66,12 +73,6 @@ export default class DayLayout extends Component<Signature> {
     return dayjs(this.args.day.date).format('YYYY-MM-DD dddd');
   }
 
-  get items() {
-    return [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    ];
-  }
-
   get mainContentHeight() {
     return `height: calc(100% - ${this.bottomHeight}px)`;
   }
@@ -80,51 +81,60 @@ export default class DayLayout extends Component<Signature> {
     return `height: ${this.bottomHeight}px`;
   }
 
+  @localCopy('prefs.startTimeNum') declare startTime: string;
+
+  @action
+  handleInput(event: any) {
+    if (event.target) {
+      this.startTime = event.target.value;
+      this.updateStartTime();
+    }
+  }
+
+  @action
+  updateStartTime() {
+    const num = Number.parseInt(this.startTime);
+    this.prefs.setStartTimeNum(num);
+  }
+
   <template>
     <header class="bg-base-200 shadow">
-      <div class="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8 prose">
-        <h2>
+      <div
+        class="mx-auto max-w-full px-4 py-4 sm:px-6 lg:px-8 flex gap-2 items-center"
+      >
+        <h2 class="text-xl font-semibold grow leading-[4rem]">
           <PhCalendarDot class="inline" />
           Time for
           {{this.date}}
         </h2>
+        <label class="input input-bordered flex items-center gap-2 w-[200px]">
+          Starting Time
+          <input
+            type="number"
+            placeholder="Notes"
+            class="w-[50px]"
+            aria-label="notes"
+            value={{this.startTime}}
+            {{on "focusout" this.updateStartTime}}
+            {{on "input" this.handleInput}}
+          />
+        </label>
+        <div id="time-tracker-header"></div>
       </div>
     </header>
 
-    {{!-- <main>
-      <div class="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8">
-        Stuff
-
-        {{! quick actions }}
-
-        {{! list of tasks }}
-      </div>
-    </main> --}}
-
     <div class="h-screen w-full flex px-4 sm:px-6 lg:px-8">
       {{! Left Column }}
-
       <QuickActions class="w-56 overflow-y-auto pt-4" />
-      {{!-- <div class="w-64 h-full border-rborder-gray-200 overflow-y-auto">
-        <div class="pt-1">
-          <h2 class="text-lg font-semibold mb-4">Left Column</h2>
-          {{#each this.items as |num|}}
-            <div class="mb-4 p-4 bg-white rounded shadow">
-              Item
-              {{num}}
-            </div>
-          {{/each}}
-        </div>
-      </div> --}}
 
       {{! Main Content Area }}
       <div id="main-content" class="flex-1 flex flex-col h-full relative">
         {{! Top Section }}
         <div
-          class="flex-1 overflow-y-auto min-h-0 mt-4"
+          class="flex-1 min-h-0 mt-4 overflow-y-scroll--- relative"
           style={{this.mainContentHeight}}
         >
-          <TaskListLayout @trackedDay={{@day}} />
+          <TaskListLayout @trackedDay={{@day}} class="" />
         </div>
 
         {{! Resize Handle }}
@@ -146,15 +156,6 @@ export default class DayLayout extends Component<Signature> {
           style={{this.bottomHeightStyle}}
         >
           <TimeChargeTotal @trackedDay={{@day}} />
-          {{!-- <div class="p-4">
-            <h2 class="text-lg font-semibold mb-4">Bottom Section</h2>
-            {{#each this.items as |num|}}
-              <div class="mb-4 p-4 bg-gray-50 rounded shadow">
-                Bottom Section Content
-                {{num}}
-              </div>
-            {{/each}}
-          </div> --}}
         </div>
       </div>
     </div>
