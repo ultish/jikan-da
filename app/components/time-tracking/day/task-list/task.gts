@@ -35,6 +35,7 @@ import { cached, localCopy } from 'tracked-toolbox';
 import TooManyChoices from 'jikan-da/components/choices';
 import { GET_CHARGE_CODES } from 'jikan-da/graphql/chargecodes';
 import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
+import type { TrackedTasksPartial } from './layout';
 
 const TRACKED_TASKS_WIDTH = 300;
 const TIMEBLOCK_WIDTH = 60;
@@ -62,7 +63,7 @@ class TimeBlock {
 }
 
 export default class Task extends Component<Signature> {
-  lastBlockClicked = -1;
+  @tracked lastBlockClicked = -1;
 
   @localCopy('args.trackedTask.notes') declare notes: string;
 
