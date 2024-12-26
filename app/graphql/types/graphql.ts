@@ -443,13 +443,8 @@ export type QueryUsersArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  timeChargeTotalChanged?: Maybe<TimeChargeTotal>;
+  timeChargeTotalsChanged?: Maybe<TimeChargeTotal>;
   trackedDayChanged?: Maybe<TrackedDay>;
-};
-
-
-export type SubscriptionTimeChargeTotalChangedArgs = {
-  userId: Scalars['String']['input'];
 };
 
 
@@ -610,6 +605,18 @@ export type TrackedDayChangedSubscriptionVariables = Exact<{
 
 export type TrackedDayChangedSubscription = { __typename?: 'Subscription', trackedDayChanged?: { __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number } | null };
 
+export type TimeChargeTotalsQueryVariables = Exact<{
+  weekOfYear?: InputMaybe<WeekOfYear>;
+}>;
+
+
+export type TimeChargeTotalsQuery = { __typename?: 'Query', timeChargeTotals?: Array<{ __typename?: 'TimeChargeTotal', id: string, value?: number | null, chargeCode?: { __typename?: 'ChargeCode', id: string, name: string, sortOrder?: number | null } | null, trackedDay?: { __typename?: 'TrackedDay', id: string, date: number, week: number } | null }> | null };
+
+export type TimeChargeTotalsChangedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TimeChargeTotalsChangedSubscription = { __typename?: 'Subscription', timeChargeTotalsChanged?: { __typename?: 'TimeChargeTotal', id: string, value?: number | null } | null };
+
 export type TrackedTasksQueryVariables = Exact<{
   trackedDayId?: InputMaybe<Scalars['ID']['input']>;
 }>;
@@ -755,6 +762,32 @@ export const TrackedDayChangedDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<TrackedDayChangedSubscription, TrackedDayChangedSubscriptionVariables>;
+export const TimeChargeTotalsDocument = new TypedDocumentString(`
+    query timeChargeTotals($weekOfYear: WeekOfYear) {
+  timeChargeTotals(weekOfYear: $weekOfYear) {
+    id
+    value
+    chargeCode {
+      id
+      name
+      sortOrder
+    }
+    trackedDay {
+      id
+      date
+      week
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<TimeChargeTotalsQuery, TimeChargeTotalsQueryVariables>;
+export const TimeChargeTotalsChangedDocument = new TypedDocumentString(`
+    subscription timeChargeTotalsChanged {
+  timeChargeTotalsChanged {
+    id
+    value
+  }
+}
+    `) as unknown as TypedDocumentString<TimeChargeTotalsChangedSubscription, TimeChargeTotalsChangedSubscriptionVariables>;
 export const TrackedTasksDocument = new TypedDocumentString(`
     query trackedTasks($trackedDayId: ID) {
   trackedTasks(trackedDayId: $trackedDayId) {

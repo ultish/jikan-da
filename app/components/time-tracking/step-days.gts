@@ -9,6 +9,7 @@ import type {
   SubscriptionTrackedDayChangedArgs,
   TrackedDay,
   TrackedDayChangedSubscription,
+  TrackedDayChangedSubscriptionVariables,
   TrackedDaysForMonthYearQuery,
   TrackedDaysForMonthYearQueryVariables,
 } from 'jikan-da/graphql/types/graphql';
@@ -123,10 +124,9 @@ export default class StepDays extends Component<Signature> {
    * works if the current tab is making that modification.
    */
   subscribeToTrackedDays = modifier((element) => {
-    console.log('SUBBBING');
     this.#unsubscribe = this.trackedDaysQuery.subscribeToMore<
       TrackedDayChangedSubscription,
-      SubscriptionTrackedDayChangedArgs
+      TrackedDayChangedSubscriptionVariables
     >({
       document: SUBSCRIBE_TRACKED_DAY_CHANGES,
       variables: {
@@ -181,7 +181,7 @@ export default class StepDays extends Component<Signature> {
     }
   }
 
-  #trackedDaysMap = new Map<String, TrackedDay>();
+  #trackedDaysMap = new Map<string, TrackedDay>();
 
   get trackedDaysMap() {
     this.trackedDays.forEach((day) => {
@@ -311,32 +311,43 @@ export default class StepDays extends Component<Signature> {
     }
   }
 
+  // normal functions have no context, so passing it in
+  stepClass(context: StepDays, step: Day) {
+    let result = '';
+    if (
+      step.trackedDay?.id &&
+      context.router.isActive('time-tracking.day', step.trackedDay.id)
+    ) {
+      result = 'step-accent';
+    } else if (step.isToday) {
+      result = 'step-info';
+    } else if (step.trackedDay) {
+      result = 'step-success';
+    } else if (step.pastDate) {
+      result = 'step-neutral';
+    }
+    return result;
+  }
+
   <template>
     <div ...attributes {{this.centerToday}} {{this.subscribeToTrackedDays}}>
       <div>
         <ul class="steps">
           {{#each this.steps as |step|}}
             <li
-              class="step
-                {{if step.pastDate 'step-neutral'}}
-                {{if step.isToday 'step-info'}}
-                {{if step.trackedDay 'step-primary'}}"
+              class="step {{this.stepClass this step}}"
               data-day={{step.date.day}}
               role="button"
               {{on "click" (fn this.openDay step)}}
               {{on "dblclick" (fn this.createDayAndTransition step)}}
-              {{this.dayRouteActive step.trackedDay.id}}
             >
-
               {{#if step.firstDay}}
                 {{this.todaysMonthAsText}}
               {{else if step.lastDay}}
                 {{this.todaysMonthAsText}}
               {{else}}
-
                 {{step.day}}
               {{/if}}
-
             </li>
           {{/each}}
         </ul>

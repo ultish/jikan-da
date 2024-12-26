@@ -12,6 +12,7 @@ import type {
 } from 'jikan-da/graphql/types/graphql';
 
 import PhKanban from 'ember-phosphor-icons/components/ph-kanban';
+import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
 
 import dayjs from 'dayjs';
 import { action } from '@ember/object';
@@ -178,7 +179,7 @@ export default class Task extends Component<Signature> {
   }
 
   get selectedChargeCodes() {
-    const map = new Map<String, ChargeCode>();
+    const map = new Map<string, ChargeCode>();
     this.args.trackedTask?.chargeCodes?.forEach((cc) => {
       map.set(cc.id, cc);
     });
@@ -225,42 +226,42 @@ export default class Task extends Component<Signature> {
       .square {
         width: 10px;
         min-width: 10px;
-        height: 50px;
+        height: 40px;
         cursor: pointer;
       }
 
       .tracked-time {
         position: absolute;
-        top: 0px;
+        top: 37px;
         left: 300px;
       }
       .tracked-task-details {
         width: 300px;
-        height: 150px;
+        {{!-- height: 150px; --}}
       }
     </style>
-    <div class="tracked-task relative border-b-2">
-      <div class="tracked-task-details">
-        <TooManyChoices
-          @choices={{this.chargeCodes}}
-          @onAdd={{this.addCC}}
-          @onRemove={{this.removeCC}}
-          as |cc|
-        >
-          <option
-            selected={{if cc.selected "selected"}}
-            value={{cc.chargeCode.id}}
-          >{{cc.chargeCode.name}}</option>
-        </TooManyChoices>
-        {{!-- <PowerSelectMultiple
-          @searchEnabled={{true}}
-          @options={{this.chargeCodes}}
-          @selected={{@trackedTask.chargeCodes}}
-          @placeholder='Select chargecodes...'
-          @onChange={{this.updateChargeCodes}} as |chargeCode|
-        >
-          {{chargeCode.name}}
-        </PowerSelectMultiple> --}}
+    <div class="tracked-task relative border-b-[1px]">
+      <div class="tracked-task-details flex flex-col gap-2 px-2 pb-5">
+        <label class="form-control w-full max-w-xs">
+          <div class="label">
+            <span class="label-text">
+              <PhLightning class="inline fill-amber-400" @weight="duotone" />
+              Charge Codes
+            </span>
+          </div>
+          <TooManyChoices
+            @choices={{this.chargeCodes}}
+            @onAdd={{this.addCC}}
+            @onRemove={{this.removeCC}}
+            @outerClass="input input-bordered input-sm w-full max-w-xs"
+            as |cc|
+          >
+            <option
+              selected={{if cc.selected "selected"}}
+              value={{cc.chargeCode.id}}
+            >{{cc.chargeCode.name}}</option>
+          </TooManyChoices>
+        </label>
 
         <label class="input input-bordered flex items-center gap-2 input-sm">
           <PhPencil @weight="duotone" class="h-4 w-4 opacity-70 inline-block" />
@@ -279,8 +280,8 @@ export default class Task extends Component<Signature> {
       <div class="tracked-time flex">
         {{#each this.squares as |block|}}
           <div
-            class="square text-[5px] border-r-[1px]
-              {{if block.checked 'bg-accent' 'odd:bg-base-200 bg-base-100 '}}"
+            class="square text-[5px] border-r-[1px] hover:bg-accent
+              {{if block.checked 'bg-primary' 'odd:bg-base-200 bg-base-100 '}}"
             role="button"
             {{on "click" (fn this.clicked block)}}
           >

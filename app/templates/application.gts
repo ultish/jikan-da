@@ -81,7 +81,6 @@ export default class ApplicationTemplate extends Component {
               <PhPaintRoller class="w-10 h-10" />
             </div>
           </div>
-
           <ThemeButtons />
         </div>
       </div>

@@ -306,7 +306,7 @@ type Query {
 }
 
 type Subscription {
-  timeChargeTotalChanged(userId: String!): TimeChargeTotal
+  timeChargeTotalsChanged: TimeChargeTotal
   trackedDayChanged(month: Int, year: Int): TrackedDay
 }
 

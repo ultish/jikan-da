@@ -9,6 +9,7 @@ import {
 } from 'jikan-da/graphql/types/graphql';
 
 import PhKanban from 'ember-phosphor-icons/components/ph-kanban';
+import PhListPlus from 'ember-phosphor-icons/components/ph-list-plus';
 
 import dayjs from 'dayjs';
 import { action } from '@ember/object';
@@ -62,12 +63,6 @@ export default class TaskListLayout extends Component<Signature> {
       },
     ]
   );
-
-  get items() {
-    return [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    ];
-  }
 
   get tasks() {
     if (this.trackedTasksQuery.loading) {
@@ -175,6 +170,9 @@ export default class TaskListLayout extends Component<Signature> {
           text-align: center;
 
         }
+        .tick-hour:nth-child(odd) {
+          background-color: oklch(var(--b2)/0.3)
+        }
       }
       #time-container {
         position: absolute;
@@ -182,26 +180,26 @@ export default class TaskListLayout extends Component<Signature> {
         width: 300px;
       }
     </style>
-    <div {{onResize this.onResize}} class="relativse">
-      <h2 class="text-lg font-semibold mb-4">
+    <div {{onResize this.onResize}}>
+      <h2 class="text-lg font-semibold mb-4 flex items-center w-[300px] px-2">
         <PhKanban
           class="inline-block -rotate-90"
           @weight="duotone"
           @color="darkorchid"
         />
-        Tracked Tasks
-        {{this.containerWidth}}
+        <span class="grow">Tracked Tasks</span>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          {{on "click" this.createTask}}
+        >
+          <PhListPlus class="inline-block" />
+          Add Task
+        </button>
       </h2>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        {{on "click" this.createTask}}
-      >
-        Add Task
-      </button>
       <div id="tick-container" class="">
         {{#each this.formattedTicks as |tick|}}
-          <div class="tick-hour text-base odd:bg-base-300">
+          <div class="tick-hour text-base">
             {{tick}}
           </div>
         {{/each}}

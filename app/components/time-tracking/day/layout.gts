@@ -8,6 +8,9 @@ import { on } from '@ember/modifier';
 import QuickActions from './quick-actions';
 import TaskListLayout from './task-list/layout';
 
+import PhCalendarDot from 'ember-phosphor-icons/components/ph-calendar-dot';
+import TimeChargeTotal from './time-charge-total';
+
 interface Signature {
   Args: {
     day: TrackedDay;
@@ -60,8 +63,7 @@ export default class DayLayout extends Component<Signature> {
   }
 
   get date() {
-    return dayjs(this.args.day.date).format('YYYY-MM-DD');
-    // return this.args.model.data?.trackedDay?.date;
+    return dayjs(this.args.day.date).format('YYYY-MM-DD dddd');
   }
 
   get items() {
@@ -82,6 +84,8 @@ export default class DayLayout extends Component<Signature> {
     <header class="bg-base-200 shadow">
       <div class="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8 prose">
         <h2>
+          <PhCalendarDot class="inline" />
+          Time for
           {{this.date}}
         </h2>
       </div>
@@ -121,15 +125,6 @@ export default class DayLayout extends Component<Signature> {
           style={{this.mainContentHeight}}
         >
           <TaskListLayout @trackedDay={{@day}} />
-          {{!-- <div class>
-            <h2 class="text-lg font-semibold mb-4">Tracked Tasks</h2>
-            {{#each this.items as |num|}}
-              <div class="mb-4 p-4 bg-gray-50 rounded shadow">
-                Top Section Content
-                {{num}}
-              </div>
-            {{/each}}
-          </div> --}}
         </div>
 
         {{! Resize Handle }}
@@ -150,7 +145,8 @@ export default class DayLayout extends Component<Signature> {
           class="overflow-y-auto border-t border-gray-200 z-[2] bg-base-100"
           style={{this.bottomHeightStyle}}
         >
-          <div class="p-4">
+          <TimeChargeTotal @trackedDay={{@day}} />
+          {{!-- <div class="p-4">
             <h2 class="text-lg font-semibold mb-4">Bottom Section</h2>
             {{#each this.items as |num|}}
               <div class="mb-4 p-4 bg-gray-50 rounded shadow">
@@ -158,7 +154,7 @@ export default class DayLayout extends Component<Signature> {
                 {{num}}
               </div>
             {{/each}}
-          </div>
+          </div> --}}
         </div>
       </div>
     </div>
