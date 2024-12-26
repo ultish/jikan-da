@@ -280,7 +280,7 @@ export default class Task extends Component<Signature> {
       <div class="tracked-time flex">
         {{#each this.squares as |block|}}
           <div
-            class="square text-[5px] border-r-[1px] hover:bg-accent
+            class="square text-[4px] border-r-[1px] hover:bg-accent border-base-300
               {{if block.checked 'bg-primary' 'odd:bg-base-200 bg-base-100 '}}"
             role="button"
             {{on "click" (fn this.clicked block)}}
