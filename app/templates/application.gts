@@ -1,7 +1,6 @@
 import { pageTitle } from 'ember-page-title';
 import { RouteTemplate } from 'jikan-da/utils/ember-route-template';
 import Component from '@glimmer/component';
-import Hello from 'jikan-da/components/hello';
 import PhHamburger from 'ember-phosphor-icons/components/ph-hamburger';
 import PhClockUser from 'ember-phosphor-icons/components/ph-clock-user';
 import NavLinks from 'jikan-da/components/nav/links';
