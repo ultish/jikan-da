@@ -1,9 +1,8 @@
 import Component from '@glimmer/component';
-import Choices, { type InputChoice } from 'choices.js';
+import Choices, { type EventChoice, type InputChoice } from 'choices.js';
 import { modifier } from 'ember-modifier';
 import { runTask } from 'ember-lifeline';
-import PhCube from 'ember-phosphor-icons/components/ph-cube';
-import PhHeart from 'ember-phosphor-icons/components/ph-heart';
+import { Promise } from 'rsvp';
 
 interface Signature<T> {
   Args: {
@@ -51,7 +50,11 @@ const CHOICES_CLASS_NAMES = {
 };
 
 export default class TooManyChoices<T> extends Component<Signature<T>> {
-  makeChoices = modifier(async (e) => {
+  element: HTMLElement | undefined;
+
+  makeChoices = modifier(async (e: HTMLElement) => {
+    this.element = e;
+
     // force-disconnect from auto-tracking
     await Promise.resolve();
 
@@ -68,17 +71,21 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
       classNames: Object.assign(CHOICES_CLASS_NAMES, outerClass),
     });
 
-    e.addEventListener('addItem', ({ detail }) => {
-      console.log('add', detail);
+    const addListener = (p: CustomEvent<EventChoice>) => {
+      const { detail } = p;
       this.args.onAdd?.(detail);
-    });
-
-    e.addEventListener('removeItem', ({ detail }) => {
-      console.log('remove', detail);
+    };
+    const removeListener = (p: CustomEvent<EventChoice | undefined>) => {
+      const { detail } = p;
       this.args.onRemove?.(detail);
-    });
+    };
+    this.element?.addEventListener('addItem', addListener);
+    this.element?.addEventListener('removeItem', removeListener);
 
     return () => {
+      this.element?.removeEventListener(addListener);
+      this.element?.removeEventListener(removeListener);
+
       console.log('destroy');
     };
   });

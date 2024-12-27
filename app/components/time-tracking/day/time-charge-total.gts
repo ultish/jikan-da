@@ -9,7 +9,6 @@ import type {
   TrackedDayChangedSubscription,
   TrackedDayChangedSubscriptionVariables,
 } from 'jikan-da/graphql/types/graphql';
-
 import PhClockCountdown from 'ember-phosphor-icons/components/ph-clock-countdown';
 import dayjs from 'dayjs';
 import { useQuery, useSubscription } from 'glimmer-apollo';
@@ -18,11 +17,8 @@ import {
   SUBSCRIBE_TIME_CHARGE_TOTALS_CHANGES,
 } from 'jikan-da/graphql/time-charge-totals';
 import { modifier } from 'ember-modifier';
-import { SUBSCRIBE_TRACKED_DAY_CHANGES } from 'jikan-da/graphql/subscriptions/tracked-days';
+import { SUBSCRIBE_TRACKED_DAY_CHANGES } from 'jikan-da/graphql/tracked-days';
 import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
-import { min } from '@ember/object/lib/computed/reduce_computed_macros';
-import { tracked } from '@glimmer/tracking';
-
 import PhHourglassHigh from 'ember-phosphor-icons/components/ph-hourglass-high';
 import PhHourglassMedium from 'ember-phosphor-icons/components/ph-hourglass-medium';
 import PhHourglassLow from 'ember-phosphor-icons/components/ph-hourglass-low';
@@ -208,7 +204,10 @@ export default class TimeChargeTotal extends Component<Signature> {
       });
     }
 
-    return result.sort((a, b) => a.sortOrder - b.sortOrder);
+    const x = result.sort((a, b) => a.sortOrder - b.sortOrder);
+
+    // console.log(x);
+    return x;
   }
 
   get chargesWithIndex() {
@@ -250,7 +249,7 @@ export default class TimeChargeTotal extends Component<Signature> {
 
   dayActive(day: string, currentDay: string) {
     if (day === currentDay) {
-      return 'bg-accent';
+      return 'bg-accent text-accent-content';
     }
   }
 
@@ -320,7 +319,7 @@ export default class TimeChargeTotal extends Component<Signature> {
             </tr>
           </thead>
           <tbody>
-            {{#each this.sortedCharges as |val|}}
+            {{#each this.sortedCharges key="chargeCodeName" as |val|}}
               <tr class="hover">
                 <td>{{val.chargeCodeName}}</td>
                 <td class={{this.dayActive "monday" this.currentDay}}>
@@ -391,7 +390,6 @@ export default class TimeChargeTotal extends Component<Signature> {
                 {{this.sixMinBlocks this.dailyTotal.total}}
                 <span class="text-[7px]">{{this.dailyTotal.total}}</span>
               </td>
-
             </tr>
           </tbody>
         </table>

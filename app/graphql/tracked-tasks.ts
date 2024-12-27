@@ -29,7 +29,7 @@ export const CREATE_TRACKED_TASK = gql`
 `;
 
 export const UPDATE_TRACKED_TASK = gql`
-  mutation UpdateTrackedTask(
+  mutation updateTrackedTask(
     $id: ID!
     $notes: String
     $chargeCodeIds: [ID!]
@@ -49,5 +49,11 @@ export const UPDATE_TRACKED_TASK = gql`
         name
       }
     }
+  }
+`;
+
+export const DELETE_TRACKED_TASK = gql`
+  mutation deleteTrackedTask($id: ID!) {
+    deleteTrackedTask(id: $id)
   }
 `;

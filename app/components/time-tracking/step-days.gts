@@ -1,7 +1,11 @@
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { useQuery, useMutation } from 'glimmer-apollo';
-import { GET_TRACKED_DAYS_BY_MONTH_YEAR } from 'jikan-da/graphql/queries/tracked-days';
+import {
+  GET_TRACKED_DAYS_BY_MONTH_YEAR,
+  CREATE_TRACKED_DAY,
+  SUBSCRIBE_TRACKED_DAY_CHANGES,
+} from 'jikan-da/graphql/tracked-days';
 import type {
   CreateTrackedDayMutation,
   MutationCreateTrackedDayArgs,
@@ -22,8 +26,6 @@ import type RouterService from '@ember/routing/router-service';
 
 import dayjs, { Dayjs } from 'dayjs';
 import { tracked } from '@glimmer/tracking';
-import { CREATE_TRACKED_DAY } from 'jikan-da/graphql/mutations/tracked-days';
-import { SUBSCRIBE_TRACKED_DAY_CHANGES } from 'jikan-da/graphql/subscriptions/tracked-days';
 import type { ApolloCache } from '@apollo/client/cache';
 import type { FetchResult } from '@apollo/client/core';
 
@@ -49,6 +51,10 @@ class Day {
     this.firstDay = firstDay;
     this.lastDay = lastDay;
     this.trackedDay = trackedDay;
+  }
+
+  get id() {
+    return this.date.toISOString();
   }
 
   get day() {
@@ -333,7 +339,7 @@ export default class StepDays extends Component<Signature> {
     <div ...attributes {{this.centerToday}} {{this.subscribeToTrackedDays}}>
       <div>
         <ul class="steps">
-          {{#each this.steps as |step|}}
+          {{#each this.steps key="id" as |step|}}
             <li
               class="step {{this.stepClass this step}}"
               data-day={{step.date.day}}

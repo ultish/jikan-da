@@ -4,42 +4,26 @@ import type {
   ChargeCodesQuery,
   MutationUpdateTrackedTaskArgs,
   QueryChargeCodesArgs,
-  QueryTrackedTasksArgs,
-  TrackedDay,
   TrackedTask,
-  TrackedTasksQuery,
   UpdateTrackedTaskMutation,
 } from 'jikan-da/graphql/types/graphql';
-
-import PhKanban from 'ember-phosphor-icons/components/ph-kanban';
 import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
-
 import dayjs from 'dayjs';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 
 import { useMutation, useQuery } from 'glimmer-apollo';
-import {
-  GET_TRACKED_TASKS,
-  UPDATE_TRACKED_TASK,
-} from 'jikan-da/graphql/tracked-tasks/gql';
-
-import { scaleTime } from 'd3-scale';
-import { modifier } from 'ember-modifier';
-import { inject as service } from '@ember/service';
-import type Prefs from 'jikan-da/services/prefs';
+import { UPDATE_TRACKED_TASK } from 'jikan-da/graphql/tracked-tasks';
 import { fn } from '@ember/helper';
-
-import { cached, localCopy, trackedReset } from 'tracked-toolbox';
+import { localCopy, trackedReset } from 'tracked-toolbox';
 import TooManyChoices from 'jikan-da/components/choices';
 import { GET_CHARGE_CODES } from 'jikan-da/graphql/chargecodes';
 import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
-import type { TrackedTasksPartial } from './layout';
 import { clickOutside } from 'ember-click-outside-modifier';
 
-const TRACKED_TASKS_WIDTH = 300;
-const TIMEBLOCK_WIDTH = 60;
+import { task } from 'ember-concurrency';
+import perform from 'ember-concurrency/helpers/perform';
 
 interface Signature {
   Args: {
@@ -179,34 +163,45 @@ export default class Task extends Component<Signature> {
     return map;
   }
 
+  get chargeCodeIds() {
+    return this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? [];
+  }
+
+  /**
+   * using a task here to make sure multiple quick adds/removes don't
+   * override each other
+   */
+  updateChargeCodes = task({ enqueue: true }, async (chargeCodeIds) => {
+    await this.updateTrackedTaskMutation.mutate({
+      id: this.args.trackedTask.id,
+      chargeCodeIds: chargeCodeIds,
+    });
+  });
+
   @action
   async addCC(detail: any) {
-    const chargeCodeIds =
-      this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? [];
+    const chargeCodeIds = [
+      ...(this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? []),
+    ];
 
     const id = detail.value;
     if (!chargeCodeIds.includes(id)) {
       chargeCodeIds.push(id);
     }
 
-    await this.updateTrackedTaskMutation.mutate({
-      id: this.args.trackedTask.id,
-      chargeCodeIds: chargeCodeIds,
-    });
+    await this.updateChargeCodes.perform(chargeCodeIds);
   }
 
   @action
   async removeCC(detail: any) {
-    const chargeCodeIds =
-      this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? [];
+    const chargeCodeIds = [
+      ...(this.args.trackedTask?.chargeCodes?.map((cc) => cc.id) ?? []),
+    ];
 
     const id = detail.value;
     const newChargeCodeIds = chargeCodeIds.filter((ccId) => ccId !== id);
 
-    await this.updateTrackedTaskMutation.mutate({
-      id: this.args.trackedTask.id,
-      chargeCodeIds: newChargeCodeIds,
-    });
+    await this.updateChargeCodes.perform(newChargeCodeIds);
   }
 
   @action
@@ -325,6 +320,7 @@ export default class Task extends Component<Signature> {
         height: 90px;
         cursor: pointer;
         background-color: oklch(var(--b2) / 0.5 );
+        color: oklch(var(--bc))
       }
       .square:nth-child(odd) {
         background-color: oklch(var(--b3) / 0.5);
@@ -336,9 +332,11 @@ export default class Task extends Component<Signature> {
       }
       .square.checked {
         background-color: oklch(var(--p));
+        color: oklch(var(--pc))
       }
       .square:hover {
         background-color: oklch(var(--a));
+        color: oklch(var(--ac))
       }
 
       .tracked-time {
@@ -357,8 +355,7 @@ export default class Task extends Component<Signature> {
           <div class="label">
             <span class="label-text">
               <PhLightning class="inline fill-amber-400" @weight="duotone" />
-              Charge Codes last:
-              {{this.lastBlockClicked}}
+              Charge Codes
             </span>
           </div>
           <TooManyChoices
@@ -390,10 +387,10 @@ export default class Task extends Component<Signature> {
         </label>
       </div>
       <div class="tracked-time flex" {{clickOutside this.onClickOutside}}>
-        {{#each this.squares as |block|}}
+        {{#each this.squares key="timeBlock" as |block|}}
           {{! template-lint-disable no-pointer-down-event-binding }}
           <div
-            class="square text-[4px] border-r-[1px] select-none border-base-300
+            class="square text-center text-[4px] border-r-[1px] select-none border-base-300
               {{this.blockClass block}}"
             role="button"
             tabindex="0"

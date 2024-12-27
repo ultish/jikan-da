@@ -10,11 +10,10 @@ import TaskListLayout from './task-list/layout';
 
 import PhCalendarDot from 'ember-phosphor-icons/components/ph-calendar-dot';
 import TimeChargeTotal from './time-charge-total';
-import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
 import { inject as service } from '@ember/service';
 import type Prefs from 'jikan-da/services/prefs';
 
-import { cached, localCopy } from 'tracked-toolbox';
+import { localCopy } from 'tracked-toolbox';
 import { modifier } from 'ember-modifier';
 import PhCube from 'ember-phosphor-icons/components/ph-cube';
 

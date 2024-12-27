@@ -301,6 +301,7 @@ type Query {
   trackedDay(id: ID): TrackedDay
   trackedDaysForMonthYear(month: Int, year: Int): [TrackedDay!]
   trackedDaysPaginated(after: String, first: Int): TrackedDayConnection
+  trackedTask(trackedTaskId: ID!): TrackedTask
   trackedTasks(trackedDayId: ID): [TrackedTask!]
   users(username: String): [User!]
 }

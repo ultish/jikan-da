@@ -1,5 +1,5 @@
 import Route from '@ember/routing/route';
-import { GET_TRACKED_DAY_BY_ID } from 'jikan-da/graphql/queries/tracked-days';
+import { GET_TRACKED_DAY_BY_ID } from 'jikan-da/graphql/tracked-days';
 import type {
   TrackedDayQuery,
   QueryTrackedDayArgs,

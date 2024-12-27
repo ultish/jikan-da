@@ -1,8 +1,4 @@
-import { on } from '@ember/modifier';
-import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
-import StepDays from 'jikan-da/components/time-tracking/step-days';
 import ChargeCodeList from './charge-code-list';
 
 import PhLightning from 'ember-phosphor-icons/components/ph-lightning';

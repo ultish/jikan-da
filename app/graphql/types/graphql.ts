@@ -389,6 +389,7 @@ export type Query = {
   trackedDay?: Maybe<TrackedDay>;
   trackedDaysForMonthYear?: Maybe<Array<TrackedDay>>;
   trackedDaysPaginated?: Maybe<TrackedDayConnection>;
+  trackedTask?: Maybe<TrackedTask>;
   trackedTasks?: Maybe<Array<TrackedTask>>;
   users?: Maybe<Array<User>>;
 };
@@ -429,6 +430,11 @@ export type QueryTrackedDaysForMonthYearArgs = {
 export type QueryTrackedDaysPaginatedArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTrackedTaskArgs = {
+  trackedTaskId: Scalars['ID']['input'];
 };
 
 
@@ -569,18 +575,17 @@ export type UpdateChargeCodeMutationVariables = Exact<{
 
 export type UpdateChargeCodeMutation = { __typename?: 'Mutation', updateChargeCode?: { __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean, group?: string | null, sortOrder?: number | null } | null };
 
-export type CreateTrackedDayMutationVariables = Exact<{
-  date: Scalars['Float']['input'];
-  mode?: InputMaybe<Scalars['String']['input']>;
+export type TimeChargeTotalsQueryVariables = Exact<{
+  weekOfYear?: InputMaybe<WeekOfYear>;
 }>;
 
 
-export type CreateTrackedDayMutation = { __typename?: 'Mutation', createTrackedDay?: { __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number } | null };
+export type TimeChargeTotalsQuery = { __typename?: 'Query', timeChargeTotals?: Array<{ __typename?: 'TimeChargeTotal', id: string, value?: number | null, chargeCode?: { __typename?: 'ChargeCode', id: string, name: string, sortOrder?: number | null } | null, trackedDay?: { __typename?: 'TrackedDay', id: string, date: number, week: number } | null }> | null };
 
-export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
+export type TimeChargeTotalsChangedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users?: Array<{ __typename?: 'User', id: string, username: string }> | null };
+export type TimeChargeTotalsChangedSubscription = { __typename?: 'Subscription', timeChargeTotalsChanged?: { __typename?: 'TimeChargeTotal', id: string, value?: number | null } | null };
 
 export type TrackedDayQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -597,6 +602,21 @@ export type TrackedDaysForMonthYearQueryVariables = Exact<{
 
 export type TrackedDaysForMonthYearQuery = { __typename?: 'Query', trackedDaysForMonthYear?: Array<{ __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number }> | null };
 
+export type CreateTrackedDayMutationVariables = Exact<{
+  date: Scalars['Float']['input'];
+  mode?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreateTrackedDayMutation = { __typename?: 'Mutation', createTrackedDay?: { __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number } | null };
+
+export type DeleteTrackedDayMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteTrackedDayMutation = { __typename?: 'Mutation', deleteTrackedDay?: boolean | null };
+
 export type TrackedDayChangedSubscriptionVariables = Exact<{
   month?: InputMaybe<Scalars['Int']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
@@ -604,18 +624,6 @@ export type TrackedDayChangedSubscriptionVariables = Exact<{
 
 
 export type TrackedDayChangedSubscription = { __typename?: 'Subscription', trackedDayChanged?: { __typename?: 'TrackedDay', id: string, date: number, mode: DayMode, week: number, year: number } | null };
-
-export type TimeChargeTotalsQueryVariables = Exact<{
-  weekOfYear?: InputMaybe<WeekOfYear>;
-}>;
-
-
-export type TimeChargeTotalsQuery = { __typename?: 'Query', timeChargeTotals?: Array<{ __typename?: 'TimeChargeTotal', id: string, value?: number | null, chargeCode?: { __typename?: 'ChargeCode', id: string, name: string, sortOrder?: number | null } | null, trackedDay?: { __typename?: 'TrackedDay', id: string, date: number, week: number } | null }> | null };
-
-export type TimeChargeTotalsChangedSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type TimeChargeTotalsChangedSubscription = { __typename?: 'Subscription', timeChargeTotalsChanged?: { __typename?: 'TimeChargeTotal', id: string, value?: number | null } | null };
 
 export type TrackedTasksQueryVariables = Exact<{
   trackedDayId?: InputMaybe<Scalars['ID']['input']>;
@@ -640,6 +648,13 @@ export type UpdateTrackedTaskMutationVariables = Exact<{
 
 
 export type UpdateTrackedTaskMutation = { __typename?: 'Mutation', updateTrackedTask: { __typename?: 'TrackedTask', id: string, notes?: string | null, timeSlots?: Array<number> | null, chargeCodes?: Array<{ __typename?: 'ChargeCode', id: string, name: string }> | null } };
+
+export type DeleteTrackedTaskMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteTrackedTaskMutation = { __typename?: 'Mutation', deleteTrackedTask?: boolean | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -710,58 +725,6 @@ export const UpdateChargeCodeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateChargeCodeMutation, UpdateChargeCodeMutationVariables>;
-export const CreateTrackedDayDocument = new TypedDocumentString(`
-    mutation createTrackedDay($date: Float!, $mode: String) {
-  createTrackedDay(date: $date, mode: $mode) {
-    id
-    date
-    mode
-    week
-    year
-  }
-}
-    `) as unknown as TypedDocumentString<CreateTrackedDayMutation, CreateTrackedDayMutationVariables>;
-export const UsersDocument = new TypedDocumentString(`
-    query users {
-  users {
-    id
-    username
-  }
-}
-    `) as unknown as TypedDocumentString<UsersQuery, UsersQueryVariables>;
-export const TrackedDayDocument = new TypedDocumentString(`
-    query trackedDay($id: ID!) {
-  trackedDay(id: $id) {
-    id
-    date
-    mode
-    week
-    year
-  }
-}
-    `) as unknown as TypedDocumentString<TrackedDayQuery, TrackedDayQueryVariables>;
-export const TrackedDaysForMonthYearDocument = new TypedDocumentString(`
-    query trackedDaysForMonthYear($month: Int, $year: Int) {
-  trackedDaysForMonthYear(month: $month, year: $year) {
-    id
-    date
-    mode
-    week
-    year
-  }
-}
-    `) as unknown as TypedDocumentString<TrackedDaysForMonthYearQuery, TrackedDaysForMonthYearQueryVariables>;
-export const TrackedDayChangedDocument = new TypedDocumentString(`
-    subscription trackedDayChanged($month: Int, $year: Int) {
-  trackedDayChanged(month: $month, year: $year) {
-    id
-    date
-    mode
-    week
-    year
-  }
-}
-    `) as unknown as TypedDocumentString<TrackedDayChangedSubscription, TrackedDayChangedSubscriptionVariables>;
 export const TimeChargeTotalsDocument = new TypedDocumentString(`
     query timeChargeTotals($weekOfYear: WeekOfYear) {
   timeChargeTotals(weekOfYear: $weekOfYear) {
@@ -788,6 +751,55 @@ export const TimeChargeTotalsChangedDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<TimeChargeTotalsChangedSubscription, TimeChargeTotalsChangedSubscriptionVariables>;
+export const TrackedDayDocument = new TypedDocumentString(`
+    query trackedDay($id: ID!) {
+  trackedDay(id: $id) {
+    id
+    date
+    mode
+    week
+    year
+  }
+}
+    `) as unknown as TypedDocumentString<TrackedDayQuery, TrackedDayQueryVariables>;
+export const TrackedDaysForMonthYearDocument = new TypedDocumentString(`
+    query trackedDaysForMonthYear($month: Int, $year: Int) {
+  trackedDaysForMonthYear(month: $month, year: $year) {
+    id
+    date
+    mode
+    week
+    year
+  }
+}
+    `) as unknown as TypedDocumentString<TrackedDaysForMonthYearQuery, TrackedDaysForMonthYearQueryVariables>;
+export const CreateTrackedDayDocument = new TypedDocumentString(`
+    mutation createTrackedDay($date: Float!, $mode: String) {
+  createTrackedDay(date: $date, mode: $mode) {
+    id
+    date
+    mode
+    week
+    year
+  }
+}
+    `) as unknown as TypedDocumentString<CreateTrackedDayMutation, CreateTrackedDayMutationVariables>;
+export const DeleteTrackedDayDocument = new TypedDocumentString(`
+    mutation deleteTrackedDay($id: ID!) {
+  deleteTrackedDay(id: $id)
+}
+    `) as unknown as TypedDocumentString<DeleteTrackedDayMutation, DeleteTrackedDayMutationVariables>;
+export const TrackedDayChangedDocument = new TypedDocumentString(`
+    subscription trackedDayChanged($month: Int, $year: Int) {
+  trackedDayChanged(month: $month, year: $year) {
+    id
+    date
+    mode
+    week
+    year
+  }
+}
+    `) as unknown as TypedDocumentString<TrackedDayChangedSubscription, TrackedDayChangedSubscriptionVariables>;
 export const TrackedTasksDocument = new TypedDocumentString(`
     query trackedTasks($trackedDayId: ID) {
   trackedTasks(trackedDayId: $trackedDayId) {
@@ -815,7 +827,7 @@ export const CreateTrackedTaskDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<CreateTrackedTaskMutation, CreateTrackedTaskMutationVariables>;
 export const UpdateTrackedTaskDocument = new TypedDocumentString(`
-    mutation UpdateTrackedTask($id: ID!, $notes: String, $chargeCodeIds: [ID!], $timeSlots: [Int!]) {
+    mutation updateTrackedTask($id: ID!, $notes: String, $chargeCodeIds: [ID!], $timeSlots: [Int!]) {
   updateTrackedTask(
     id: $id
     notes: $notes
@@ -832,3 +844,8 @@ export const UpdateTrackedTaskDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateTrackedTaskMutation, UpdateTrackedTaskMutationVariables>;
+export const DeleteTrackedTaskDocument = new TypedDocumentString(`
+    mutation deleteTrackedTask($id: ID!) {
+  deleteTrackedTask(id: $id)
+}
+    `) as unknown as TypedDocumentString<DeleteTrackedTaskMutation, DeleteTrackedTaskMutationVariables>;

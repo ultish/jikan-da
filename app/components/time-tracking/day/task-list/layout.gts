@@ -6,29 +6,22 @@ import {
   type TrackedDay,
   type TrackedTasksQuery,
   type TrackedTasksQueryVariables,
-  type TrackedTask,
 } from 'jikan-da/graphql/types/graphql';
-
 import PhKanban from 'ember-phosphor-icons/components/ph-kanban';
 import PhListPlus from 'ember-phosphor-icons/components/ph-list-plus';
-
 import dayjs from 'dayjs';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { cached, trackedReset } from 'tracked-toolbox';
+import { trackedReset } from 'tracked-toolbox';
 import { on } from '@ember/modifier';
-
 import { useMutation, useQuery } from 'glimmer-apollo';
 import {
   CREATE_TRACKED_TASK,
   GET_TRACKED_TASKS,
-} from 'jikan-da/graphql/tracked-tasks/gql';
-
+} from 'jikan-da/graphql/tracked-tasks';
 import { scaleTime } from 'd3-scale';
 import { modifier } from 'ember-modifier';
-
 import onResize from 'ember-on-resize-modifier/modifiers/on-resize';
-
 import { inject as service } from '@ember/service';
 import type Prefs from 'jikan-da/services/prefs';
 import Task from './task';
@@ -37,7 +30,6 @@ export type TrackedTasksPartial = NonNullable<
   TrackedTasksQuery['trackedTasks']
 >[number];
 
-const TRACKED_TASKS_WIDTH = 300;
 const TIMEBLOCK_WIDTH = 100;
 
 interface Signature {
@@ -72,9 +64,8 @@ export default class TaskListLayout extends Component<Signature> {
   });
 
   @action
-  onResize({ contentRect: { width } }) {
+  onResize({ contentRect: { width } }: { contentRect: { width: number } }) {
     this.containerWidth = (width ?? 0) - 300;
-    console.log('containerWidth', this.containerWidth);
   }
 
   trackedTasksQuery = useQuery<TrackedTasksQuery, QueryTrackedTasksArgs>(
@@ -92,43 +83,38 @@ export default class TaskListLayout extends Component<Signature> {
     ]
   );
 
-  layoutTrack = 0;
-
-  get track() {
-    return this.layoutTrack;
-  }
-
-  increment(num: number) {
-    this.layoutTrack = num + 1;
-    console.log(this.layoutTrack);
-  }
-
   // So important for not refreshing the display!
   @trackedReset('args.trackedDay')
   tasksMap = new Map<string, TrackedTasksPartial>(); // this type matches what was fetched
 
   /**
-   * always be careful with getters, they are run each time. so if you return an
-   * array and loop over it on the template then expect any components loaded in
-   * that loop to re-init each time this getter fires. That's because a new
-   * array is created each time this getter is called! So track it using the map
-   * instead
+   * this uses a map to cache the tracked tasks for performance reasons but it causes
+   * odd caching of the tracked Task object!
+   *
+   * instead you can just specify the key in a #each loop and ember won't re-init the
+   * component
    */
+  get tasks_using_map() {
+    if (this.trackedTasksQuery.loading) {
+      return [];
+    } else {
+      this.trackedTasksQuery.data?.trackedTasks?.forEach((t) => {
+        if (!this.tasksMap.has(t.id)) {
+          this.tasksMap.set(t.id, t);
+        } else {
+          const existing = this.tasksMap.get(t.id);
+          console.log(existing, t);
+        }
+      });
+      return this.tasksMap;
+    }
+  }
+
   get tasks() {
     if (this.trackedTasksQuery.loading) {
       return [];
     } else {
-      console.log('fetch tasks', this.trackedTasksQuery.data?.trackedTasks);
-
-      this.increment(this.layoutTrack);
-
-      this.trackedTasksQuery.data?.trackedTasks?.forEach((t) => {
-        if (!this.tasksMap.has(t.id)) {
-          this.tasksMap.set(t.id, t);
-        }
-      });
-      return this.tasksMap;
-      // return (this.trackedTasksQuery.data?.trackedTasks ?? []).filter((x) => x);
+      return this.trackedTasksQuery?.data?.trackedTasks ?? [];
     }
   }
 
@@ -238,7 +224,6 @@ export default class TaskListLayout extends Component<Signature> {
     <div {{onResize this.onResize}} class="h-full relative" ...attributes>
       <header {{this.setHeaderHeight}}>
         <h2 class="text-lg font-semibold flex items-center w-[300px] px-2">
-          {{this.track}}
           <PhKanban
             class="inline-block -rotate-90"
             @weight="duotone"
@@ -267,9 +252,9 @@ export default class TaskListLayout extends Component<Signature> {
           {{/each}}
         </div>
         <div id="time-container" class="overflow-y-auto h-full">
-          {{#each-in this.tasks as |key task|}}
+          {{#each this.tasks key="id" as |task|}}
             <Task @trackedTask={{task}} @ticks={{this.ticks}} />
-          {{/each-in}}
+          {{/each}}
         </div>
       </main>
       {{!-- {{#each this.items as |num|}}

@@ -69,7 +69,7 @@ export default class ThemeButtons extends Component<Signature> {
       tabindex="0"
       class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
     >
-      {{#each this.themeOptions as |themeOption|}}
+      {{#each this.themeOptions key="theme" as |themeOption|}}
         <li>
           {{! template-lint-disable link-href-attributes }}
           <a
