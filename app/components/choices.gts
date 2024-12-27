@@ -80,7 +80,6 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
 
     return () => {
       console.log('destroy');
-      debugger;
     };
   });
 
@@ -126,13 +125,25 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
         padding-bottom: 2px;
       }
       .choices__item.custom_item:not(.has-no-choices) {
-        background-color: var(--fallback-n,oklch(var(--n)/1));
+        background-color: var(--fallback-n,oklch(var(--n)/0.8));
+        color: var(--fallback-nc, oklch(var(--nc)));
+        border-color: oklch(var(--n) / 1);
       }
       .choices__item.choices__item--choice.choices__item--selectable {
         padding-left: 1rem;
       }
       .choices__item.choices__item--choice.choices__item--selectable.is-highlighted {
-        background-color: var(--fallback-bc,oklch(var(--bc)/.1));
+        background-color: var(--fallback-a ,oklch(var(--a)/.5));
+        color: var(--fallback-ac, oklch(var(--ac)))
+      }
+      .choices__item.custom_item.choices__item--selectable.is-selected {
+        background-color: var(--fallback-n,oklch(var(--n)/0.6));
+      }
+      /* no choices option*/
+      .choices__item.custom_item.choices__item--choice.choices__notice.has-no-choices {
+        {{!-- background-color: var(--fallback-n,oklch(var(--n)/0.8));
+        color: var(--fallback-nc, oklch(var(--nc)));
+        border-color: oklch(var(--n) / 1); --}}
       }
     </style>
 

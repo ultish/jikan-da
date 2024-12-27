@@ -15,6 +15,8 @@ import { inject as service } from '@ember/service';
 import type Prefs from 'jikan-da/services/prefs';
 
 import { cached, localCopy } from 'tracked-toolbox';
+import { modifier } from 'ember-modifier';
+import PhCube from 'ember-phosphor-icons/components/ph-cube';
 
 interface Signature {
   Args: {
@@ -26,13 +28,18 @@ interface Signature {
   Element: HTMLDivElement;
 }
 export default class DayLayout extends Component<Signature> {
-  @tracked bottomHeight = 384; // Initial height in pixels
+  @tracked bottomHeight = 200; // Initial height in pixels
   @tracked isDragging = false;
 
   @service declare prefs: Prefs;
 
-  minBottomHeight = 200;
+  minBottomHeight = 30;
   minTopHeight = 200;
+
+  setTimeTrackingHeight = modifier((element: HTMLElement) => {
+    const top = element.offsetTop;
+    element.style.height = `calc(100vh - ${top}px)`;
+  });
 
   @action
   startDragging() {
@@ -107,23 +114,56 @@ export default class DayLayout extends Component<Signature> {
           Time for
           {{this.date}}
         </h2>
-        <label class="input input-bordered flex items-center gap-2 w-[200px]">
-          Starting Time
-          <input
-            type="number"
-            placeholder="Notes"
-            class="w-[50px]"
-            aria-label="notes"
-            value={{this.startTime}}
-            {{on "focusout" this.updateStartTime}}
-            {{on "input" this.handleInput}}
-          />
-        </label>
+        <div class="flex gap-2 items-center">
+          <div>
+            <PhCube @color="darkorchid" @weight="duotone">
+              <animate
+                attributeName="opacity"
+                values="0.1;1;0.1"
+                dur="4s"
+                repeatCount="indefinite"
+              />
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                dur="5s"
+                from="0 0 0"
+                to="360 0 0"
+                repeatCount="indefinite"
+              />
+            </PhCube>
+          </div>
+          <div class="grow">
+            <input
+              type="range"
+              min="5"
+              max="11"
+              value={{this.startTime}}
+              {{on "input" this.handleInput}}
+              class="range range-xs"
+              step="1"
+            />
+            <div class="flex w-full justify-between text-xs">
+              <span class="text-[10px] w-[10px] text-center">5</span>
+              <span class="text-[10px] w-[10px] text-center">6</span>
+              <span class="text-[10px] w-[10px] text-center">7</span>
+              <span class="text-[10px] w-[10px] text-center">8</span>
+              <span class="text-[10px] w-[10px] text-center">9</span>
+              <span class="text-[10px] w-[10px] text-center">10</span>
+              <span class="text-[10px] w-[10px] text-center">11</span>
+            </div>
+          </div>
+        </div>
+
         <div id="time-tracker-header"></div>
       </div>
     </header>
 
-    <div class="h-screen w-full flex px-4 sm:px-6 lg:px-8">
+    <div
+      class="h-screen w-full flex px-4 sm:px-6 lg:px-8"
+      {{this.setTimeTrackingHeight}}
+    >
       {{! Left Column }}
       <QuickActions class="w-56 overflow-y-auto pt-4" />
 

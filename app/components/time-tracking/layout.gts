@@ -30,7 +30,7 @@ export default class TimeTrackingLayout extends Component {
 
   <template>
     <main class="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8">
-      <div class="flex w-full gap-x-1">
+      <div class="flex w-full gap-x-1 items-baseline">
         <button
           class="btn btn-primary btn-sm"
           {{on "click" this.prevMonth}}

@@ -116,7 +116,6 @@ export default class TimeChargeTotal extends Component<Signature> {
       document: SUBSCRIBE_TIME_CHARGE_TOTALS_CHANGES,
       variables: {},
       updateQuery: (prevQueryResult, { subscriptionData }) => {
-        debugger;
         if (!subscriptionData.data.timeChargeTotalsChanged) {
           return prevQueryResult;
         }

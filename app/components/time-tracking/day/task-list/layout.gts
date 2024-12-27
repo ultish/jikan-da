@@ -86,7 +86,6 @@ export default class TaskListLayout extends Component<Signature> {
           trackedDayId: this.args.trackedDay.id,
         },
         onComplete: () => {
-          debugger;
           console.log('tracked task query');
         },
       },
@@ -137,16 +136,13 @@ export default class TaskListLayout extends Component<Signature> {
     // only showing 18hrs max
     const maxWidth = 18 * TIMEBLOCK_WIDTH;
     const availableWidth = Math.min(this.containerWidth, maxWidth);
-
     const blocks = Math.floor(availableWidth / TIMEBLOCK_WIDTH) - 1;
 
-    console.log('blocks', blocks);
     return blocks;
   }
 
   get startTime() {
     const start = dayjs().startOf('day').add(this.prefs.startTimeNum, 'hour');
-    console.log(start);
     return start;
   }
 
@@ -204,7 +200,6 @@ export default class TaskListLayout extends Component<Signature> {
     const newTask = await this.createTaskMutation.mutate({
       trackedDayId: this.args.trackedDay.id,
     });
-    console.log(newTask);
   }
 
   @action

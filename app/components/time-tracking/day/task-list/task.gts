@@ -31,11 +31,12 @@ import { inject as service } from '@ember/service';
 import type Prefs from 'jikan-da/services/prefs';
 import { fn } from '@ember/helper';
 
-import { cached, localCopy } from 'tracked-toolbox';
+import { cached, localCopy, trackedReset } from 'tracked-toolbox';
 import TooManyChoices from 'jikan-da/components/choices';
 import { GET_CHARGE_CODES } from 'jikan-da/graphql/chargecodes';
 import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
 import type { TrackedTasksPartial } from './layout';
+import { clickOutside } from 'ember-click-outside-modifier';
 
 const TRACKED_TASKS_WIDTH = 300;
 const TIMEBLOCK_WIDTH = 60;
@@ -55,6 +56,10 @@ class TimeBlock {
   @tracked selected = false;
   @tracked checked = false;
   @tracked timeBlock = -1;
+  @tracked hover = false;
+
+  mouseOver = false;
+  mouseDown = false;
 
   constructor(timeBlock: number, checked: boolean) {
     this.timeBlock = timeBlock;
@@ -67,7 +72,12 @@ export default class Task extends Component<Signature> {
 
   @localCopy('args.trackedTask.notes') declare notes: string;
 
-  @cached
+  @tracked mouseModeChecked = true;
+  @tracked startMouseGlide = false;
+
+  @trackedReset('args.trackedTask.id')
+  timeBlocksMap = new Map<number, TimeBlock>(); // this type matches what was fetched
+
   get squares() {
     if (!this.args.ticks) {
       return [];
@@ -76,53 +86,35 @@ export default class Task extends Component<Signature> {
     // 00:00 = 0, 00:06 = 1, 00:12 = 2, 00:18 = 3, 00:24 = 4, 00:30 = 5
     // 00:36 = 6, 00:42 = 7, 00:48 = 8, 00:54 = 9
     // 01:00 = 10
-    const squares = [];
-    const trackedTask = this.args.trackedTask;
 
     // the ticks are hourly
     for (let i = 0; i < this.args.ticks.length; i++) {
       const tick = this.args.ticks[i];
       const tickTime = dayjs(tick);
       const tickHour = tickTime.hour();
-      const tickMinute = tickTime.minute();
 
       // we want 10 blocks per hour
       for (let j = 0; j < 10; j++) {
         const timeBlock = tickHour * 10 + j;
-        const checked = trackedTask.timeSlots?.includes(timeBlock) || false;
 
-        squares.push(new TimeBlock(timeBlock, checked));
-      }
+        let tb = this.timeBlocksMap.get(timeBlock);
 
-      // const timeBlock = tickHour * 10 + Math.floor(tickMinute / 6);
-      // const checked = trackedTask.timeSlots?.includes(timeBlock) || false;
-
-      // squares.push(new TimeBlock(timeBlock, checked));
-    }
-
-    return squares;
-  }
-
-  @action
-  clicked(timeBlock: TimeBlock) {
-    if (this.lastBlockClicked === -1) {
-      timeBlock.checked = !timeBlock.checked;
-      this.lastBlockClicked = timeBlock.timeBlock;
-    } else {
-      const start = Math.min(this.lastBlockClicked, timeBlock.timeBlock);
-      const end = Math.max(this.lastBlockClicked, timeBlock.timeBlock);
-
-      for (let i = start; i <= end; i++) {
-        const block = this.squares.find((s) => s.timeBlock === i);
-        if (block) {
-          block.checked = !block.checked;
+        const checked =
+          this.args.trackedTask.timeSlots?.includes(timeBlock) || false;
+        if (!tb) {
+          tb = new TimeBlock(timeBlock, checked);
+          this.timeBlocksMap.set(timeBlock, tb);
+        } else {
+          if (tb.checked !== checked) {
+            console.log('FOUND DIFF', tb.timeBlock, tb.checked, checked);
+          }
         }
-      }
 
-      this.lastBlockClicked = -1;
+        // squares.push(new TimeBlock(timeBlock, checked));
+      }
     }
 
-    this.updateTimeBlocks();
+    return Array.from(this.timeBlocksMap.values());
   }
 
   updateTrackedTaskMutation = useMutation<
@@ -217,18 +209,136 @@ export default class Task extends Component<Signature> {
     });
   }
 
+  @action
+  mouseDown(block: TimeBlock, e: MouseEvent) {
+    if (e.buttons === 1) {
+      this.startMouseGlide = true;
+      block.checked = this.mouseModeChecked;
+    }
+  }
+  @action
+  async mouseUp(block: TimeBlock, e: MouseEvent) {
+    // no mouse clicks and was gliding
+
+    if (e.shiftKey && this.lastBlockClicked !== -1) {
+      // if shift-clicking then select a range
+      const start = Math.min(this.lastBlockClicked, block.timeBlock);
+      const end = Math.max(this.lastBlockClicked, block.timeBlock);
+
+      for (let i = start; i <= end; i++) {
+        const block = this.squares.find((s) => s.timeBlock === i);
+        if (block) {
+          // block.checked = !block.checked;
+          block.selected = true;
+        }
+      }
+
+      // this.lastBlockClicked = -1;
+    } else if (e.buttons === 0) {
+      this.lastBlockClicked = block.timeBlock;
+
+      if (this.startMouseGlide) {
+        this.mouseModeChecked = true;
+        this.startMouseGlide = false;
+      }
+      await this.updateTimeBlocks();
+    }
+  }
+
+  @action
+  mouseEnter(block: TimeBlock, e: MouseEvent) {
+    if (!this.startMouseGlide) {
+      this.mouseModeChecked = !block.checked;
+    } else if (e.buttons === 1) {
+      block.checked = this.mouseModeChecked;
+    }
+  }
+
+  @action
+  async keyUp(e: KeyboardEvent) {
+    e.preventDefault;
+    console.log('KEYUP ');
+    if (e.code === 'Enter') {
+      const selected = this.squares.filter((s) => s.selected);
+      // are any selected not checked?
+      const hasNonChecked = selected.find((b) => !b.checked);
+
+      // if there's non-checked we will check everything in selection
+      // otherwise we'll un-check everything
+
+      selected.forEach((s) => (s.checked = hasNonChecked ? true : false));
+
+      await this.updateTimeBlocks();
+    }
+  }
+
+  @action
+  onClickOutside() {
+    this.squares.forEach((block) => {
+      block.selected = false;
+    });
+    this.lastBlockClicked = -1;
+  }
+
+  blockClass(block: TimeBlock) {
+    const result = [];
+    if (block.selected) {
+      result.push('selected');
+    }
+    if (block.checked) {
+      result.push('checked');
+    }
+
+    return result.join(' ');
+  }
   <template>
     {{!prettier-ignore}}
     <style>
-
+      @keyframes shimmer {
+        0% {
+          background-color: rgba(64, 156, 255, 0.2);
+          box-shadow: 0 0 5px rgba(64, 156, 255, 0.2);
+        }
+        50% {
+          background-color: rgba(64, 156, 255, 0.4);
+          box-shadow: 0 0 15px rgba(64, 156, 255, 0.4);
+        }
+        100% {
+          background-color: rgba(64, 156, 255, 0.2);
+          box-shadow: 0 0 5px rgba(64, 156, 255, 0.2);
+        }
+      }
+      @keyframes glow {
+        from {
+          box-shadow: 0 0 10px -10px #aef4af;
+        }
+        to {
+          box-shadow: 0 0 10px 10px #aef4af;
+        }
+      }
       .tracked-task {
         width: 300px;
       }
       .square {
         width: 10px;
         min-width: 10px;
-        height: 40px;
+        height: 90px;
         cursor: pointer;
+        background-color: oklch(var(--b2) / 0.5 );
+      }
+      .square:nth-child(odd) {
+        background-color: oklch(var(--b3) / 0.5);
+      }
+      .square.selected {
+        transform: scaleY(1.1);
+        opacity: 1;
+        outline: 1px solid oklch(var(--a))
+      }
+      .square.checked {
+        background-color: oklch(var(--p));
+      }
+      .square:hover {
+        background-color: oklch(var(--a));
       }
 
       .tracked-time {
@@ -247,7 +357,8 @@ export default class Task extends Component<Signature> {
           <div class="label">
             <span class="label-text">
               <PhLightning class="inline fill-amber-400" @weight="duotone" />
-              Charge Codes
+              Charge Codes last:
+              {{this.lastBlockClicked}}
             </span>
           </div>
           <TooManyChoices
@@ -278,13 +389,18 @@ export default class Task extends Component<Signature> {
 
         </label>
       </div>
-      <div class="tracked-time flex">
+      <div class="tracked-time flex" {{clickOutside this.onClickOutside}}>
         {{#each this.squares as |block|}}
+          {{! template-lint-disable no-pointer-down-event-binding }}
           <div
-            class="square text-[4px] border-r-[1px] hover:bg-accent border-base-300
-              {{if block.checked 'bg-primary' 'odd:bg-base-200 bg-base-100 '}}"
+            class="square text-[4px] border-r-[1px] select-none border-base-300
+              {{this.blockClass block}}"
             role="button"
-            {{on "click" (fn this.clicked block)}}
+            tabindex="0"
+            {{on "keyup" this.keyUp}}
+            {{on "mousedown" (fn this.mouseDown block)}}
+            {{on "mouseup" (fn this.mouseUp block)}}
+            {{on "mouseenter" (fn this.mouseEnter block)}}
           >
             {{block.timeBlock}}
 
