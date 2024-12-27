@@ -16,6 +16,7 @@ import type Prefs from 'jikan-da/services/prefs';
 import { localCopy } from 'tracked-toolbox';
 import { modifier } from 'ember-modifier';
 import PhCube from 'ember-phosphor-icons/components/ph-cube';
+import QuickActionsNew from './quick-actions/new';
 
 interface Signature {
   Args: {
@@ -36,7 +37,7 @@ export default class DayLayout extends Component<Signature> {
   minTopHeight = 200;
 
   setTimeTrackingHeight = modifier((element: HTMLElement) => {
-    const top = element.offsetTop;
+    const top = element.getBoundingClientRect().top;
     element.style.height = `calc(100vh - ${top}px)`;
   });
 
@@ -159,42 +160,62 @@ export default class DayLayout extends Component<Signature> {
       </div>
     </header>
 
-    <div
-      class="h-screen w-full flex px-4 sm:px-6 lg:px-8"
-      {{this.setTimeTrackingHeight}}
-    >
-      {{! Left Column }}
-      <QuickActions class="w-56 overflow-y-auto pt-4" />
+    <div class="drawer drawer-end w-full relative--">
+      <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content">
+        <!-- Page content here -->
 
-      {{! Main Content Area }}
-      <div id="main-content" class="flex-1 flex flex-col h-full relative">
-        {{! Top Section }}
         <div
-          class="flex-1 min-h-0 mt-4 overflow-y-scroll--- relative"
-          style={{this.mainContentHeight}}
+          class="h-screen w-full flex px-4 sm:px-6 lg:px-8"
+          {{this.setTimeTrackingHeight}}
         >
-          <TaskListLayout @trackedDay={{@day}} class="" />
-        </div>
+          {{! Left Column }}
 
-        {{! Resize Handle }}
-        <div
-          class="h-2 bg-gray-200 hover:bg-blue-300 cursor-ns-resize relative"
-          {{on "mousedown" this.startDragging}}
-          draggable="true"
-        >
-          <div
-            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          >
-            <div class="w-8 h-1 bg-gray-400 rounded"></div>
+          <QuickActions class="w-56 overflow-y-auto pt-4" />
+
+          {{! Main Content Area }}
+          <div id="main-content" class="flex-1 flex flex-col h-full relative">
+            {{! Top Section }}
+            <div
+              class="flex-1 min-h-0 mt-4 overflow-y-scroll--- relative--"
+              style={{this.mainContentHeight}}
+            >
+              <TaskListLayout @trackedDay={{@day}} class="" />
+            </div>
+
+            {{! Resize Handle }}
+            <div
+              class="h-2 bg-gray-200 hover:bg-blue-300 cursor-ns-resize relative"
+              {{on "mousedown" this.startDragging}}
+              draggable="true"
+            >
+              <div
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              >
+                <div class="w-8 h-1 bg-gray-400 rounded"></div>
+              </div>
+            </div>
+
+            {{! Bottom Section }}
+            <div
+              class="overflow-y-auto border-t border-gray-200 z-[2] bg-base-100"
+              style={{this.bottomHeightStyle}}
+            >
+              <TimeChargeTotal @trackedDay={{@day}} />
+            </div>
           </div>
         </div>
-
-        {{! Bottom Section }}
+      </div>
+      <div class="drawer-side z-50">
+        <label
+          for="my-drawer-4"
+          aria-label="close sidebar"
+          class="drawer-overlay"
+        ></label>
         <div
-          class="overflow-y-auto border-t border-gray-200 z-[2] bg-base-100"
-          style={{this.bottomHeightStyle}}
+          class="menu bg-base-100 text-base-content min-h-full w-[600px] p-8"
         >
-          <TimeChargeTotal @trackedDay={{@day}} />
+          <QuickActionsNew />
         </div>
       </div>
     </div>
