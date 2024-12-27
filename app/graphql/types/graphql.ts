@@ -278,14 +278,17 @@ export enum ErrorType {
 export type Mutation = {
   __typename?: 'Mutation';
   createChargeCode?: Maybe<ChargeCode>;
+  createQuickAction: QuickAction;
   createTrackedDay?: Maybe<TrackedDay>;
   createTrackedTask: TrackedTask;
   createUser?: Maybe<User>;
   deleteChargeCode?: Maybe<Scalars['Boolean']['output']>;
+  deleteQuickAction?: Maybe<Scalars['Boolean']['output']>;
   deleteTrackedDay?: Maybe<Scalars['Boolean']['output']>;
   deleteTrackedTask?: Maybe<Scalars['Boolean']['output']>;
   deleteUser?: Maybe<Scalars['Boolean']['output']>;
   updateChargeCode?: Maybe<ChargeCode>;
+  updateQuickAction: QuickAction;
   updateTrackedDay?: Maybe<TrackedDay>;
   updateTrackedTask: TrackedTask;
   updateUser?: Maybe<User>;
@@ -299,6 +302,14 @@ export type MutationCreateChargeCodeArgs = {
   group?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   sortOrder?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type MutationCreateQuickActionArgs = {
+  chargeCodeIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  timeSlots?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 
@@ -321,6 +332,11 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationDeleteChargeCodeArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteQuickActionArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -348,6 +364,15 @@ export type MutationUpdateChargeCodeArgs = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   sortOrder?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type MutationUpdateQuickActionArgs = {
+  chargeCodeIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  timeSlots?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 
@@ -384,6 +409,8 @@ export type Query = {
   __typename?: 'Query';
   _service: _Service;
   chargeCodes?: Maybe<Array<ChargeCode>>;
+  quickAction?: Maybe<QuickAction>;
+  quickActions?: Maybe<Array<QuickAction>>;
   timeChargeTotals?: Maybe<Array<TimeChargeTotal>>;
   timeCharges?: Maybe<Array<TimeCharge>>;
   trackedDay?: Maybe<TrackedDay>;
@@ -401,6 +428,16 @@ export type QueryChargeCodesArgs = {
   expired?: InputMaybe<Scalars['Boolean']['input']>;
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryQuickActionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryQuickActionsArgs = {
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 
@@ -445,6 +482,15 @@ export type QueryTrackedTasksArgs = {
 
 export type QueryUsersArgs = {
   username?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type QuickAction = {
+  __typename?: 'QuickAction';
+  chargeCodes?: Maybe<Array<ChargeCode>>;
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  timeSlots?: Maybe<Array<Scalars['Int']['output']>>;
 };
 
 export type Subscription = {

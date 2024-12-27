@@ -273,14 +273,17 @@ enum ErrorType {
 
 type Mutation {
   createChargeCode(code: String!, description: String, expired: Boolean = false, group: String, name: String!, sortOrder: Int): ChargeCode
+  createQuickAction(chargeCodeIds: [ID!], description: String, name: String!, timeSlots: [Int!]): QuickAction!
   createTrackedDay(date: Float!, mode: String): TrackedDay
   createTrackedTask(notes: String, trackedDayId: ID!): TrackedTask!
   createUser(password: String!, username: String!): User
   deleteChargeCode(id: ID!): Boolean
+  deleteQuickAction(id: ID!): Boolean
   deleteTrackedDay(id: ID!): Boolean
   deleteTrackedTask(id: ID): Boolean
   deleteUser(username: String!): Boolean
   updateChargeCode(code: String, description: String, expired: Boolean, group: String, id: ID!, name: String, sortOrder: Int): ChargeCode
+  updateQuickAction(chargeCodeIds: [ID!], description: String, id: ID!, name: String, timeSlots: [Int!]): QuickAction!
   updateTrackedDay(date: Float, id: ID!, mode: DayMode, trackedTaskIds: [String!]): TrackedDay
   updateTrackedTask(chargeCodeIds: [ID!], id: ID!, notes: String, timeSlots: [Int!]): TrackedTask!
   updateUser(trackedDayIds: [String], userId: ID!): User
@@ -296,6 +299,8 @@ type PageInfo {
 type Query {
   _service: _Service!
   chargeCodes(code: String, description: String, expired: Boolean, ids: [ID!], name: String): [ChargeCode!]
+  quickAction(id: ID!): QuickAction
+  quickActions(ids: [ID!]): [QuickAction!]
   timeChargeTotals(weekOfYear: WeekOfYear): [TimeChargeTotal!]
   timeCharges(chargeCodeId: ID, timeSlot: Int, trackedDayId: String): [TimeCharge!]
   trackedDay(id: ID): TrackedDay
@@ -304,6 +309,14 @@ type Query {
   trackedTask(trackedTaskId: ID!): TrackedTask
   trackedTasks(trackedDayId: ID): [TrackedTask!]
   users(username: String): [User!]
+}
+
+type QuickAction {
+  chargeCodes: [ChargeCode!]
+  description: String
+  id: ID!
+  name: String!
+  timeSlots: [Int!]
 }
 
 type Subscription {

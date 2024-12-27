@@ -243,13 +243,13 @@ export default class StepDays extends Component<Signature> {
   }
 
   @action
-  openDay(day: Day) {
+  async openDay(day: Day) {
     if (day.trackedDay) {
       // transition to route
       this.router.transitionTo('time-tracking.day', day.trackedDay.id);
     } else {
       // create day
-      console.log('no tracked day', day);
+      await this.createDayAndTransition(day);
     }
   }
 
@@ -302,7 +302,6 @@ export default class StepDays extends Component<Signature> {
     }
   }
 
-  //TODO this creates a new date, but it doesnt update the original query for steps so you never see the date change colour
   @action
   async createDayAndTransition(day: Day) {
     const newDate = await this.createTrackedDay.mutate({
@@ -353,7 +352,7 @@ export default class StepDays extends Component<Signature> {
                 {{this.todaysMonthAsText}}
               {{else}}
                 {{step.day}}
-                <span class="text-[7px]">{{step.dayOfWeek}}</span>
+                <span class="text-[8px]">{{step.dayOfWeek}}</span>
               {{/if}}
             </li>
           {{/each}}
