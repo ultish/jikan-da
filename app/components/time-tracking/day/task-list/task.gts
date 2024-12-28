@@ -81,6 +81,24 @@ export default class Task extends Component<Signature> {
     // 00:36 = 6, 00:42 = 7, 00:48 = 8, 00:54 = 9
     // 01:00 = 10, 01:06 = 11
 
+    // validate time block range
+    const firstTick = this.args.ticks[0];
+    const firstTime = dayjs(firstTick);
+    const firstBlock = firstTime.hour() * 10;
+
+    const lastTick = this.args.ticks[this.args.ticks.length - 1];
+    const lastTime = dayjs(lastTick);
+    const lastBlock = lastTime.hour() * 10 + 9;
+
+    for (let i = 0; i < firstBlock; i++) {
+      this.timeBlocksMap.delete(i);
+    }
+    let i = lastBlock + 1;
+    while (this.timeBlocksMap.has(i)) {
+      this.timeBlocksMap.delete(i);
+      i++;
+    }
+
     // the ticks are hourly
     for (let i = 0; i < this.args.ticks.length; i++) {
       const tick = this.args.ticks[i];
@@ -100,15 +118,15 @@ export default class Task extends Component<Signature> {
           this.timeBlocksMap.set(timeBlock, tb);
         } else {
           if (tb.checked !== checked) {
-            console.log('FOUND DIFF', tb.timeBlock, tb.checked, checked);
+            // console.log('FOUND DIFF', tb.timeBlock, tb.checked, checked);
           }
         }
-
-        // squares.push(new TimeBlock(timeBlock, checked));
       }
     }
 
-    return Array.from(this.timeBlocksMap.values());
+    return Array.from(this.timeBlocksMap.values()).sort(
+      (a, b) => a.timeBlock - b.timeBlock
+    );
   }
 
   updateTrackedTaskMutation = useMutation<
@@ -262,7 +280,6 @@ export default class Task extends Component<Signature> {
   @action
   async keyUp(e: KeyboardEvent) {
     e.preventDefault;
-    console.log('KEYUP ');
     if (e.code === 'Enter') {
       const selected = this.squares.filter((s) => s.selected);
       // are any selected not checked?

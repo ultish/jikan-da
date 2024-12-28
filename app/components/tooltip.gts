@@ -64,10 +64,8 @@ export default class Tooltip extends Component<Signature> {
       {
         strategy: 'absolute',
         middleware: [autoPlacement()],
-        // middleware: [offset(6), flip(), shift()],
       }
     );
-    console.log(this.triggerElement, this.tooltipElement);
 
     Object.assign(this.tooltipElement.style, {
       left: `${x}px`,

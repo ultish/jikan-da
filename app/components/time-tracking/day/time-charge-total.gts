@@ -215,7 +215,6 @@ export default class TimeChargeTotal extends Component<Signature> {
 
     const x = result.sort((a, b) => a.sortOrder - b.sortOrder);
 
-    // console.log(x);
     return x;
   }
 

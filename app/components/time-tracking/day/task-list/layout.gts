@@ -132,6 +132,7 @@ export default class TaskListLayout extends Component<Signature> {
 
   get startTime() {
     const start = dayjs().startOf('day').add(this.prefs.startTimeNum, 'hour');
+
     return start;
   }
 

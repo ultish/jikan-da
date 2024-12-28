@@ -9,7 +9,6 @@ class ThemeClass {
   @tracked currentTheme: string | null;
 
   get active() {
-    console.log(this.currentTheme);
     return this.theme === this.currentTheme;
   }
 
@@ -27,12 +26,7 @@ export default class ThemeButtons extends Component<Signature> {
 
   @action
   storageListener(event: any) {
-    console.log('asd', event);
     if (event.key === 'theme') {
-      console.log(`The key "${event.key}" was updated!`);
-      console.log(`Old value: ${event.oldValue}`);
-      console.log(`New value: ${event.newValue}`);
-
       this.setTheme(event.newValue);
     }
   }
