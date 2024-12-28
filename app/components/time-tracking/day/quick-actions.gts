@@ -116,7 +116,7 @@ export default class QuickActions extends Component<Signature> {
           cache.writeQuery<TrackedTasksQuery>({
             query: GET_TRACKED_TASKS,
             variables: vars,
-            data: { trackedTasks: [newTask, ...existingTasks] },
+            data: { trackedTasks: [...existingTasks, newTask] },
           });
         }
       },
@@ -151,7 +151,7 @@ export default class QuickActions extends Component<Signature> {
       {{#each this.quickActions key="id" as |qa|}}
         <div class="flex gap-2 items-center">
           <div
-            class="badge grow hover:bg-accent hover:text-accent-content cursor-pointer"
+            class="badge grow text-ellipsisoverflow-hidden truncate hover:bg-accent hover:text-accent-content cursor-pointer"
             role="button"
             {{on "click" (fn this.apply qa)}}
           >

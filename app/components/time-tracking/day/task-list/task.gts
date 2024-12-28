@@ -403,6 +403,7 @@ export default class Task extends Component<Signature> {
             >
               <option
                 selected={{if cc.selected "selected"}}
+                disabled={{if cc.chargeCode.expired "true"}}
                 value={{cc.chargeCode.id}}
               >{{cc.chargeCode.name}}</option>
             </TooManyChoices>

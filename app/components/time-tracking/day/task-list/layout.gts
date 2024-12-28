@@ -47,14 +47,12 @@ interface Signature {
 export default class TaskListLayout extends Component<Signature> {
   @service declare prefs: Prefs;
   @tracked containerWidth = 0;
-
   @tracked headerHeight = 0;
 
   setHeaderHeight = modifier((element) => {
     this.headerHeight = element.clientHeight;
   });
 
-  //  return `height: calc(100% - ${this.bottomHeight}px)`;
   setMainHeight = modifier((element: HTMLElement) => {
     element.style.height = `calc(100% - ${this.headerHeight}px)`;
   });
@@ -179,7 +177,7 @@ export default class TaskListLayout extends Component<Signature> {
           cache.writeQuery<TrackedTasksQuery>({
             query: GET_TRACKED_TASKS,
             variables: vars,
-            data: { trackedTasks: [newTask, ...existingTasks] },
+            data: { trackedTasks: [...existingTasks, newTask] },
           });
         }
       },
@@ -286,10 +284,10 @@ export default class TaskListLayout extends Component<Signature> {
       <main id="container-main" class="relative" {{this.setMainHeight}}>
         <div
           id="tick-container"
-          class="absolute left-[300px] top-[-32px] flex pointer-events-none"
+          class="absolute left-[300px] top-[-32px] h-full flex pointer-events-none"
         >
           {{#each this.formattedTicks as |tick|}}
-            <div class="tick-hour text-base" {{this.setTickHeight}}>
+            <div class="tick-hour text-base h-full">
               {{tick}}
             </div>
           {{/each}}
@@ -304,12 +302,6 @@ export default class TaskListLayout extends Component<Signature> {
           {{/each}}
         </div>
       </main>
-      {{!-- {{#each this.items as |num|}}
-        <div class="mb-4 p-4 bg-gray-50 rounded shadow">
-          Top Section Content
-          {{num}}
-        </div>
-      {{/each}} --}}
     </div>
   </template>
 }
