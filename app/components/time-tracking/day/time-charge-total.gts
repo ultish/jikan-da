@@ -255,9 +255,11 @@ export default class TimeChargeTotal extends Component<Signature> {
     return (min / 60).toFixed(2);
   }
 
-  dayActive(day: string, currentDay: string) {
+  dayActive(day: string, currentDay: string, val?: number) {
     if (day === currentDay) {
       return 'bg-accent text-accent-content';
+    } else if (val) {
+      return 'bg-info/10';
     }
   }
 
@@ -330,31 +332,65 @@ export default class TimeChargeTotal extends Component<Signature> {
             {{#each this.sortedCharges key="chargeCodeName" as |val|}}
               <tr class="hover">
                 <td>{{val.chargeCodeName}}</td>
-                <td class={{this.dayActive "monday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive 'monday' this.currentDay val.monday}}"
+                >
                   {{this.sixMinBlocks val.monday}}
                   <span class="text-[7px]">{{val.monday}}</span>
                 </td>
-                <td class={{this.dayActive "tuesday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive
+                      'tuesday'
+                      this.currentDay
+                      val.tuesday
+                    }}
+                    "
+                >
                   {{this.sixMinBlocks val.tuesday}}
                   <span class="text-[7px]">{{val.tuesday}}</span>
                 </td>
-                <td class={{this.dayActive "wednesday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive
+                      'wednesday'
+                      this.currentDay
+                      val.wednesday
+                    }}
+                    "
+                >
                   {{this.sixMinBlocks val.wednesday}}
                   <span class="text-[7px]">{{val.wednesday}}</span>
                 </td>
-                <td class={{this.dayActive "thursday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive
+                      'thursday'
+                      this.currentDay
+                      val.thursday
+                    }}"
+                >
                   {{this.sixMinBlocks val.thursday}}
                   <span class="text-[7px]">{{val.thursday}}</span>
                 </td>
-                <td class={{this.dayActive "friday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive 'friday' this.currentDay val.friday}}"
+                >
                   {{this.sixMinBlocks val.friday}}
                   <span class="text-[7px]">{{val.friday}}</span>
                 </td>
-                <td class={{this.dayActive "saturday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive
+                      'saturday'
+                      this.currentDay
+                      val.saturday
+                    }}
+                    "
+                >
                   {{this.sixMinBlocks val.saturday}}
                   <span class="text-[7px]">{{val.saturday}}</span>
                 </td>
-                <td class={{this.dayActive "sunday" this.currentDay}}>
+                <td
+                  class="{{this.dayActive 'sunday' this.currentDay val.sunday}}
+                    "
+                >
                   {{this.sixMinBlocks val.sunday}}
                   <span class="text-[7px]">{{val.sunday}}</span>
                 </td>
