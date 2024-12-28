@@ -32,7 +32,7 @@ export default class TimeTrackingLayout extends Component {
     <main class="mx-auto max-w-full px-4 py-4 sm:px-6 lg:px-8">
       <div class="flex w-full gap-x-1 items-baseline">
         <button
-          class="btn btn-primary btn-sm"
+          class="btn btn-outline btn-sm"
           {{on "click" this.prevMonth}}
           type="button"
         >
@@ -44,7 +44,7 @@ export default class TimeTrackingLayout extends Component {
           class="overflow-x-auto"
         />
         <button
-          class="btn btn-primary btn-sm"
+          class="btn btn-outline btn-sm"
           {{on "click" this.nextMonth}}
           type="button"
         >

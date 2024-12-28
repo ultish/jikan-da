@@ -9,6 +9,7 @@ import {
 } from 'jikan-da/graphql/quick-actions';
 import PhTrash from 'ember-phosphor-icons/components/ph-trash';
 import PhHandEye from 'ember-phosphor-icons/components/ph-hand-eye';
+import PhArrowBendRightUp from 'ember-phosphor-icons/components/ph-arrow-bend-right-up';
 import type {
   CreateTrackedTaskMutation,
   DeleteQuickActionMutation,
@@ -169,6 +170,10 @@ export default class QuickActions extends Component<Signature> {
           </button>
 
         </div>
+      {{else}}
+        <i class="text-xs">Create your first Quick Action...
+          <PhArrowBendRightUp class="inline" />
+        </i>
       {{/each}}
       {{yield}}
     </main>

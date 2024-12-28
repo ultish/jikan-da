@@ -25,6 +25,7 @@ import {
 import { scaleTime } from 'd3-scale';
 import { modifier } from 'ember-modifier';
 import onResize from 'ember-on-resize-modifier/modifiers/on-resize';
+import PhArrowBendRightUp from 'ember-phosphor-icons/components/ph-arrow-bend-right-up';
 import { inject as service } from '@ember/service';
 import type Prefs from 'jikan-da/services/prefs';
 import Task from './task';
@@ -272,7 +273,7 @@ export default class TaskListLayout extends Component<Signature> {
           <span class="grow">Tracked Tasks</span>
           <button
             type="button"
-            class="btn btn-primary btn-sm"
+            class="btn btn-neutral text-neutral-content hover:btn-accent hover:text-accent-content btn-sm"
             {{on "click" this.createTask}}
           >
             <PhListPlus class="inline-block" />
@@ -301,6 +302,12 @@ export default class TaskListLayout extends Component<Signature> {
               @ticks={{this.ticks}}
               @deleteTrackedTaskMutation={{this.deleteTrackedTaskMutation}}
             />
+          {{else}}
+
+            <div class="text-xs pt-4 italic pl-8">
+              Add a new Tracked Task...
+              <PhArrowBendRightUp class="inline" />
+            </div>
           {{/each}}
         </div>
       </main>

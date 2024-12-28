@@ -279,7 +279,12 @@ export default class DayLayout extends Component<Signature> {
     </header>
 
     <div class="drawer drawer-end w-full relative--">
-      <input id="qa-drawer" type="checkbox" class="drawer-toggle" />
+      <input
+        id="qa-drawer"
+        type="checkbox"
+        class="drawer-toggle"
+        tabindex="-1"
+      />
       <div class="drawer-content">
         <!-- Page content here -->
 
