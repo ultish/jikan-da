@@ -15,8 +15,18 @@ export const GET_TRACKED_TASKS = gql`
 `;
 
 export const CREATE_TRACKED_TASK = gql`
-  mutation createTrackedTask($trackedDayId: ID!) {
-    createTrackedTask(trackedDayId: $trackedDayId) {
+  mutation createTrackedTask(
+    $trackedDayId: ID!
+    $notes: String
+    $chargeCodeIds: [ID!]
+    $timeSlots: [Int!]
+  ) {
+    createTrackedTask(
+      trackedDayId: $trackedDayId
+      notes: $notes
+      chargeCodeIds: $chargeCodeIds
+      timeSlots: $timeSlots
+    ) {
       id
       notes
       timeSlots

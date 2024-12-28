@@ -64,6 +64,12 @@ export default class TimeChargeTotal extends Component<Signature> {
             week: this.args.trackedDay.week,
           },
         },
+        // TODO setting this to bypass cache.
+        // reason: the subscription to timesheet totals is destroyed
+        // so when i open another day from the same week i see a
+        // cached result. Can probably do someting in
+        // DayLayout:deleteTrackedDayMutation instead?
+        fetchPolicy: 'network-only',
       },
     ]
   );
@@ -111,6 +117,7 @@ export default class TimeChargeTotal extends Component<Signature> {
     >({
       document: SUBSCRIBE_TIME_CHARGE_TOTALS_CHANGES,
       variables: {},
+
       updateQuery: (prevQueryResult, { subscriptionData }) => {
         if (!subscriptionData.data.timeChargeTotalsChanged) {
           return prevQueryResult;
@@ -128,6 +135,8 @@ export default class TimeChargeTotal extends Component<Signature> {
         } else {
           // TODO bug adding newTct here as it doesnt contain chargecode
           // and trackedday. apollo cache spits an error
+
+          // TODO: use modify instead??
           return {
             timeChargeTotals: [newTct, ...prevResults],
           };

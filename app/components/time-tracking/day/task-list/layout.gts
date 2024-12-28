@@ -6,6 +6,8 @@ import {
   type TrackedDay,
   type TrackedTasksQuery,
   type TrackedTasksQueryVariables,
+  type MutationDeleteTrackedTaskArgs,
+  type DeleteTrackedTaskMutation,
 } from 'jikan-da/graphql/types/graphql';
 import PhKanban from 'ember-phosphor-icons/components/ph-kanban';
 import PhListPlus from 'ember-phosphor-icons/components/ph-list-plus';
@@ -17,6 +19,7 @@ import { on } from '@ember/modifier';
 import { useMutation, useQuery } from 'glimmer-apollo';
 import {
   CREATE_TRACKED_TASK,
+  DELETE_TRACKED_TASK,
   GET_TRACKED_TASKS,
 } from 'jikan-da/graphql/tracked-tasks';
 import { scaleTime } from 'd3-scale';
@@ -172,7 +175,7 @@ export default class TaskListLayout extends Component<Signature> {
           const existingTasks = data.trackedTasks ?? [];
           const newTask = result.data.createTrackedTask;
 
-          cache.writeQuery({
+          cache.writeQuery<TrackedTasksQuery>({
             query: GET_TRACKED_TASKS,
             variables: vars,
             data: { trackedTasks: [newTask, ...existingTasks] },
@@ -181,6 +184,45 @@ export default class TaskListLayout extends Component<Signature> {
       },
     },
   ]);
+
+  deleteTrackedTaskMutation = useMutation<
+    DeleteTrackedTaskMutation,
+    MutationDeleteTrackedTaskArgs
+  >(this, () => [
+    DELETE_TRACKED_TASK,
+    {
+      update: (cache, result) => {
+        // have to manage the cache in apollo. wonder if there's an easier way...
+        if (result.data?.deleteTrackedTask) {
+          const vars = {
+            trackedDayId: this.args.trackedDay.id,
+          };
+          // deleted
+          const data = cache.readQuery<
+            TrackedTasksQuery,
+            TrackedTasksQueryVariables
+          >({
+            query: GET_TRACKED_TASKS,
+            variables: vars,
+          });
+
+          if (data) {
+            const existingTasks = data.trackedTasks ?? [];
+            cache.writeQuery<TrackedTasksQuery>({
+              query: GET_TRACKED_TASKS,
+              variables: vars,
+              data: {
+                trackedTasks: existingTasks.filter(
+                  (t) => t.id !== result.data?.deleteTrackedTask
+                ),
+              },
+            });
+          }
+        }
+      },
+    },
+  ]);
+
   @action
   async createTask() {
     const newTask = await this.createTaskMutation.mutate({
@@ -253,7 +295,11 @@ export default class TaskListLayout extends Component<Signature> {
         </div>
         <div id="time-container" class="overflow-y-auto h-full">
           {{#each this.tasks key="id" as |task|}}
-            <Task @trackedTask={{task}} @ticks={{this.ticks}} />
+            <Task
+              @trackedTask={{task}}
+              @ticks={{this.ticks}}
+              @deleteTrackedTaskMutation={{this.deleteTrackedTaskMutation}}
+            />
           {{/each}}
         </div>
       </main>

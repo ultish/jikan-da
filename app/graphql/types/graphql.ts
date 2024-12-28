@@ -282,11 +282,11 @@ export type Mutation = {
   createTrackedDay?: Maybe<TrackedDay>;
   createTrackedTask: TrackedTask;
   createUser?: Maybe<User>;
-  deleteChargeCode?: Maybe<Scalars['Boolean']['output']>;
-  deleteQuickAction?: Maybe<Scalars['Boolean']['output']>;
-  deleteTrackedDay?: Maybe<Scalars['Boolean']['output']>;
-  deleteTrackedTask?: Maybe<Scalars['Boolean']['output']>;
-  deleteUser?: Maybe<Scalars['Boolean']['output']>;
+  deleteChargeCode?: Maybe<Scalars['ID']['output']>;
+  deleteQuickAction?: Maybe<Scalars['ID']['output']>;
+  deleteTrackedDay?: Maybe<Scalars['ID']['output']>;
+  deleteTrackedTask?: Maybe<Scalars['ID']['output']>;
+  deleteUser?: Maybe<Scalars['ID']['output']>;
   updateChargeCode?: Maybe<ChargeCode>;
   updateQuickAction: QuickAction;
   updateTrackedDay?: Maybe<TrackedDay>;
@@ -320,7 +320,9 @@ export type MutationCreateTrackedDayArgs = {
 
 
 export type MutationCreateTrackedTaskArgs = {
+  chargeCodeIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   notes?: InputMaybe<Scalars['String']['input']>;
+  timeSlots?: InputMaybe<Array<Scalars['Int']['input']>>;
   trackedDayId: Scalars['ID']['input'];
 };
 
@@ -621,6 +623,28 @@ export type UpdateChargeCodeMutationVariables = Exact<{
 
 export type UpdateChargeCodeMutation = { __typename?: 'Mutation', updateChargeCode?: { __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean, group?: string | null, sortOrder?: number | null } | null };
 
+export type QuickActionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type QuickActionsQuery = { __typename?: 'Query', quickActions?: Array<{ __typename?: 'QuickAction', id: string, name: string, description?: string | null, timeSlots?: Array<number> | null, chargeCodes?: Array<{ __typename?: 'ChargeCode', id: string, name: string }> | null }> | null };
+
+export type CreateQuickActionMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  chargeCodeIds?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+  timeSlots?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
+}>;
+
+
+export type CreateQuickActionMutation = { __typename?: 'Mutation', createQuickAction: { __typename?: 'QuickAction', id: string, name: string, description?: string | null, timeSlots?: Array<number> | null, chargeCodes?: Array<{ __typename?: 'ChargeCode', id: string, name: string }> | null } };
+
+export type DeleteQuickActionMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteQuickActionMutation = { __typename?: 'Mutation', deleteQuickAction?: string | null };
+
 export type TimeChargeTotalsQueryVariables = Exact<{
   weekOfYear?: InputMaybe<WeekOfYear>;
 }>;
@@ -661,7 +685,7 @@ export type DeleteTrackedDayMutationVariables = Exact<{
 }>;
 
 
-export type DeleteTrackedDayMutation = { __typename?: 'Mutation', deleteTrackedDay?: boolean | null };
+export type DeleteTrackedDayMutation = { __typename?: 'Mutation', deleteTrackedDay?: string | null };
 
 export type TrackedDayChangedSubscriptionVariables = Exact<{
   month?: InputMaybe<Scalars['Int']['input']>;
@@ -680,6 +704,9 @@ export type TrackedTasksQuery = { __typename?: 'Query', trackedTasks?: Array<{ _
 
 export type CreateTrackedTaskMutationVariables = Exact<{
   trackedDayId: Scalars['ID']['input'];
+  notes?: InputMaybe<Scalars['String']['input']>;
+  chargeCodeIds?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+  timeSlots?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
 }>;
 
 
@@ -700,7 +727,7 @@ export type DeleteTrackedTaskMutationVariables = Exact<{
 }>;
 
 
-export type DeleteTrackedTaskMutation = { __typename?: 'Mutation', deleteTrackedTask?: boolean | null };
+export type DeleteTrackedTaskMutation = { __typename?: 'Mutation', deleteTrackedTask?: string | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -771,6 +798,44 @@ export const UpdateChargeCodeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateChargeCodeMutation, UpdateChargeCodeMutationVariables>;
+export const QuickActionsDocument = new TypedDocumentString(`
+    query quickActions {
+  quickActions {
+    id
+    name
+    description
+    chargeCodes {
+      id
+      name
+    }
+    timeSlots
+  }
+}
+    `) as unknown as TypedDocumentString<QuickActionsQuery, QuickActionsQueryVariables>;
+export const CreateQuickActionDocument = new TypedDocumentString(`
+    mutation createQuickAction($name: String!, $description: String, $chargeCodeIds: [ID!], $timeSlots: [Int!]) {
+  createQuickAction(
+    name: $name
+    description: $description
+    chargeCodeIds: $chargeCodeIds
+    timeSlots: $timeSlots
+  ) {
+    id
+    name
+    description
+    chargeCodes {
+      id
+      name
+    }
+    timeSlots
+  }
+}
+    `) as unknown as TypedDocumentString<CreateQuickActionMutation, CreateQuickActionMutationVariables>;
+export const DeleteQuickActionDocument = new TypedDocumentString(`
+    mutation deleteQuickAction($id: ID!) {
+  deleteQuickAction(id: $id)
+}
+    `) as unknown as TypedDocumentString<DeleteQuickActionMutation, DeleteQuickActionMutationVariables>;
 export const TimeChargeTotalsDocument = new TypedDocumentString(`
     query timeChargeTotals($weekOfYear: WeekOfYear) {
   timeChargeTotals(weekOfYear: $weekOfYear) {
@@ -860,8 +925,13 @@ export const TrackedTasksDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<TrackedTasksQuery, TrackedTasksQueryVariables>;
 export const CreateTrackedTaskDocument = new TypedDocumentString(`
-    mutation createTrackedTask($trackedDayId: ID!) {
-  createTrackedTask(trackedDayId: $trackedDayId) {
+    mutation createTrackedTask($trackedDayId: ID!, $notes: String, $chargeCodeIds: [ID!], $timeSlots: [Int!]) {
+  createTrackedTask(
+    trackedDayId: $trackedDayId
+    notes: $notes
+    chargeCodeIds: $chargeCodeIds
+    timeSlots: $timeSlots
+  ) {
     id
     notes
     timeSlots

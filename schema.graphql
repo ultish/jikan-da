@@ -275,13 +275,13 @@ type Mutation {
   createChargeCode(code: String!, description: String, expired: Boolean = false, group: String, name: String!, sortOrder: Int): ChargeCode
   createQuickAction(chargeCodeIds: [ID!], description: String, name: String!, timeSlots: [Int!]): QuickAction!
   createTrackedDay(date: Float!, mode: String): TrackedDay
-  createTrackedTask(notes: String, trackedDayId: ID!): TrackedTask!
+  createTrackedTask(chargeCodeIds: [ID!], notes: String, timeSlots: [Int!], trackedDayId: ID!): TrackedTask!
   createUser(password: String!, username: String!): User
-  deleteChargeCode(id: ID!): Boolean
-  deleteQuickAction(id: ID!): Boolean
-  deleteTrackedDay(id: ID!): Boolean
-  deleteTrackedTask(id: ID): Boolean
-  deleteUser(username: String!): Boolean
+  deleteChargeCode(id: ID!): ID
+  deleteQuickAction(id: ID!): ID
+  deleteTrackedDay(id: ID!): ID
+  deleteTrackedTask(id: ID): ID
+  deleteUser(username: String!): ID
   updateChargeCode(code: String, description: String, expired: Boolean, group: String, id: ID!, name: String, sortOrder: Int): ChargeCode
   updateQuickAction(chargeCodeIds: [ID!], description: String, id: ID!, name: String, timeSlots: [Int!]): QuickAction!
   updateTrackedDay(date: Float, id: ID!, mode: DayMode, trackedTaskIds: [String!]): TrackedDay

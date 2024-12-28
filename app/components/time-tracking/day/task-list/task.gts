@@ -2,9 +2,13 @@ import Component from '@glimmer/component';
 import type {
   ChargeCode,
   ChargeCodesQuery,
+  DeleteTrackedTaskMutation,
+  MutationDeleteTrackedTaskArgs,
   MutationUpdateTrackedTaskArgs,
   QueryChargeCodesArgs,
   TrackedTask,
+  TrackedTasksQuery,
+  TrackedTasksQueryVariables,
   UpdateTrackedTaskMutation,
 } from 'jikan-da/graphql/types/graphql';
 import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
@@ -13,22 +17,28 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 
-import { useMutation, useQuery } from 'glimmer-apollo';
+import { useMutation, useQuery, type MutationResource } from 'glimmer-apollo';
 import { UPDATE_TRACKED_TASK } from 'jikan-da/graphql/tracked-tasks';
 import { fn } from '@ember/helper';
 import { localCopy, trackedReset } from 'tracked-toolbox';
 import TooManyChoices from 'jikan-da/components/choices';
 import { GET_CHARGE_CODES } from 'jikan-da/graphql/chargecodes';
 import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
+import PhTrash from 'ember-phosphor-icons/components/ph-trash';
+
 import { clickOutside } from 'ember-click-outside-modifier';
 
 import { task } from 'ember-concurrency';
-import perform from 'ember-concurrency/helpers/perform';
+import type { TrackedTasksPartial } from './layout';
 
 interface Signature {
   Args: {
-    trackedTask: TrackedTask;
+    trackedTask: TrackedTasksPartial;
     ticks: Date[];
+    deleteTrackedTaskMutation: MutationResource<
+      DeleteTrackedTaskMutation,
+      MutationDeleteTrackedTaskArgs
+    >;
   };
   Blocks: {
     default: {};
@@ -69,7 +79,7 @@ export default class Task extends Component<Signature> {
 
     // 00:00 = 0, 00:06 = 1, 00:12 = 2, 00:18 = 3, 00:24 = 4, 00:30 = 5
     // 00:36 = 6, 00:42 = 7, 00:48 = 8, 00:54 = 9
-    // 01:00 = 10
+    // 01:00 = 10, 01:06 = 11
 
     // the ticks are hourly
     for (let i = 0; i < this.args.ticks.length; i++) {
@@ -286,6 +296,14 @@ export default class Task extends Component<Signature> {
 
     return result.join(' ');
   }
+
+  @action
+  async deleteTrackedTask() {
+    await this.args.deleteTrackedTaskMutation.mutate({
+      id: this.args.trackedTask.id,
+    });
+  }
+
   <template>
     {{!prettier-ignore}}
     <style>
@@ -350,41 +368,52 @@ export default class Task extends Component<Signature> {
       }
     </style>
     <div class="tracked-task relative border-b-[1px]">
-      <div class="tracked-task-details flex flex-col gap-2 px-2 pb-5">
-        <label class="form-control w-full max-w-xs">
-          <div class="label">
-            <span class="label-text">
-              <PhLightning class="inline fill-amber-400" @weight="duotone" />
-              Charge Codes
-            </span>
-          </div>
-          <TooManyChoices
-            @choices={{this.chargeCodes}}
-            @onAdd={{this.addCC}}
-            @onRemove={{this.removeCC}}
-            @outerClass="input input-bordered input-sm w-full max-w-xs"
-            as |cc|
-          >
-            <option
-              selected={{if cc.selected "selected"}}
-              value={{cc.chargeCode.id}}
-            >{{cc.chargeCode.name}}</option>
-          </TooManyChoices>
-        </label>
+      <div class="tracked-task-details flex gap-2 px-2 pb-5">
+        <div class="grow flex flex-col gap-2">
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">
+                <PhLightning class="inline fill-amber-400" @weight="duotone" />
+                Charge Codes
+              </span>
+            </div>
+            <TooManyChoices
+              @choices={{this.chargeCodes}}
+              @onAdd={{this.addCC}}
+              @onRemove={{this.removeCC}}
+              @outerClass="input input-bordered input-sm w-full max-w-xs"
+              as |cc|
+            >
+              <option
+                selected={{if cc.selected "selected"}}
+                value={{cc.chargeCode.id}}
+              >{{cc.chargeCode.name}}</option>
+            </TooManyChoices>
+          </label>
+          <label class="input input-bordered flex items-center gap-2 input-sm">
+            <PhPencil
+              @weight="duotone"
+              class="h-4 w-4 opacity-70 inline-block"
+            />
+            <input
+              type="text"
+              placeholder="Notes"
+              class="grow"
+              aria-label="notes"
+              value={{this.notes}}
+              {{on "focusout" this.updateNotes}}
+              {{on "input" this.handleInput}}
+            />
 
-        <label class="input input-bordered flex items-center gap-2 input-sm">
-          <PhPencil @weight="duotone" class="h-4 w-4 opacity-70 inline-block" />
-          <input
-            type="text"
-            placeholder="Notes"
-            class="grow"
-            aria-label="notes"
-            value={{this.notes}}
-            {{on "focusout" this.updateNotes}}
-            {{on "input" this.handleInput}}
-          />
-
-        </label>
+          </label>
+        </div>
+        <button
+          type="button"
+          class="btn btn-circle btn-sm mt-9 btn-outline btn-error text-error-content"
+          {{on "dblclick" this.deleteTrackedTask}}
+        >
+          <PhTrash />
+        </button>
       </div>
       <div class="tracked-time flex" {{clickOutside this.onClickOutside}}>
         {{#each this.squares key="timeBlock" as |block|}}

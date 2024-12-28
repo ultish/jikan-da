@@ -18,6 +18,9 @@ const documents = {
     "\n  query chargeCodes {\n    chargeCodes {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n": types.ChargeCodesDocument,
     "\n  mutation createChargeCode(\n    $name: String!\n    $code: String!\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    createChargeCode(\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n": types.CreateChargeCodeDocument,
     "\n  mutation updateChargeCode(\n    $id: ID!\n    $name: String\n    $code: String\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    updateChargeCode(\n      id: $id\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n": types.UpdateChargeCodeDocument,
+    "\n  query quickActions {\n    quickActions {\n      id\n      name\n      description\n      chargeCodes {\n        id\n        name\n      }\n      timeSlots\n    }\n  }\n": types.QuickActionsDocument,
+    "\n  mutation createQuickAction(\n    $name: String!\n    $description: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    createQuickAction(\n      name: $name\n      description: $description\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      name\n      description\n      chargeCodes {\n        id\n        name\n      }\n      timeSlots\n    }\n  }\n": types.CreateQuickActionDocument,
+    "\n  mutation deleteQuickAction($id: ID!) {\n    deleteQuickAction(id: $id)\n  }\n": types.DeleteQuickActionDocument,
     "\n  query timeChargeTotals($weekOfYear: WeekOfYear) {\n    timeChargeTotals(weekOfYear: $weekOfYear) {\n      id\n      value\n      chargeCode {\n        id\n        name\n        sortOrder\n      }\n      trackedDay {\n        id\n        date\n        week\n      }\n    }\n  }\n": types.TimeChargeTotalsDocument,
     "\n  subscription timeChargeTotalsChanged {\n    timeChargeTotalsChanged {\n      id\n      value\n    }\n  }\n": types.TimeChargeTotalsChangedDocument,
     "\n  query trackedDay($id: ID!) {\n    trackedDay(id: $id) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayDocument,
@@ -26,7 +29,7 @@ const documents = {
     "\n  mutation deleteTrackedDay($id: ID!) {\n    deleteTrackedDay(id: $id)\n  }\n": types.DeleteTrackedDayDocument,
     "\n  subscription trackedDayChanged($month: Int, $year: Int) {\n    trackedDayChanged(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayChangedDocument,
     "\n  query trackedTasks($trackedDayId: ID) {\n    trackedTasks(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.TrackedTasksDocument,
-    "\n  mutation createTrackedTask($trackedDayId: ID!) {\n    createTrackedTask(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.CreateTrackedTaskDocument,
+    "\n  mutation createTrackedTask(\n    $trackedDayId: ID!\n    $notes: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    createTrackedTask(\n      trackedDayId: $trackedDayId\n      notes: $notes\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.CreateTrackedTaskDocument,
     "\n  mutation updateTrackedTask(\n    $id: ID!\n    $notes: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    updateTrackedTask(\n      id: $id\n      notes: $notes\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n": types.UpdateTrackedTaskDocument,
     "\n  mutation deleteTrackedTask($id: ID!) {\n    deleteTrackedTask(id: $id)\n  }\n": types.DeleteTrackedTaskDocument,
 };
@@ -43,6 +46,18 @@ export function graphql(source: "\n  mutation createChargeCode(\n    $name: Stri
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation updateChargeCode(\n    $id: ID!\n    $name: String\n    $code: String\n    $description: String\n    $expired: Boolean\n    $group: String\n    $sortOrder: Int\n  ) {\n    updateChargeCode(\n      id: $id\n      name: $name\n      code: $code\n      description: $description\n      expired: $expired\n      group: $group\n      sortOrder: $sortOrder\n    ) {\n      id\n      name\n      code\n      description\n      expired\n      group\n      sortOrder\n    }\n  }\n"): typeof import('./graphql').UpdateChargeCodeDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query quickActions {\n    quickActions {\n      id\n      name\n      description\n      chargeCodes {\n        id\n        name\n      }\n      timeSlots\n    }\n  }\n"): typeof import('./graphql').QuickActionsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createQuickAction(\n    $name: String!\n    $description: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    createQuickAction(\n      name: $name\n      description: $description\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      name\n      description\n      chargeCodes {\n        id\n        name\n      }\n      timeSlots\n    }\n  }\n"): typeof import('./graphql').CreateQuickActionDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation deleteQuickAction($id: ID!) {\n    deleteQuickAction(id: $id)\n  }\n"): typeof import('./graphql').DeleteQuickActionDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -78,7 +93,7 @@ export function graphql(source: "\n  query trackedTasks($trackedDayId: ID) {\n  
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation createTrackedTask($trackedDayId: ID!) {\n    createTrackedTask(trackedDayId: $trackedDayId) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').CreateTrackedTaskDocument;
+export function graphql(source: "\n  mutation createTrackedTask(\n    $trackedDayId: ID!\n    $notes: String\n    $chargeCodeIds: [ID!]\n    $timeSlots: [Int!]\n  ) {\n    createTrackedTask(\n      trackedDayId: $trackedDayId\n      notes: $notes\n      chargeCodeIds: $chargeCodeIds\n      timeSlots: $timeSlots\n    ) {\n      id\n      notes\n      timeSlots\n      chargeCodes {\n        id\n        name\n      }\n    }\n  }\n"): typeof import('./graphql').CreateTrackedTaskDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -9,7 +9,7 @@ export default class Router extends EmberRouter {
 }
 
 Router.map(function () {
-  this.route('time-tracking', function () {
+  this.route('time-tracking', { path: ':time' }, function () {
     this.route('day', { path: '/day/:id' });
   });
   this.route('charge-codes');

@@ -1,5 +1,13 @@
 import Component from '@glimmer/component';
-import type { TrackedDay } from 'jikan-da/graphql/types/graphql';
+import type {
+  DeleteTrackedDayMutation,
+  DeleteTrackedTaskMutation,
+  MutationDeleteTrackedDayArgs,
+  MutationDeleteTrackedTaskArgs,
+  QueryTrackedDaysForMonthYearArgs,
+  TrackedDay,
+  TrackedDaysForMonthYearQuery,
+} from 'jikan-da/graphql/types/graphql';
 
 import dayjs from 'dayjs';
 import { action } from '@ember/object';
@@ -17,6 +25,18 @@ import { localCopy } from 'tracked-toolbox';
 import { modifier } from 'ember-modifier';
 import PhCube from 'ember-phosphor-icons/components/ph-cube';
 import QuickActionsNew from './quick-actions/new';
+import PhTrash from 'ember-phosphor-icons/components/ph-trash';
+import {
+  DELETE_TRACKED_DAY,
+  GET_TRACKED_DAYS_BY_MONTH_YEAR,
+} from 'jikan-da/graphql/tracked-days';
+import { useMutation } from 'glimmer-apollo';
+import {
+  DELETE_TRACKED_TASK,
+  GET_TRACKED_TASKS,
+} from 'jikan-da/graphql/tracked-tasks';
+import type RouterService from '@ember/routing/router-service';
+import { GET_TIME_CHARGE_TOTALS } from 'jikan-da/graphql/time-charge-totals';
 
 interface Signature {
   Args: {
@@ -32,6 +52,7 @@ export default class DayLayout extends Component<Signature> {
   @tracked isDragging = false;
 
   @service declare prefs: Prefs;
+  @service declare router: RouterService;
 
   minBottomHeight = 30;
   minTopHeight = 200;
@@ -104,6 +125,95 @@ export default class DayLayout extends Component<Signature> {
     this.prefs.setStartTimeNum(num);
   }
 
+  deleteTrackedDayMutation = useMutation<
+    DeleteTrackedDayMutation,
+    MutationDeleteTrackedDayArgs
+  >(this, () => [
+    DELETE_TRACKED_DAY,
+    {
+      // this isn't re-fetching with last known variables, maybe because i
+      // destroy the query from unloading the component?
+      refetchQueries: [
+        // {
+        //   query: GET_TIME_CHARGE_TOTALS,
+        // },
+      ],
+      update: (cache, result) => {
+        // have to manage the cache in apollo. wonder if there's an easier way...
+        if (result.data?.deleteTrackedDay) {
+          // using modify here to easily remove an object from the cache
+          // it specifically targets a query to clean up from
+          // cache.modify<TrackedDaysForMonthYearQuery>({
+          //   fields: {
+          //     trackedDaysForMonthYear(existingTaskRefs, { readField }) {
+          //       return existingTaskRefs?.filter(
+          //         (ref) =>
+          //           readField('id', ref) !== result?.data?.deleteTrackedDay
+          //       );
+          //     },
+          //   },
+          // });
+
+          // can also use this to remove from the cache but will remove all
+          // references to this object it seems! much cleaner?
+          const normalizedId = cache.identify({
+            id: result.data.deleteTrackedDay,
+            __typename: 'TrackedDay',
+          });
+          if (normalizedId) {
+            cache.evict({ id: normalizedId });
+            // removes unreachable results
+            cache.gc();
+          }
+
+          // the alternative mess to remove an obejct from cache...
+          // cache.modify({
+          //   id: cache.identify(result.data.deleteTrackedDay),
+          //   fields: {
+          //     TrackedDay(existing, { readField }) {
+          //       debugger;
+          //       return existing;
+          //     },
+          //   },
+          // });
+          // const vars = {
+          //   // month: this.args.month,
+          //   // year: this.args.year,
+          // };
+          // // deleted
+          // const data = cache.readQuery<
+          //   TrackedDaysForMonthYearQuery,
+          //   QueryTrackedDaysForMonthYearArgs
+          // >({
+          //   query: GET_TRACKED_DAYS_BY_MONTH_YEAR,
+          //   variables: vars,
+          // });
+          // if (data) {
+          //   const existingTasks = data.trackedDaysForMonthYear ?? [];
+          //   cache.writeQuery<TrackedDaysForMonthYearQuery>({
+          //     query: GET_TRACKED_DAYS_BY_MONTH_YEAR,
+          //     variables: vars,
+          //     data: {
+          //       trackedDaysForMonthYear: existingTasks.filter(
+          //         (t) => t.id !== result.data?.deleteTrackedDay
+          //       ),
+          //     },
+          //   });
+          // }
+        }
+      },
+    },
+  ]);
+
+  @action
+  async deleteTrackedDay() {
+    await this.deleteTrackedDayMutation.mutate({
+      id: this.args.day.id,
+    });
+
+    this.router.transitionTo('time-tracking');
+  }
+
   <template>
     <header class="bg-base-200 shadow">
       <div
@@ -113,6 +223,14 @@ export default class DayLayout extends Component<Signature> {
           <PhCalendarDot class="inline" />
           Time for
           {{this.date}}
+
+          <button
+            type="button"
+            class="btn btn-circle btn-sm ml-3 btn-outline btn-error text-error-content"
+            {{on "dblclick" this.deleteTrackedDay}}
+          >
+            <PhTrash />
+          </button>
         </h2>
         <div class="flex gap-2 items-center">
           <div>
@@ -161,7 +279,7 @@ export default class DayLayout extends Component<Signature> {
     </header>
 
     <div class="drawer drawer-end w-full relative--">
-      <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+      <input id="qa-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content">
         <!-- Page content here -->
 
@@ -171,7 +289,10 @@ export default class DayLayout extends Component<Signature> {
         >
           {{! Left Column }}
 
-          <QuickActions class="w-56 overflow-y-auto pt-4" />
+          <QuickActions
+            @trackedDay={{@day}}
+            class="w-56 overflow-y-auto pt-4"
+          />
 
           {{! Main Content Area }}
           <div id="main-content" class="flex-1 flex flex-col h-full relative">
@@ -208,7 +329,7 @@ export default class DayLayout extends Component<Signature> {
       </div>
       <div class="drawer-side z-50">
         <label
-          for="my-drawer-4"
+          for="qa-drawer"
           aria-label="close sidebar"
           class="drawer-overlay"
         ></label>

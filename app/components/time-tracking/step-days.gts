@@ -5,10 +5,13 @@ import {
   GET_TRACKED_DAYS_BY_MONTH_YEAR,
   CREATE_TRACKED_DAY,
   SUBSCRIBE_TRACKED_DAY_CHANGES,
+  DELETE_TRACKED_DAY,
 } from 'jikan-da/graphql/tracked-days';
 import type {
   CreateTrackedDayMutation,
+  DeleteTrackedDayMutation,
   MutationCreateTrackedDayArgs,
+  MutationDeleteTrackedDayArgs,
   QueryTrackedDaysForMonthYearArgs,
   SubscriptionTrackedDayChangedArgs,
   TrackedDay,
@@ -191,17 +194,16 @@ export default class StepDays extends Component<Signature> {
     }
   }
 
-  #trackedDaysMap = new Map<string, TrackedDay>();
+  // #trackedDaysMap = new Map<string, TrackedDay>();
 
   get trackedDaysMap() {
+    const trackedDaysMap = new Map<string, TrackedDay>();
     this.trackedDays.forEach((day) => {
       const date = dayjs(day.date).format('YYYY-MM-DD');
-      // const date = new Date(day.date);
-      // const key = `${date.}
-      this.#trackedDaysMap.set(date, day);
+      trackedDaysMap.set(date, day);
     });
 
-    return this.#trackedDaysMap;
+    return trackedDaysMap;
   }
 
   get today() {
@@ -293,7 +295,7 @@ export default class StepDays extends Component<Signature> {
       const existingDays = data.trackedDaysForMonthYear;
       const newDay = result.data.createTrackedDay;
       if (existingDays) {
-        cache.writeQuery({
+        cache.writeQuery<TrackedDaysForMonthYearQuery>({
           query: GET_TRACKED_DAYS_BY_MONTH_YEAR,
           variables: vars,
           data: { trackedDaysForMonthYear: [newDay, ...existingDays] },
@@ -358,7 +360,6 @@ export default class StepDays extends Component<Signature> {
           {{/each}}
         </ul>
       </div>
-
     </div>
   </template>
 }
