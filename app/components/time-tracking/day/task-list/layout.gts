@@ -250,7 +250,6 @@ export default class TaskListLayout extends Component<Signature> {
           display: inline-block;
           user-select: none;
           text-align: center;
-
         }
         .tick-hour:nth-child(odd) {
           background-color: oklch(var(--b2)/0.3)
@@ -287,8 +286,12 @@ export default class TaskListLayout extends Component<Signature> {
           class="absolute left-[300px] top-[-32px] h-full flex pointer-events-none"
         >
           {{#each this.formattedTicks as |tick|}}
-            <div class="tick-hour text-base h-full">
+            <div class="tick-hour text-base h-full relative">
               {{tick}}
+
+              <div
+                class="absolute top-0 left-1/2 w-[1px] h-full bg-base-200/70"
+              ></div>
             </div>
           {{/each}}
         </div>
