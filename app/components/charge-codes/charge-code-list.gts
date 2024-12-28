@@ -79,7 +79,7 @@ export default class ChargeCodeList extends Component<Signature> {
         name="my_tabs_1"
         role="tab"
         class="tab"
-        aria-label="New"
+        aria-label="New*"
       />
       <div
         role="tabpanel"

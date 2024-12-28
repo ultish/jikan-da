@@ -52,12 +52,18 @@ class TimeBlock {
   @tracked timeBlock = -1;
   @tracked hover = false;
 
+  #blockMin;
+
   mouseOver = false;
   mouseDown = false;
 
-  constructor(timeBlock: number, checked: boolean) {
+  constructor(timeBlock: number, checked: boolean, blockMin: number) {
     this.timeBlock = timeBlock;
     this.checked = checked;
+    this.#blockMin = blockMin;
+  }
+  get blockMin() {
+    return this.#blockMin * 6;
   }
 }
 
@@ -114,7 +120,7 @@ export default class Task extends Component<Signature> {
         const checked =
           this.args.trackedTask.timeSlots?.includes(timeBlock) || false;
         if (!tb) {
-          tb = new TimeBlock(timeBlock, checked);
+          tb = new TimeBlock(timeBlock, checked, j);
           this.timeBlocksMap.set(timeBlock, tb);
         } else {
           if (tb.checked !== checked) {
@@ -437,7 +443,7 @@ export default class Task extends Component<Signature> {
         {{#each this.squares key="timeBlock" as |block|}}
           {{! template-lint-disable no-pointer-down-event-binding }}
           <div
-            class="square text-center text-[4px] border-r-[1px] select-none border-base-300
+            class="square text-center text-[5px] border-r-[1px] select-none border-base-300
               {{this.blockClass block}}"
             role="button"
             tabindex="0"
@@ -446,7 +452,7 @@ export default class Task extends Component<Signature> {
             {{on "mouseup" (fn this.mouseUp block)}}
             {{on "mouseenter" (fn this.mouseEnter block)}}
           >
-            {{block.timeBlock}}
+            {{block.blockMin}}
 
           </div>
         {{/each}}

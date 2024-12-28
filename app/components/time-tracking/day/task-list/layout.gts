@@ -288,7 +288,6 @@ export default class TaskListLayout extends Component<Signature> {
           {{#each this.formattedTicks as |tick|}}
             <div class="tick-hour text-base h-full relative">
               {{tick}}
-
               <div
                 class="absolute top-0 left-1/2 w-[1px] h-full bg-base-200/70"
               ></div>
