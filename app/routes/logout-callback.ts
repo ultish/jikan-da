@@ -1,16 +1,16 @@
+// app/routes/logout-callback.js
 import Route from '@ember/routing/route';
-import type RouterService from '@ember/routing/router-service';
 import { inject as service } from '@ember/service';
 import type AuthService from 'jikan-da/services/auth';
 
-export default class ChargeCodesRoute extends Route {
+import type RouterService from '@ember/routing/router-service';
+
+export default class LogoutCallbackRoute extends Route {
   @service declare auth: AuthService;
   @service declare router: RouterService;
 
   async beforeModel() {
-    if (!this.auth.isAuthenticated) {
-      console.log('not authenticated');
-      this.router.transitionTo('application');
-    }
+    await this.auth.handleLogoutCallback();
+    this.router.transitionTo('application');
   }
 }

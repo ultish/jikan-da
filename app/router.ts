@@ -14,4 +14,7 @@ Router.map(function () {
   });
   this.route('charge-codes');
   this.route('login');
+  this.route('authenticated');
+  this.route('callback');
+  this.route('logout-callback');
 });

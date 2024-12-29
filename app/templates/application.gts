@@ -9,10 +9,37 @@ import ThemeButtons from 'jikan-da/components/theme-buttons';
 import PhPaintRoller from 'ember-phosphor-icons/components/ph-paint-roller';
 import PhPawPrint from 'ember-phosphor-icons/components/ph-paw-print';
 
+import { inject as service } from '@ember/service';
+import type AuthService from 'jikan-da/services/auth';
+
+import type RouterService from '@ember/routing/router-service';
+import { on } from '@ember/modifier';
+import { action } from '@ember/object';
+import { modifier } from 'ember-modifier';
+import setupApolloClient from 'jikan-da/apollo';
+
 @RouteTemplate
 export default class ApplicationTemplate extends Component {
+  @service declare auth: AuthService;
+  @service declare router: RouterService;
+
+  @action
+  login() {
+    this.auth.login();
+  }
+
   get year() {
     return new Date().getFullYear();
+  }
+
+  loadApollo = modifier((element) => {
+    debugger;
+    setupApolloClient(this, this.auth.accessToken);
+  });
+
+  @action
+  async logout() {
+    await this.auth.logout();
   }
 
   <template>
@@ -70,7 +97,15 @@ export default class ApplicationTemplate extends Component {
         <NavLinks class="menu-horizontal px-1" @burgerMenu={{false}} />
       </div>
       <div class="navbar-end">
-
+        {{#if this.auth.isAuthenticated}}
+          <button
+            class="btn btn-ghost btn-sm"
+            type="button"
+            {{on "click" this.logout}}
+          >
+            Logout
+          </button>
+        {{/if}}
         <div class="dropdown dropdown-end">
           <div
             tabindex="0"
@@ -82,6 +117,36 @@ export default class ApplicationTemplate extends Component {
             </div>
           </div>
           <ThemeButtons />
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="hero min-h-screen"
+      style="background-image: url({{if
+        this.auth.isAuthenticated
+        'bg3.jpg'
+        'bg2.jpg'
+      }});"
+    >
+      <div class="hero-overlay bg-opacity-60"></div>
+      <div class="hero-content text-neutral-content text-center">
+        <div class="max-w-md">
+
+          {{#if this.auth.isAuthenticated}}
+            <h1 class="mb-5 text-5xl font-bold">Hello
+              {{this.auth.username}}
+              👋</h1>
+          {{else}}
+            <h1 class="mb-5 text-5xl font-bold">Hello 👋</h1>
+            <button
+              type="button"
+              class="btn btn-primary"
+              {{on "click" this.login}}
+            >
+              Login
+            </button>
+          {{/if}}
         </div>
       </div>
     </div>

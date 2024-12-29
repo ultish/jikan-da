@@ -15,9 +15,6 @@ const NavLinks: TOC<object> = <template>
     <li>
       <NavSubLink @burgerMenu={{@burgerMenu}} />
     </li>
-    <li>
-      <a href="/login">Login</a>
-    </li>
   </ul>
 </template>;
 
