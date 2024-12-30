@@ -7,9 +7,6 @@ import ChargeCodesLayout from 'jikan-da/components/charge-codes/layout';
 export default class ApplicationTemplate extends Component {
   <template>
     {{pageTitle "Charge Codes"}}
-
-    <ChargeCodesLayout>
-      {{outlet}}
-    </ChargeCodesLayout>
+    <ChargeCodesLayout />
   </template>
 }

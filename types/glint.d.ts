@@ -7,3 +7,8 @@ declare module '@glint/environment-ember-loose/registry' {
     // local entries
   }
 }
+
+// removes error for using @RouteTemplate annotation
+declare module 'ember-route-template' {
+  export default function RouteTemplate(Component: object): void;
+}
