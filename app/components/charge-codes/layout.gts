@@ -5,10 +5,8 @@ import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
 
 interface Signature {
   Args: {};
-  Blocks: {
-    default: {};
-  };
-  Element: HTMLDivElement;
+  Blocks: {};
+  Element: HTMLElement;
 }
 export default class ChargeCodesLayout extends Component<Signature> {
   <template>

@@ -6,14 +6,9 @@ import type {
 } from 'jikan-da/graphql/types/graphql';
 
 import { useQuery } from 'glimmer-apollo';
-
-import TooManyChoices from 'jikan-da/components/choices';
 import { GET_CHARGE_CODES } from 'jikan-da/graphql/chargecodes';
-import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { on } from '@ember/modifier';
-import { fn } from '@ember/helper';
 import ChargeCodeEdit from './edit';
 
 interface Signature {

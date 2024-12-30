@@ -4,7 +4,6 @@ import Component from '@glimmer/component';
 import PhHamburger from 'ember-phosphor-icons/components/ph-hamburger';
 import PhClockUser from 'ember-phosphor-icons/components/ph-clock-user';
 import NavLinks from 'jikan-da/components/nav/links';
-import NavSubLink from 'jikan-da/components/nav/sub-link';
 import ThemeButtons from 'jikan-da/components/theme-buttons';
 import PhPaintRoller from 'ember-phosphor-icons/components/ph-paint-roller';
 import PhPawPrint from 'ember-phosphor-icons/components/ph-paw-print';
@@ -71,7 +70,7 @@ export default class ApplicationTemplate extends Component {
         100% { transform: rotateY(360deg); }
       }
     </style>
-    {{pageTitle "JikanDa"}}
+    {{pageTitle "時間だ"}}
     <div class="navbar bg-base-100">
       <div class="navbar-start">
         <div class="dropdown">
@@ -114,7 +113,7 @@ export default class ApplicationTemplate extends Component {
             class="btn btn-ghost btn-circle avatar"
           >
             <div class="w-10 rounded-full">
-              <PhPaintRoller class="w-10 h-10" />
+              <PhPaintRoller class="w-10 h-10" role="presentation" />
             </div>
           </div>
           <ThemeButtons />
@@ -139,15 +138,13 @@ export default class ApplicationTemplate extends Component {
             src="/wow.svg"
             width="60"
             class="hover:scale-[10] transition-transform duration-300 origin-bottom-left"
+            alt="wow"
           />
         </div>
         <p>much time</p>
       </aside>
       <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-        <a>
-
-          <PhPawPrint class="w-6 h-6" />
-        </a>
+        <PhPawPrint class="w-6 h-6" />
       </nav>
     </footer>
   </template>

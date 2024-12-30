@@ -1,7 +1,14 @@
 import type { TOC } from '@ember/component/template-only';
 import NavSubLink from 'jikan-da/components/nav/sub-link';
 
-const NavLinks: TOC<object> = <template>
+interface Signature {
+  Args: {
+    burgerMenu: boolean;
+  };
+  Blocks: {};
+  Element: HTMLElement;
+}
+const NavLinks: TOC<Signature> = <template>
   <ul class="menu" ...attributes>
     <li>
       <a href="/">Home</a>

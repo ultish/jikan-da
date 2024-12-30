@@ -3,6 +3,9 @@ import type Controller from '@ember/controller';
 
 export type ModelFrom<R extends Route> = Awaited<ReturnType<R['model']>>;
 
+/**
+ * this fle just provides Model/Controller typing for ember-route-templates
+ */
 export type RouteTemplateSignature<
   R extends Route,
   C extends Controller | undefined = undefined,
