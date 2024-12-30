@@ -269,7 +269,7 @@ export default class TimeChargeTotal extends Component<Signature> {
     const half = ['後ちょっと', 'もう少し', 'お腹空いた'];
 
     const left = ((2280 - this.dailyTotal.total) / 60).toFixed(1);
-    if (this.dailyTotal.total > 2280) {
+    if (this.dailyTotal.total >= 2280) {
       return {
         left: left,
         msg: good[Math.floor(Math.random() * good.length)],
@@ -455,9 +455,9 @@ export default class TimeChargeTotal extends Component<Signature> {
                   {{/if}}
                 </div>
                 <div class="stat-title text-[0.7rem]">Hours Left</div>
-                <div
-                  class="stat-value text-[1.2rem] leading-[1.2rem]"
-                >{{this.stats.left}}</div>
+                <div class="stat-value text-[1.2rem] leading-[1.2rem]">
+                  {{this.stats.left}}
+                </div>
                 <div class="stat-desc">{{this.stats.msg}}</div>
               </div>
             </div>
