@@ -50,10 +50,10 @@ const CHOICES_CLASS_NAMES = {
 };
 
 export default class TooManyChoices<T> extends Component<Signature<T>> {
-  element: HTMLElement | undefined;
+  ele: HTMLElement | undefined;
 
   makeChoices = modifier(async (e: HTMLElement) => {
-    this.element = e;
+    this.ele = e;
 
     // force-disconnect from auto-tracking
     await Promise.resolve();
@@ -79,23 +79,35 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
       const { detail } = p;
       this.args.onRemove?.(detail);
     };
-    this.element?.addEventListener('addItem', addListener);
-    this.element?.addEventListener('removeItem', removeListener);
+    this.ele?.addEventListener('addItem', addListener);
+    this.ele?.addEventListener('removeItem', removeListener);
 
     return () => {
-      this.element?.removeEventListener(addListener);
-      this.element?.removeEventListener(removeListener);
-
-      console.log('destroy');
+      this.ele?.removeEventListener(addListener);
+      this.ele?.removeEventListener(removeListener);
     };
   });
 
   instance: Choices | undefined;
 
   get choices() {
-    runTask(this, () => this.instance?.refresh());
+    const groups = this.args.choices.reduce((acc, c) => {
+      const { chargeCode } = c;
+      // Check if group already exists
+      const group = chargeCode.group ?? 'Ungrouped';
+      if (!acc[group]) {
+        acc[group] = { name: group, choices: [] };
+      }
+      // Push the choice to the corresponding group
+      acc[group].choices.push(c);
 
-    return this.args.choices;
+      return acc;
+    }, {});
+
+    runTask(this, () => this.instance?.refresh());
+    const groupedChoices = Object.values(groups);
+    // return this.args.choices;
+    return groupedChoices;
   }
 
   <template>
@@ -155,8 +167,17 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
     </style>
 
     <select multiple="true" id="test" {{this.makeChoices}}>
-      {{#each this.choices as |c|}}
-        {{yield c}}
+      {{!-- <optgroup label="Dev">
+        {{#each this.choices as |c|}}
+          {{yield c}}
+        {{/each}}
+      </optgroup> --}}
+      {{#each this.choices as |group|}}
+        <optgroup label="{{group.name}}">
+          {{#each group.choices as |c|}}
+            {{yield c}}
+          {{/each}}
+        </optgroup>
       {{/each}}
     </select>
   </template>

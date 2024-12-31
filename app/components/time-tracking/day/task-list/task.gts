@@ -434,7 +434,10 @@ export default class Task extends Component<Signature> {
                 selected={{if cc.selected "selected"}}
                 disabled={{if cc.chargeCode.expired "true"}}
                 value={{cc.chargeCode.id}}
-              >{{cc.chargeCode.name}}</option>
+                data-group={{cc.group}}
+              >
+                {{cc.chargeCode.name}}
+              </option>
             </TooManyChoices>
           </label>
           <label class="input input-bordered flex items-center gap-2 input-sm">
