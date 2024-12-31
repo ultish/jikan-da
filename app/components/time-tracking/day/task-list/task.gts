@@ -6,9 +6,6 @@ import type {
   MutationDeleteTrackedTaskArgs,
   MutationUpdateTrackedTaskArgs,
   QueryChargeCodesArgs,
-  TrackedTask,
-  TrackedTasksQuery,
-  TrackedTasksQueryVariables,
   UpdateTrackedTaskMutation,
 } from 'jikan-da/graphql/types/graphql';
 import PhLightning from 'ember-phosphor-icons/components/ph-lightning';
@@ -78,6 +75,10 @@ export default class Task extends Component<Signature> {
   @trackedReset('args.trackedTask.id')
   timeBlocksMap = new Map<number, TimeBlock>(); // this type matches what was fetched
 
+  firstBlock = 0;
+  lastBlock = 0;
+
+  // this is whats on screen. whats selected can be larger range
   get squares() {
     if (!this.args.ticks) {
       return [];
@@ -90,21 +91,20 @@ export default class Task extends Component<Signature> {
     // validate time block range
     const firstTick = this.args.ticks[0];
     const firstTime = dayjs(firstTick);
-    const firstBlock = firstTime.hour() * 10;
+    this.firstBlock = firstTime.hour() * 10;
 
     const lastTick = this.args.ticks[this.args.ticks.length - 1];
     const lastTime = dayjs(lastTick);
-    const lastBlock = lastTime.hour() * 10 + 9;
+    this.lastBlock = lastTime.hour() * 10 + 9;
 
-    for (let i = 0; i < firstBlock; i++) {
+    for (let i = 0; i < this.firstBlock; i++) {
       this.timeBlocksMap.delete(i);
     }
-    let i = lastBlock + 1;
+    let i = this.lastBlock + 1;
     while (this.timeBlocksMap.has(i)) {
       this.timeBlocksMap.delete(i);
       i++;
     }
-
     // the ticks are hourly
     for (let i = 0; i < this.args.ticks.length; i++) {
       const tick = this.args.ticks[i];
@@ -130,9 +130,10 @@ export default class Task extends Component<Signature> {
       }
     }
 
-    return Array.from(this.timeBlocksMap.values()).sort(
+    const result = Array.from(this.timeBlocksMap.values()).sort(
       (a, b) => a.timeBlock - b.timeBlock
     );
+    return result;
   }
 
   updateTrackedTaskMutation = useMutation<
@@ -147,14 +148,36 @@ export default class Task extends Component<Signature> {
     },
   ]);
 
+  /**
+   * this.squares only shows time blocks within visible range eg (50-150), so if there's
+   * pre-existing time blocks that have been selected (eg 300-350) they won't appear in
+   * this.squares. We need to take existing time blocks that are not visible and include
+   * them in the result set to update with
+   */
   async updateTimeBlocks() {
-    const timeSlots = this.squares
+    const existingTimeSlotToIndex = new Map<number, number>();
+    this.args.trackedTask.timeSlots?.forEach((t, i) => {
+      existingTimeSlotToIndex.set(t, i);
+    });
+
+    const existing = [...(this.args.trackedTask.timeSlots ?? [])].sort(
+      (a, b) => a - b
+    );
+    const notVisible = existing.filter(
+      (num) => num < this.firstBlock || num > this.lastBlock
+    );
+
+    const visibleSelected = this.squares
       .filter((s) => s.checked)
       .map((s) => s.timeBlock);
 
+    const result: number[] = [...notVisible, ...visibleSelected].sort(
+      (a, b) => a - b
+    );
+
     await this.updateTrackedTaskMutation.mutate({
       id: this.args.trackedTask.id,
-      timeSlots: timeSlots,
+      timeSlots: result,
     });
   }
 
@@ -452,7 +475,8 @@ export default class Task extends Component<Signature> {
             {{on "mouseup" (fn this.mouseUp block)}}
             {{on "mouseenter" (fn this.mouseEnter block)}}
           >
-            {{block.blockMin}}
+            {{block.timeBlock}}
+            {{!-- {{block.blockMin}} --}}
 
           </div>
         {{/each}}
