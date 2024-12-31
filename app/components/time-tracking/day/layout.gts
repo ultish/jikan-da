@@ -1,12 +1,8 @@
 import Component from '@glimmer/component';
 import type {
   DeleteTrackedDayMutation,
-  DeleteTrackedTaskMutation,
   MutationDeleteTrackedDayArgs,
-  MutationDeleteTrackedTaskArgs,
-  QueryTrackedDaysForMonthYearArgs,
   TrackedDay,
-  TrackedDaysForMonthYearQuery,
 } from 'jikan-da/graphql/types/graphql';
 
 import dayjs from 'dayjs';
@@ -26,17 +22,9 @@ import { modifier } from 'ember-modifier';
 import PhCube from 'ember-phosphor-icons/components/ph-cube';
 import QuickActionsNew from './quick-actions/new';
 import PhTrash from 'ember-phosphor-icons/components/ph-trash';
-import {
-  DELETE_TRACKED_DAY,
-  GET_TRACKED_DAYS_BY_MONTH_YEAR,
-} from 'jikan-da/graphql/tracked-days';
+import { DELETE_TRACKED_DAY } from 'jikan-da/graphql/tracked-days';
 import { useMutation } from 'glimmer-apollo';
-import {
-  DELETE_TRACKED_TASK,
-  GET_TRACKED_TASKS,
-} from 'jikan-da/graphql/tracked-tasks';
 import type RouterService from '@ember/routing/router-service';
-import { GET_TIME_CHARGE_TOTALS } from 'jikan-da/graphql/time-charge-totals';
 
 interface Signature {
   Args: {
@@ -77,7 +65,7 @@ export default class DayLayout extends Component<Signature> {
   }
 
   @action
-  handleDrag(event) {
+  handleDrag(event: MouseEvent) {
     if (!this.isDragging) return;
 
     const container = document.getElementById('main-content');
@@ -261,6 +249,7 @@ export default class DayLayout extends Component<Signature> {
               {{on "input" this.handleInput}}
               class="range range-xs"
               step="1"
+              aria-label="start time"
             />
             <div class="flex w-full justify-between text-xs">
               <span class="text-[10px] w-[10px] text-center">5</span>
@@ -286,7 +275,7 @@ export default class DayLayout extends Component<Signature> {
         tabindex="-1"
       />
       <div class="drawer-content">
-        <!-- Page content here -->
+        {{! Page content here  }}
 
         <div
           class="h-screen w-full flex px-4 sm:px-6 lg:px-8"
@@ -310,7 +299,9 @@ export default class DayLayout extends Component<Signature> {
             </div>
 
             {{! Resize Handle }}
+            {{! template-lint-disable no-pointer-down-event-binding }}
             <div
+              role="button"
               class="h-2 bg-gray-200 hover:bg-blue-300 cursor-ns-resize relative"
               {{on "mousedown" this.startDragging}}
               draggable="true"

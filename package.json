@@ -63,7 +63,7 @@
     "@warp-drive/core-types": "~0.0.0-beta.12",
     "autoprefixer": "^10.4.20",
     "babel-plugin-ember-template-compilation": "^2.3.0",
-    "choices.js": "^11.0.2",
+    "choices.js": "^11.0.3",
     "concurrently": "^9.1.0",
     "daisyui": "^4.12.22",
     "decorator-transforms": "^2.3.0",

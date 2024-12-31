@@ -78,7 +78,6 @@ export default class QuickActionsNew extends Component<Signature> {
     CREATE_QUICK_ACTION,
     {
       update: (cache, result) => {
-        debugger;
         if (result?.data?.createQuickAction) {
           const previous = cache.readQuery<
             QuickActionsQuery,

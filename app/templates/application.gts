@@ -32,7 +32,6 @@ export default class ApplicationTemplate extends Component {
   }
 
   loadApollo = modifier((element) => {
-    debugger;
     setupApolloClient(this, this.auth.accessToken);
   });
 

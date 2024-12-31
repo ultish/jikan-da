@@ -30,7 +30,6 @@ export default class AuthService extends Service {
     });
 
     this.userManager.events.addUserLoaded((user) => {
-      debugger;
       this.currentUser = user;
 
       this.roles = this.getRoles(user);
