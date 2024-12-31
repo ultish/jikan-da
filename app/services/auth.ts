@@ -1,4 +1,3 @@
-// app/services/auth.js
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
@@ -29,15 +28,11 @@ export default class AuthService extends Service {
       loadUserInfo: true, // Ensure user info is loaded
     });
 
-    console.log('iser msmg', this.userManager, this.currentUser);
-
     this.userManager.events.addUserLoaded((user) => {
       this.currentUser = user;
 
       this.roles = this.getRoles(user);
       this.username = this.getSid(user);
-
-      console.log('current user', this.currentUser);
     });
 
     this.userManager.events.addUserUnloaded(() => {
@@ -62,7 +57,6 @@ export default class AuthService extends Service {
       this.currentUser = user;
       this.roles = this.getRoles(user);
       this.username = this.getSid(user);
-      console.log('current user', this.currentUser);
     }
     return user;
   }
