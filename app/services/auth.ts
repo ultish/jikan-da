@@ -29,11 +29,15 @@ export default class AuthService extends Service {
       loadUserInfo: true, // Ensure user info is loaded
     });
 
+    console.log('iser msmg', this.userManager, this.currentUser);
+
     this.userManager.events.addUserLoaded((user) => {
       this.currentUser = user;
 
       this.roles = this.getRoles(user);
       this.username = this.getSid(user);
+
+      console.log('current user', this.currentUser);
     });
 
     this.userManager.events.addUserUnloaded(() => {
@@ -42,13 +46,25 @@ export default class AuthService extends Service {
       this.username = undefined;
     });
 
-    this.userManager.getUser().then((user) => {
-      if (user) {
-        this.currentUser = user;
-        this.roles = this.getRoles(user);
-        this.username = this.getSid(user);
-      }
-    });
+    // this.userManager.getUser().then((user) => {
+    //   if (user) {
+    //     this.currentUser = user;
+    //     this.roles = this.getRoles(user);
+    //     this.username = this.getSid(user);
+    //     console.log('current user', this.currentUser);
+    //   }
+    // });
+  }
+
+  async getUser() {
+    const user = await this.userManager.getUser();
+    if (user) {
+      this.currentUser = user;
+      this.roles = this.getRoles(user);
+      this.username = this.getSid(user);
+      console.log('current user', this.currentUser);
+    }
+    return user;
   }
 
   getSid(user: any) {
@@ -65,14 +81,13 @@ export default class AuthService extends Service {
     const idToken = user?.id_token;
     const accessToken = user?.access_token;
 
-    if (idToken) {
-      const idTokenPayload = JSON.parse(atob(idToken.split('.')[1]));
-      return idTokenPayload.roles || [];
-    }
-
     if (accessToken) {
       const accessTokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
       return accessTokenPayload.roles || [];
+    }
+    if (idToken) {
+      const idTokenPayload = JSON.parse(atob(idToken.split('.')[1]));
+      return idTokenPayload.roles || [];
     }
 
     return [];

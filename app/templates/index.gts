@@ -113,6 +113,11 @@ export default class ApplicationTemplate extends Component {
               {{this.auth.username}}
               👋
             </h1>
+            Roles:
+            {{#each this.auth.roles as |role|}}
+              {{role}}
+              <br />
+            {{/each}}
           {{else}}
             <h1 class="mb-5 text-5xl font-bold">Hello 👋</h1>
             <button

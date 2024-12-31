@@ -14,8 +14,6 @@ import type AuthService from 'jikan-da/services/auth';
 import type RouterService from '@ember/routing/router-service';
 import { on } from '@ember/modifier';
 import { action } from '@ember/object';
-import { modifier } from 'ember-modifier';
-import setupApolloClient from 'jikan-da/apollo';
 
 @RouteTemplate
 export default class ApplicationTemplate extends Component {
@@ -23,17 +21,13 @@ export default class ApplicationTemplate extends Component {
   @service declare router: RouterService;
 
   @action
-  login() {
-    this.auth.login();
+  async login() {
+    await this.auth.login();
   }
 
   get year() {
     return new Date().getFullYear();
   }
-
-  loadApollo = modifier((element) => {
-    setupApolloClient(this, this.auth.accessToken);
-  });
 
   @action
   async logout() {
@@ -100,7 +94,6 @@ export default class ApplicationTemplate extends Component {
             class="btn btn-ghost btn-sm"
             type="button"
             {{on "click" this.logout}}
-            {{this.loadApollo}}
           >
             Logout
           </button>

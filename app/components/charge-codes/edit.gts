@@ -135,7 +135,7 @@ export default class ChargeCodeEdit extends Component<Signature> {
   @action
   async save() {
     if (this.args.chargeCode) {
-      await this.updateChargeCodeMutation.mutate({
+      const result = await this.updateChargeCodeMutation.mutate({
         id: this.args.chargeCode.id,
         name: this.name,
         code: this.name,
@@ -256,8 +256,7 @@ export default class ChargeCodeEdit extends Component<Signature> {
         </div>
       </div>
 
-      <div class="mt-6 flex items-center justify-end gap-2">
-
+      <div class="mt-6 flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
           class="btn btn-sm btn-primary"
@@ -265,6 +264,25 @@ export default class ChargeCodeEdit extends Component<Signature> {
         >
           Save
         </button>
+
+        {{#if this.updateChargeCodeMutation.error}}
+          <div role="alert" class="alert alert-error grow">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{{this.updateChargeCodeMutation.error.message}}</span>
+          </div>
+        {{/if}}
       </div>
     </form>
   </template>
