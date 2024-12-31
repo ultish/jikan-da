@@ -46,7 +46,7 @@ export default class ApplicationTemplate extends Component {
         height: 20px;
       }
       a.whoa:hover .container {
-        perspective: 4px;
+        perspective: 12px;
       }
 
       .cube {
