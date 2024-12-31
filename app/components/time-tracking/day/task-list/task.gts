@@ -475,9 +475,8 @@ export default class Task extends Component<Signature> {
             {{on "mouseup" (fn this.mouseUp block)}}
             {{on "mouseenter" (fn this.mouseEnter block)}}
           >
-            {{block.timeBlock}}
-            {{!-- {{block.blockMin}} --}}
-
+            {{!-- {{block.timeBlock}} --}}
+            {{block.blockMin}}
           </div>
         {{/each}}
       </div>
