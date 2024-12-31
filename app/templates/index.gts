@@ -61,7 +61,7 @@ export default class ApplicationTemplate extends Component {
 
       this.confetti.forEach((emoji) => {
         emoji.y += 0.3 * emoji.r;
-        if (emoji.y > 120) emoji.y = -20;
+        if (emoji.y > 110) emoji.y = -20;
       });
     };
 

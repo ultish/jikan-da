@@ -1,20 +1,16 @@
-import { pageTitle } from 'ember-page-title';
-import {
-  RouteTemplate,
-  type RouteTemplateSignature,
-} from 'jikan-da/utils/ember-route-template';
+import { RouteTemplate } from 'jikan-da/utils/ember-route-template';
 import Component from '@glimmer/component';
-import type TimeTrackingDayRoute from 'jikan-da/routes/time-tracking/day';
-
-import dayjs from 'dayjs';
-import DayLayout from 'jikan-da/components/time-tracking/day/layout';
+import PhArrowBendRightUp from 'ember-phosphor-icons/components/ph-arrow-bend-right-up';
 
 @RouteTemplate
 export default class TimeTrackingIndexTemplate extends Component {
   <template>
-    <main class="mx-auto max-w-full px-4 py-4 sm:px-6 lg:px-8">
+    <main class="mx-auto max-w-full px-4 py-4 sm:px-6 lg:px-8 text-center">
 
-      Pick a date above
+      <i class="text-xs">
+        Pick a date above...
+        <PhArrowBendRightUp class="inline" />
+      </i>
     </main>
   </template>
 }
