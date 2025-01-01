@@ -5,15 +5,11 @@ import {
   GET_TRACKED_DAYS_BY_MONTH_YEAR,
   CREATE_TRACKED_DAY,
   SUBSCRIBE_TRACKED_DAY_CHANGES,
-  DELETE_TRACKED_DAY,
 } from 'jikan-da/graphql/tracked-days';
 import type {
   CreateTrackedDayMutation,
-  DeleteTrackedDayMutation,
   MutationCreateTrackedDayArgs,
-  MutationDeleteTrackedDayArgs,
   QueryTrackedDaysForMonthYearArgs,
-  SubscriptionTrackedDayChangedArgs,
   TrackedDay,
   TrackedDayChangedSubscription,
   TrackedDayChangedSubscriptionVariables,
@@ -74,7 +70,7 @@ interface Signature {
     month: number;
     year: number;
   };
-  Element: HTMLDivElement;
+  Element: HTMLUListElement;
 }
 
 export default class StepDays extends Component<Signature> {
@@ -102,18 +98,27 @@ export default class StepDays extends Component<Signature> {
     }
   });
 
-  centerToday = modifier((element) => {
+  centerToday = modifier((element: HTMLElement) => {
     const today = element.querySelector('.step-info');
     if (today) {
       const todayEle = today as HTMLElement;
-      // Get the position of the element
-      const elementPosition = todayEle.offsetLeft;
-      const elementWidth = todayEle.offsetWidth;
-      const containerWidth = todayEle.offsetWidth;
+      // Get the position of the element (relative to the container)
+      const elementPosition = todayEle.offsetLeft; // Position from the left of the container
+      const elementWidth = todayEle.offsetWidth; // Width of the 'today' element
+      const containerWidth = element.offsetWidth; // Width of the scrollable container
 
-      // Calculate the scroll position to center the element
-      const scrollPosition =
-        elementPosition - containerWidth / 2 + elementWidth / 2;
+      // Get the container's position relative to the viewport (or the page)
+      const containerRect = element.getBoundingClientRect();
+      const containerOffsetLeft = containerRect.left; // Distance from the viewport's left edge
+
+      // Calculate the scroll position to center the element within the container
+      const scrollPosition = Math.max(
+        0,
+        elementPosition -
+          containerOffsetLeft -
+          containerWidth / 2 +
+          elementWidth / 2
+      );
 
       // Scroll the container to center the current day
       element.scrollTo({
@@ -172,8 +177,6 @@ export default class StepDays extends Component<Signature> {
     });
 
     return () => {
-      // unsubscribe
-      console.log('unsiub');
       this.#unsubscribe?.();
     };
   });
@@ -337,29 +340,30 @@ export default class StepDays extends Component<Signature> {
   }
 
   <template>
-    <div ...attributes {{this.centerToday}} {{this.subscribeToTrackedDays}}>
-      <div>
-        <ul class="steps">
-          {{#each this.steps key="id" as |step|}}
-            <li
-              class="step {{this.stepClass this step}}"
-              data-day={{step.date.day}}
-              role="button"
-              {{on "click" (fn this.openDay step)}}
-              {{on "dblclick" (fn this.createDayAndTransition step)}}
-            >
-              {{#if step.firstDay}}
-                {{this.todaysMonthAsText}}
-              {{else if step.lastDay}}
-                {{this.todaysMonthAsText}}
-              {{else}}
-                {{step.day}}
-                <span class="text-[8px]">{{step.dayOfWeek}}</span>
-              {{/if}}
-            </li>
-          {{/each}}
-        </ul>
-      </div>
-    </div>
+    <ul
+      class="steps"
+      ...attributes
+      {{this.centerToday}}
+      {{this.subscribeToTrackedDays}}
+    >
+      {{#each this.steps key="id" as |step|}}
+        <li
+          class="step {{this.stepClass this step}}"
+          data-day={{step.date.day}}
+          role="button"
+          {{on "click" (fn this.openDay step)}}
+          {{on "dblclick" (fn this.createDayAndTransition step)}}
+        >
+          {{#if step.firstDay}}
+            {{this.todaysMonthAsText}}
+          {{else if step.lastDay}}
+            {{this.todaysMonthAsText}}
+          {{else}}
+            {{step.day}}
+            <span class="text-[8px]">{{step.dayOfWeek}}</span>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
   </template>
 }
