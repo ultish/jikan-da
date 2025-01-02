@@ -4,6 +4,7 @@ import type {
   MutationDeleteTrackedDayArgs,
   TrackedDay,
 } from 'jikan-da/graphql/types/graphql';
+import { htmlSafe } from '@ember/template';
 
 import dayjs from 'dayjs';
 import { action } from '@ember/object';
@@ -86,15 +87,15 @@ export default class DayLayout extends Component<Signature> {
   }
 
   get date() {
-    return dayjs(this.args.day.date).format('YYYY-MM-DD dddd');
+    return dayjs.utc(this.args.day.date).local().format('YYYY-MM-DD dddd');
   }
 
   get mainContentHeight() {
-    return `height: calc(100% - ${this.bottomHeight}px)`;
+    return htmlSafe(`height: calc(100% - ${this.bottomHeight}px)`);
   }
 
   get bottomHeightStyle() {
-    return `height: ${this.bottomHeight}px`;
+    return htmlSafe(`height: ${this.bottomHeight}px`);
   }
 
   @localCopy('prefs.startTimeNum') declare startTime: string;

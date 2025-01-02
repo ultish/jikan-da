@@ -24,6 +24,7 @@ import { inject as service } from '@ember/service';
 import type RouterService from '@ember/routing/router-service';
 
 import dayjs, { Dayjs } from 'dayjs';
+
 import { tracked } from '@glimmer/tracking';
 import type { ApolloCache } from '@apollo/client/cache';
 import type { FetchResult } from '@apollo/client/core';
@@ -197,13 +198,12 @@ export default class StepDays extends Component<Signature> {
     }
   }
 
-  // #trackedDaysMap = new Map<string, TrackedDay>();
-
   get trackedDaysMap() {
     const trackedDaysMap = new Map<string, TrackedDay>();
     this.trackedDays.forEach((day) => {
-      const date = dayjs(day.date).format('YYYY-MM-DD');
-      trackedDaysMap.set(date, day);
+      const utcDate = dayjs.utc(day.date).local().format('YYYY-MM-DD');
+
+      trackedDaysMap.set(utcDate, day);
     });
 
     return trackedDaysMap;

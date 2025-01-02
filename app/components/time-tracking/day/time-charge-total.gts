@@ -244,11 +244,15 @@ export default class TimeChargeTotal extends Component<Signature> {
   }
 
   get currentDay() {
-    return dayjs(this.args.trackedDay.date).format('dddd').toLowerCase();
+    return dayjs
+      .utc(this.args.trackedDay.date)
+      .local()
+      .format('dddd')
+      .toLowerCase();
   }
 
   formatDate(date: number | undefined) {
-    return dayjs(date).format('dddd');
+    return dayjs.utc(date).local().format('dddd');
   }
 
   sixMinBlocks(min: number) {
@@ -307,7 +311,14 @@ export default class TimeChargeTotal extends Component<Signature> {
   <template>
     <main class="" {{this.subscribeToTimeChargeTotals}}>
       <h2 class="text-lg font-semibold mb-4">
-        <PhClockCountdown class="inline" />Timesheet</h2>
+        <PhClockCountdown class="inline" />
+        Timesheet
+        <span class="text-xs">
+          {{@trackedDay.year}}
+          week
+          {{@trackedDay.week}}
+        </span>
+      </h2>
       <div class="flx gap-4 pr-4">
         <table class="table">
           <thead>

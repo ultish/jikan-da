@@ -379,7 +379,6 @@ export type MutationUpdateQuickActionArgs = {
 
 
 export type MutationUpdateTrackedDayArgs = {
-  date?: InputMaybe<Scalars['Float']['input']>;
   id: Scalars['ID']['input'];
   mode?: InputMaybe<DayMode>;
   trackedTaskIds?: InputMaybe<Array<Scalars['String']['input']>>;

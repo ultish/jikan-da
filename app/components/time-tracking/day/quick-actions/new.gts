@@ -8,8 +8,6 @@ import type {
   QuickActionsQuery,
   TrackedDay,
 } from 'jikan-da/graphql/types/graphql';
-
-import dayjs from 'dayjs';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
