@@ -40,15 +40,6 @@ export default class AuthService extends Service {
       this.roles = undefined;
       this.username = undefined;
     });
-
-    // this.userManager.getUser().then((user) => {
-    //   if (user) {
-    //     this.currentUser = user;
-    //     this.roles = this.getRoles(user);
-    //     this.username = this.getSid(user);
-    //     console.log('current user', this.currentUser);
-    //   }
-    // });
   }
 
   async getUser() {
@@ -89,7 +80,15 @@ export default class AuthService extends Service {
 
   @action
   async login() {
+    // rediect to the auth endpoint (ie keycloak)
     await this.userManager.signinRedirect();
+
+    // this works, gets user immediately
+    // const user = await this.userManager.signinPopup();
+
+    // this call will use the redicect setup in the userManager object
+    // (eg /callback) so no point doing anything after signinRedirect
+    // call is made
   }
 
   @action
@@ -97,14 +96,19 @@ export default class AuthService extends Service {
     await this.userManager.signoutRedirect();
   }
 
+  /**
+   * Handle the callback after a user logs in
+   *
+   * @returns the authenticated user
+   */
   @action
   async handleCallback() {
-    await this.userManager.signinRedirectCallback();
+    return await this.userManager.signinCallback();
   }
 
   @action
   async handleLogoutCallback() {
-    await this.userManager.signoutRedirectCallback();
+    await this.userManager.signoutCallback();
   }
 
   get accessToken() {
