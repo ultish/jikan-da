@@ -52,7 +52,9 @@ export default class DayLayout extends Component<Signature> {
   });
 
   @action
-  startDragging() {
+  startDragging(event: MouseEvent) {
+    event.preventDefault();
+
     this.isDragging = true;
     document.addEventListener('mousemove', this.handleDrag);
     document.addEventListener('mouseup', this.stopDragging);
