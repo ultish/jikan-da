@@ -12,7 +12,7 @@ export default class AuthService extends Service {
   @tracked
   declare roles: string[] | undefined;
   @tracked
-  declare username: string | undefined;
+  declare name: string | undefined;
 
   constructor() {
     super(...arguments);
@@ -32,13 +32,13 @@ export default class AuthService extends Service {
       this.currentUser = user;
 
       this.roles = this.getRoles(user);
-      this.username = this.getSid(user);
+      this.name = this.getSid(user);
     });
 
     this.userManager.events.addUserUnloaded(() => {
       this.currentUser = undefined;
       this.roles = undefined;
-      this.username = undefined;
+      this.name = undefined;
     });
   }
 
@@ -47,7 +47,7 @@ export default class AuthService extends Service {
     if (user) {
       this.currentUser = user;
       this.roles = this.getRoles(user);
-      this.username = this.getSid(user);
+      this.name = this.getSid(user);
     }
     return user;
   }
@@ -57,7 +57,7 @@ export default class AuthService extends Service {
 
     if (idToken) {
       const idTokenPayload = JSON.parse(atob(idToken.split('.')[1]));
-      return idTokenPayload.username;
+      return idTokenPayload.name;
     }
   }
 

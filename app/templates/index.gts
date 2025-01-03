@@ -107,7 +107,7 @@ export default class ApplicationTemplate extends Component {
         <div class="max-w-lg">
           {{#if this.auth.isAuthenticated}}
             <h1 class="mb-5 text-5xl font-bold">Hello
-              {{this.auth.username}}
+              {{this.auth.name}}
               👋
             </h1>
             Roles:
