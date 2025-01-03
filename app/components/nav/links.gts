@@ -17,7 +17,7 @@ const NavLinks: TOC<Signature> = <template>
       <a href="/time-tracking">Time Tracking</a>
     </li>
     <li>
-      <a href="/charge-codes">Chage Codes</a>
+      <a href="/charge-codes">Charge Codes</a>
     </li>
     <li>
       <NavSubLink @burgerMenu={{@burgerMenu}} />

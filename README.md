@@ -50,3 +50,9 @@
 - `pnpm run generate`
 - see codegen.ts for graphql config
 - this will verify your graphql queries, mutations, subscriptions match whats in the graphql schema on the server (as defined by codegen.ts config)
+
+## Docker
+- cd jikan-da/
+- pnpm build
+- docker build -t jikan-da .
+- docker-compose up

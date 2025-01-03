@@ -19,7 +19,7 @@ export default function setupApolloClient(
   // WebSocket connection to the API
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: 'ws://localhost:8080/graphql',
+      url: 'wss://192.168.1.41:8443/graphql',
 
       // this is used to add user-id/Authorization to the websocket header on init as the websocket conn doesn't allow custom headers
       connectionParams: () => {
@@ -35,7 +35,7 @@ export default function setupApolloClient(
 
   // HTTP connection to the API
   const httpLink = new HttpLink({
-    uri: 'http://localhost:8080/graphql',
+    uri: 'https://192.168.1.41:8443/graphql',
     headers: {
       // 'user-id': '6768f8e49ce0e819a8f73dfb',
       Authorization: `Bearer ${authToken}`,

@@ -11,6 +11,7 @@
     "test": "tests"
   },
   "scripts": {
+    "docker": "ember build --environment=production --output-path=docker/dist",
     "build": "vite build",
     "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\"",
     "lint:css": "stylelint \"**/*.css\"",

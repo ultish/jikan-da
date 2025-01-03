@@ -18,8 +18,8 @@ export default class AuthService extends Service {
     super(...arguments);
 
     this.userManager = new UserManager({
-      authority: 'https://localhost:18443/realms/jxhui',
-      client_id: 'jxhui',
+      authority: 'https://192.168.1.41:18443/realms/jxhui',
+      client_id: 'jikan-da',
       redirect_uri: `${window.location.origin}/callback`,
       response_type: 'code',
       scope: 'openid roles',

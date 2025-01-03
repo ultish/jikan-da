@@ -104,7 +104,7 @@ export default class ApplicationTemplate extends Component {
       {{/if}}
       <div class="hero-overlay bg-opacity-60"></div>
       <div class="hero-content text-neutral-content text-center">
-        <div class="max-w-md">
+        <div class="max-w-lg">
           {{#if this.auth.isAuthenticated}}
             <h1 class="mb-5 text-5xl font-bold">Hello
               {{this.auth.username}}
