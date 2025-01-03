@@ -46,9 +46,9 @@ export default class ApplicationTemplate extends Component {
     .fill(null)
     .map((_, i) => {
       return new Wow(
-        Math.random() * 100,
+        Math.min(90, Math.random() * 100),
         -20 - Math.random() * 100,
-        0.1 + Math.random() * 1
+        0.15 + Math.random() * 1
       );
     })
     .sort((a, b) => a.r - b.r);
