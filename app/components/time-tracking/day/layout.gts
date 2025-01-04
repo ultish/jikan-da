@@ -37,7 +37,7 @@ interface Signature {
   Element: HTMLDivElement;
 }
 export default class DayLayout extends Component<Signature> {
-  @tracked bottomHeight = 200; // Initial height in pixels
+  @tracked bottomHeight = 300; // Initial height in pixels
   @tracked isDragging = false;
 
   @service declare prefs: Prefs;
