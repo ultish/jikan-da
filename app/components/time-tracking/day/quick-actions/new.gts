@@ -229,7 +229,6 @@ export default class QuickActionsNew extends Component<Signature> {
               @choices={{this.chargeCodes}}
               @onAdd={{this.addCC}}
               @onRemove={{this.removeCC}}
-              @outerClass="input input-bordered input-sm"
               as |cc|
             >
               <option
