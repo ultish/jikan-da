@@ -45,7 +45,7 @@ export default class ThemeButtons extends Component<Signature> {
   }
 
   get themeOptions() {
-    return themes.sort().map((theme) => {
+    return themes.map((theme) => {
       return new ThemeClass(theme, this.currentTheme);
     });
   }
@@ -61,21 +61,31 @@ export default class ThemeButtons extends Component<Signature> {
   <template>
     <ul
       tabindex="0"
-      class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
+      class="menu menu-sm dropdown-content bg-base-100 rounded-btn z-10 mt-3 w-64 p-2 shadow grid grid-cols-1 gap-2 overflow-y-auto max-h-[calc(100vh-10rem)]"
     >
       {{#each this.themeOptions key="theme" as |themeOption|}}
         <li>
           {{! template-lint-disable link-href-attributes }}
           <a
             role="button"
-            class="justify-between"
+            class="justify-normal bg-base-100 hover:text-info-content hover:bg-info flex"
+            data-theme={{themeOption.theme}}
             data-set-theme={{themeOption.theme}}
             {{on "click" (fn this.setTheme themeOption.theme)}}
           >
-            {{themeOption.theme}}
+
+            <span class="flex-grow">
+              {{themeOption.theme}}
+            </span>
             {{#if themeOption.active}}
               <span class="badge">Active</span>
             {{/if}}
+            <span class="flex h-full shrink-0 flex-wrap gap-1">
+              <span class="bg-primary rounded-badge w-2"></span>
+              <span class="bg-secondary rounded-badge w-2"></span>
+              <span class="bg-accent rounded-badge w-2"></span>
+              <span class="bg-neutral rounded-badge w-2"></span>
+            </span>
           </a>
         </li>
       {{/each}}
@@ -89,34 +99,34 @@ export default class ThemeButtons extends Component<Signature> {
 const themes = [
   'light',
   'dark',
-  'cupcake',
-  'bumblebee',
-  'emerald',
-  'corporate',
-  'synthwave',
-  'retro',
-  'cyberpunk',
-  'valentine',
-  'halloween',
-  'garden',
-  'forest',
-  'aqua',
-  'lofi',
-  'pastel',
-  'fantasy',
-  'wireframe',
-  'black',
-  'luxury',
-  'dracula',
-  'cmyk',
-  'autumn',
-  'business',
   'acid',
-  'lemonade',
-  'night',
+  'aqua',
+  'autumn',
+  'black',
+  'bumblebee',
+  'business',
+  'cmyk',
   'coffee',
-  'winter',
+  'corporate',
+  'cupcake',
+  'cyberpunk',
   'dim',
+  'dracula',
+  'emerald',
+  'fantasy',
+  'forest',
+  'garden',
+  'halloween',
+  'lemonade',
+  'lofi',
+  'luxury',
+  'night',
   'nord',
+  'pastel',
+  'retro',
   'sunset',
+  'synthwave',
+  'valentine',
+  'winter',
+  'wireframe',
 ];
