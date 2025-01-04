@@ -11,46 +11,55 @@ interface Signature<T> {
     onAdd?: (detail: any) => void;
     onRemove?: (detail: any) => void;
     outerClass?: string;
+    placeholder?: string;
   };
   Blocks: {
     default: [T];
   };
 }
 
-const CHOICES_CLASS_NAMES = {
-  containerOuter: ['choices', 'flex', 'items-center'],
-  containerInner: ['choices__inner'],
-  input: ['choices__input'],
-  inputCloned: ['choices__input--cloned'],
-  list: ['choices__list', 'bg-base-100'],
-  listItems: ['choices__list--multiple'],
-  listSingle: ['choices__list--single'],
-  listDropdown: ['choices__list--dropdown'],
-  item: ['choices__item', 'custom_item'],
-  itemSelectable: ['choices__item--selectable'],
-  itemDisabled: ['choices__item--disabled'],
-  itemChoice: ['choices__item--choice'],
-  description: ['choices__description'],
-  placeholder: ['choices__placeholder'],
-  group: ['choices__group'],
-  groupHeading: ['choices__heading'],
-  button: ['choices__button'],
-  activeState: ['is-active'],
-  focusState: ['is-focused'],
-  openState: ['is-open'],
-  disabledState: ['is-disabled'],
-  highlightedState: ['is-highlighted'],
-  selectedState: ['is-selected'],
-  flippedState: ['is-flipped'],
-  loadingState: ['is-loading'],
-  notice: ['choices__notice'],
-  addChoice: ['choices__item--selectable', 'add-choice'],
-  noResults: ['has-no-results'],
-  noChoices: ['has-no-choices'],
-};
-
 export default class TooManyChoices<T> extends Component<Signature<T>> {
+  CHOICES_CLASS_NAMES = {
+    containerOuter: ['choices'],
+    containerInner: ['choices__inner', 'custom_choices__inner'], // custom class
+    input: ['choices__input'],
+    inputCloned: ['choices__input--cloned'],
+    list: ['choices__list', 'custom_choices__list'], // custom class, background
+    listItems: ['choices__list--multiple'],
+    listSingle: ['choices__list--single'],
+    listDropdown: ['choices__list--dropdown'],
+    item: ['choices__item', 'custom_item'],
+    itemSelectable: ['choices__item--selectable'],
+    itemDisabled: ['choices__item--disabled'],
+    itemChoice: ['choices__item--choice'],
+    description: ['choices__description'],
+    placeholder: ['choices__placeholder'],
+    group: ['choices__group'],
+    groupHeading: ['choices__heading'],
+    button: ['choices__button'],
+    activeState: ['is-active'],
+    focusState: ['is-focused'],
+    openState: ['is-open'],
+    disabledState: ['is-disabled'],
+    highlightedState: ['is-highlighted'],
+    selectedState: ['is-selected'],
+    flippedState: ['is-flipped'],
+    loadingState: ['is-loading'],
+    notice: ['choices__notice'],
+    addChoice: ['choices__item--selectable', 'add-choice'],
+    noResults: ['has-no-results'],
+    noChoices: ['has-no-choices'],
+  };
+
   ele: HTMLElement | undefined;
+
+  // get makeUUID() {
+  //   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  //     var r = (Math.random() * 16) | 0,
+  //       v = c == 'x' ? r : (r & 0x3) | 0x8;
+  //     return v.toString(16);
+  //   });
+  // }
 
   makeChoices = modifier(async (e: HTMLElement) => {
     this.ele = e;
@@ -61,14 +70,15 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
     const outerClass = {
       containerOuter: [
         ...(this.args.outerClass?.split(' ') ?? []),
-        ...CHOICES_CLASS_NAMES.containerOuter,
+        ...this.CHOICES_CLASS_NAMES.containerOuter,
       ],
     };
 
+    console.log(e, outerClass);
     this.instance = new Choices(e, {
       items: this.args.items,
       removeItemButton: true,
-      classNames: Object.assign(CHOICES_CLASS_NAMES, outerClass),
+      classNames: Object.assign(this.CHOICES_CLASS_NAMES, outerClass),
     });
 
     const addListener = (p: CustomEvent<EventChoice>) => {
@@ -113,50 +123,79 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
   <template>
     {{! prettier-ignore }}
     <style scoped>
-      .hide {
-        display: none;
+      .is-open .choices__list--dropdown, .is-open .choices__list--dropdown[aria-expanded] {
+        border-color: var(--fallback-bc, oklch(var(--bc)/0.2));
       }
-
-
-      .choices__inner {
-        background-color: inherit;
-        border: 0px;
-        padding: 0px;
-        min-height: inherit;
+      .is-focused  .custom_choices__inner{
+        box-shadow: none;
+        border-color: var(--fallback-bc, oklch(var(--bc)/0.2));
+        outline-style: solid;
+        outline-width: 2px;
+        outline-offset: 2px;
+        outline-color: var(--fallback-bc, oklch(var(--bc)/0.2));
       }
-      .choices__input {
-        margin-bottom: 0px;
-        padding: 0px;
+      .custom_choices__inner {
+        padding: 2px 0.75rem 0px 0.75rem;
+        min-height: 32px;
+        border-radius: var(--rounded-btn, 0.5rem);
+        border-color: var(--fallback-bc, oklch(var(--bc)/0.2));
+        background: inherit;
       }
-      .choices__item.choices__item--selectable {
-        margin-bottom: 0px;
-      }
-      .choices__list.choices__list--dropdown {
-        margin-left: -1em;
-        margin-right: -1em;
-      }
-      .choices__list.bg-base-100.choices__list--dropdown {
+      .is-open .choices__inner.custom_choices__inner {
         border-radius: var(--rounded-btn, 0.5rem);
       }
+      .choices__list.custom_choices__list.choices__list--dropdown {
+        border-radius: var(--rounded-btn, 0.5rem);
+      }
+      .choices__input {
+        background-color: inherit;
+        margin-bottom: 0px;
+        padding: 0px;
+      }
+      .choices__group {
+        background-color: var(--fallback-b1, oklch(var(--b1)));
+      }
+
+      {{!-- multi-select chip styles --}}
+      .custom_choices__list.choices__list--multiple .custom_item {
+        padding: 0px 6px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+      }
+      .choices__item.custom_item:not(.has-no-choices) {
+        background-color: var(--fallback-b3, oklch(var(--b2) / 1));
+        color: var(--fallback-bc, oklch(var(--bc)));
+        border-color: var(--fallback-b3, oklch(var(--b2) / 1));
+      }
+      .custom_item.has-no-choices {
+        background-color: var(--fallback-b3, oklch(var(--b2) / 1));
+        color: var(--fallback-bc, oklch(var(--bc)));
+        border-color: var(--fallback-b3, oklch(var(--b2) / 1));
+      }
+      .choices__item.custom_item.choices__item--selectable.is-selected {
+        background-color: var(--fallback-b2, oklch(var(--b2)/0.6 ));
+      }
+      {{!-- the delete button on a chip --}}
+      .custom_choices__list.choices__list--multiple .custom_item.choices__item--selectable button {
+        filter: invert(50%) brightness(100%);
+      }
+
+
+
+
+
       .input-sm .choices__inner .choices__list .choices__item.choices__item--selectable {
         line-height: initial;
         padding-top: 2px;
         padding-bottom: 2px;
-      }
-      .choices__item.custom_item:not(.has-no-choices) {
-        background-color: var(--fallback-n,oklch(var(--n)/0.8));
-        color: var(--fallback-nc, oklch(var(--nc)));
-        border-color: oklch(var(--n) / 1);
       }
       .choices__item.choices__item--choice.choices__item--selectable {
         padding-left: 1rem;
       }
       .choices__item.choices__item--choice.choices__item--selectable.is-highlighted {
         background-color: var(--fallback-a ,oklch(var(--a)/.5));
+        {{!-- background-color: var(--fallback-b2, oklch(var(--b2))); --}}
         color: var(--fallback-ac, oklch(var(--ac)))
-      }
-      .choices__item.custom_item.choices__item--selectable.is-selected {
-        background-color: var(--fallback-n,oklch(var(--n)/0.6));
       }
       /* no choices option*/
       .choices__item.custom_item.choices__item--choice.choices__notice.has-no-choices {
@@ -166,7 +205,12 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
       }
     </style>
 
-    <select multiple="true" id="test" {{this.makeChoices}}>
+    <select
+      multiple
+      class="form-control"
+      {{this.makeChoices}}
+      data-placeholder={{@placeholder}}
+    >
       {{!-- <optgroup label="Dev">
         {{#each this.choices as |c|}}
           {{yield c}}

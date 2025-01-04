@@ -427,7 +427,7 @@ export default class Task extends Component<Signature> {
               @choices={{this.chargeCodes}}
               @onAdd={{this.addCC}}
               @onRemove={{this.removeCC}}
-              @outerClass="input input-bordered input-sm w-full max-w-xs"
+              @outerClass="w-full max-w-xs"
               as |cc|
             >
               <option
@@ -439,6 +439,7 @@ export default class Task extends Component<Signature> {
                 {{cc.chargeCode.name}}
               </option>
             </TooManyChoices>
+
           </label>
           <label class="input input-bordered flex items-center gap-2 input-sm">
             <PhPencil
