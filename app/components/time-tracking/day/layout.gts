@@ -26,6 +26,9 @@ import PhTrash from 'ember-phosphor-icons/components/ph-trash';
 import { DELETE_TRACKED_DAY } from 'jikan-da/graphql/tracked-days';
 import { useMutation } from 'glimmer-apollo';
 import type RouterService from '@ember/routing/router-service';
+import PhCursorClick from 'ember-phosphor-icons/components/ph-cursor-click';
+import PhKeyReturn from 'ember-phosphor-icons/components/ph-key-return';
+import PhMouseLeftClick from 'ember-phosphor-icons/components/ph-mouse-left-click';
 
 interface Signature {
   Args: {
@@ -215,13 +218,15 @@ export default class DayLayout extends Component<Signature> {
           Time for
           {{this.date}}
 
-          <button
-            type="button"
-            class="btn btn-circle btn-sm ml-3 btn-outline btn-error text-error-content"
-            {{on "dblclick" this.deleteTrackedDay}}
-          >
-            <PhTrash />
-          </button>
+          <div class="ml-3 tooltip" data-tip="Double-Click to delete">
+            <button
+              type="button"
+              class="btn btn-circle btn-sm btn-outline btn-error text-error-content"
+              {{on "dblclick" this.deleteTrackedDay}}
+            >
+              <PhTrash />
+            </button>
+          </div>
         </h2>
         <div class="flex gap-2 items-center">
           <div>
@@ -270,7 +275,7 @@ export default class DayLayout extends Component<Signature> {
       </div>
     </header>
 
-    <div class="drawer drawer-end w-full relative--">
+    <div class="drawer drawer-end w-full">
       <input
         id="qa-drawer"
         type="checkbox"
@@ -294,10 +299,7 @@ export default class DayLayout extends Component<Signature> {
           {{! Main Content Area }}
           <div id="main-content" class="flex-1 flex flex-col h-full relative">
             {{! Top Section }}
-            <div
-              class="flex-1 min-h-0 mt-4 overflow-y-scroll--- relative--"
-              style={{this.mainContentHeight}}
-            >
+            <div class="flex-1 min-h-0 mt-4" style={{this.mainContentHeight}}>
               <TaskListLayout @trackedDay={{@day}} class="" />
             </div>
 
@@ -305,14 +307,40 @@ export default class DayLayout extends Component<Signature> {
             {{! template-lint-disable no-pointer-down-event-binding }}
             <div
               role="button"
-              class="h-2 bg-gray-200 hover:bg-blue-300 cursor-ns-resize relative"
+              class="h-2 bg-base-300 hover:bg-accent cursor-ns-resize relative"
               {{on "mousedown" this.startDragging}}
               draggable="true"
             >
+
+              <div
+                id="help"
+                class="absolute w-full -top-6 flex items-center justify-end gap-1"
+                role="presentation"
+              >
+                <span class="text-xs">select range:</span>
+                <PhCursorClick class="inline" role="presentation" />
+                <span class="text-xs"> +</span>
+                {{! template-lint-disable require-presentational-children }}
+                <kbd class="kbd kbd-xs text-[10px]">shift</kbd>
+                <span class="text-xs"> +</span>
+                <PhCursorClick class="inline" role="presentation" />
+                <span class="text-xs"> +</span>
+                <kbd class="kbd kbd-xs text-[10px]">
+                  <PhKeyReturn class="inline" role="presentation" />
+                  return
+                </kbd>
+                <span class="text-xs">
+                  or
+                </span>
+                <PhMouseLeftClick class="inline" role="presentation" />
+                <span class="text-xs">
+                  + drag
+                </span>
+              </div>
               <div
                 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
               >
-                <div class="w-8 h-1 bg-gray-400 rounded"></div>
+                <div class="w-8 h-1 bg-neutral rounded"></div>
               </div>
             </div>
 

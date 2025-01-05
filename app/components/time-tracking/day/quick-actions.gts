@@ -160,14 +160,15 @@ export default class QuickActions extends Component<Signature> {
             <PhHandEye @color="oklch(var(--s))" class="inline-block" />
             {{qa.name}}
           </div>
-
-          <button
-            type="button"
-            class="btn btn-circle btn-sm btn-ghost"
-            {{on "dblclick" (fn this.deleteQuickAction qa)}}
-          >
-            <PhTrash @color="oklch(var(--er))" />
-          </button>
+          <div class="tooltip" data-tip="Double-Click to delete">
+            <button
+              type="button"
+              class="btn btn-circle btn-sm btn-ghost"
+              {{on "dblclick" (fn this.deleteQuickAction qa)}}
+            >
+              <PhTrash @color="oklch(var(--er))" />
+            </button>
+          </div>
 
         </div>
       {{else}}

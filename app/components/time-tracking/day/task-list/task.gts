@@ -458,13 +458,16 @@ export default class Task extends Component<Signature> {
 
           </label>
         </div>
-        <button
-          type="button"
-          class="btn btn-circle btn-sm mt-9 btn-outline btn-error text-error-content"
-          {{on "dblclick" this.deleteTrackedTask}}
-        >
-          <PhTrash />
-        </button>
+
+        <div class="tooltip mt-9" data-tip="Double-Click to delete">
+          <button
+            type="button"
+            class="btn btn-circle btn-sm btn-outline btn-error text-error-content"
+            {{on "dblclick" this.deleteTrackedTask}}
+          >
+            <PhTrash />
+          </button>
+        </div>
       </div>
       <div class="tracked-time flex" {{clickOutside this.onClickOutside}}>
         {{#each this.squares key="timeBlock" as |block|}}
