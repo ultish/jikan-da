@@ -259,7 +259,7 @@ export default class QuickActionsNew extends Component<Signature> {
               {{on "input" this.endInput}}
             />
           </label>
-          <span class="text-[5px] col-span-full">
+          <span class="text-[7px] col-span-full">
             {{#each this.timeSlots as |s|}}
               {{s}}
             {{/each}}

@@ -69,7 +69,7 @@ export default class Task extends Component<Signature> {
 
   @localCopy('args.trackedTask.notes') declare notes: string;
 
-  @tracked mouseModeChecked = true;
+  @tracked mouseModeChecked: boolean | undefined = undefined;
   @tracked startMouseGlide = false;
 
   @trackedReset('args.trackedTask.id')
@@ -91,11 +91,15 @@ export default class Task extends Component<Signature> {
     // validate time block range
     const firstTick = this.args.ticks[0];
     const firstTime = dayjs(firstTick);
+    const firstDay = firstTime.date();
     this.firstBlock = firstTime.hour() * 10;
 
     const lastTick = this.args.ticks[this.args.ticks.length - 1];
     const lastTime = dayjs(lastTick);
-    this.lastBlock = lastTime.hour() * 10 + 9;
+    const lastDay = lastTime.date();
+
+    const dayDiff = (lastDay - firstDay) * 24 * 10;
+    this.lastBlock = dayDiff + lastTime.hour() * 10 + 9;
 
     for (let i = 0; i < this.firstBlock; i++) {
       this.timeBlocksMap.delete(i);
@@ -109,7 +113,9 @@ export default class Task extends Component<Signature> {
     for (let i = 0; i < this.args.ticks.length; i++) {
       const tick = this.args.ticks[i];
       const tickTime = dayjs(tick);
-      const tickHour = tickTime.hour();
+      const tickDay = tickTime.date();
+      const dayDiff = (tickDay - firstDay) * 24;
+      const tickHour = dayDiff + tickTime.hour();
 
       // we want 10 blocks per hour
       for (let j = 0; j < 10; j++) {
@@ -265,12 +271,13 @@ export default class Task extends Component<Signature> {
   mouseDown(block: TimeBlock, e: MouseEvent) {
     if (e.buttons === 1) {
       this.startMouseGlide = true;
-      block.checked = this.mouseModeChecked;
+      block.checked = this.mouseModeChecked ?? !block.checked;
     }
   }
   @action
   async mouseUp(block: TimeBlock, e: MouseEvent) {
-    // no mouse clicks and was gliding
+    // reset
+    this.mouseModeChecked = undefined;
 
     if (e.shiftKey && this.lastBlockClicked !== -1) {
       // if shift-clicking then select a range
@@ -284,13 +291,10 @@ export default class Task extends Component<Signature> {
           block.selected = true;
         }
       }
-
-      // this.lastBlockClicked = -1;
     } else if (e.buttons === 0) {
       this.lastBlockClicked = block.timeBlock;
 
       if (this.startMouseGlide) {
-        this.mouseModeChecked = true;
         this.startMouseGlide = false;
       }
       await this.updateTimeBlocks();
@@ -299,10 +303,14 @@ export default class Task extends Component<Signature> {
 
   @action
   mouseEnter(block: TimeBlock, e: MouseEvent) {
-    if (!this.startMouseGlide) {
-      this.mouseModeChecked = !block.checked;
-    } else if (e.buttons === 1) {
+    if (
+      this.startMouseGlide &&
+      e.buttons === 1 &&
+      this.mouseModeChecked !== undefined
+    ) {
       block.checked = this.mouseModeChecked;
+    } else if (e.buttons === 0) {
+      this.mouseModeChecked = !block.checked;
     }
   }
 
@@ -473,7 +481,7 @@ export default class Task extends Component<Signature> {
         {{#each this.squares key="timeBlock" as |block|}}
           {{! template-lint-disable no-pointer-down-event-binding }}
           <div
-            class="square text-center text-[5px] border-r-[1px] select-none border-base-300
+            class="square text-center text-[7px] border-r-[1px] select-none border-base-300
               {{this.blockClass block}}"
             role="button"
             tabindex="0"

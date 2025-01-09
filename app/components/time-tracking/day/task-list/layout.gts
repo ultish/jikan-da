@@ -253,7 +253,7 @@ export default class TaskListLayout extends Component<Signature> {
           text-align: center;
         }
         .tick-hour:nth-child(odd) {
-          background-color: oklch(var(--b2)/0.3)
+          background-color: oklch(var(--b2)/0.45)
         }
       }
       #time-container {
