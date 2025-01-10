@@ -247,7 +247,7 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1(postcss@8.4.49)(typescript@5.7.2)(webpack@4.47.0)
       prettier:
-        specifier: ^3.3.3
+        specifier: ^3.4.2
         version: 3.4.2
       prettier-plugin-ember-template-tag:
         specifier: ^2.0.4

@@ -14,6 +14,7 @@ import type AuthService from 'jikan-da/services/auth';
 import type RouterService from '@ember/routing/router-service';
 import { on } from '@ember/modifier';
 import { action } from '@ember/object';
+import config from 'jikan-da/config/environment';
 
 @RouteTemplate
 export default class ApplicationTemplate extends Component {
@@ -136,6 +137,11 @@ export default class ApplicationTemplate extends Component {
         <p>much time</p>
       </aside>
       <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+        ServerURL:
+        {{config.serverURL}}
+        <br />
+        Keycloak URL:
+        {{config.keycloakURL}}
         <PhPawPrint class="w-6 h-6" />
       </nav>
     </footer>

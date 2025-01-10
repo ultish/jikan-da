@@ -6,6 +6,11 @@ module.exports = function (environment) {
     environment,
     rootURL: '/',
     locationType: 'history',
+
+    serverURL: 'http://localhost/graphql',
+    websocketURL: 'ws://localhost/subscriptions',
+    keycloakURL: 'https://192.168.1.41:18443/realms/jxhui',
+
     EmberENV: {
       EXTEND_PROTOTYPES: false,
       FEATURES: {
@@ -40,8 +45,11 @@ module.exports = function (environment) {
     ENV.APP.autoboot = false;
   }
 
-  if (environment === 'production') {
+  if (environment === 'rancher') {
     // here you can enable a production-specific feature
+    serverURL: 'https://192.168.1.41:8443/graphql';
+    websocketURL: 'wss://192.168.1.41:8443/subscriptions';
+    keycloakURL: 'https://192.168.1.41:18443/realms/jxhui';
   }
 
   return ENV;

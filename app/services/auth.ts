@@ -3,6 +3,8 @@ import { tracked } from '@glimmer/tracking';
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 import { action } from '@ember/object';
 
+import config from 'jikan-da/config/environment';
+
 export default class AuthService extends Service {
   @tracked
   declare currentUser: any | undefined;
@@ -18,7 +20,7 @@ export default class AuthService extends Service {
     super(...arguments);
 
     this.userManager = new UserManager({
-      authority: 'https://192.168.1.41:18443/realms/jxhui',
+      authority: config.keycloakURL,
       client_id: 'jikan-da',
       redirect_uri: `${window.location.origin}/callback`,
       response_type: 'code',

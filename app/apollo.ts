@@ -1,5 +1,6 @@
 // needed for Vite + glimmer-apollo, see https://github.com/josemarluedke/glimmer-apollo/issues/97
 import 'glimmer-apollo/environment-ember';
+import config from 'jikan-da/config/environment';
 
 import { setClient } from 'glimmer-apollo';
 import {
@@ -19,7 +20,7 @@ export default function setupApolloClient(
   // WebSocket connection to the API
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: 'wss://192.168.1.41:8443/graphql',
+      url: config.websocketURL,
 
       // this is used to add user-id/Authorization to the websocket header on init as the websocket conn doesn't allow custom headers
       connectionParams: () => {
@@ -32,10 +33,9 @@ export default function setupApolloClient(
       },
     })
   );
-
   // HTTP connection to the API
   const httpLink = new HttpLink({
-    uri: 'https://192.168.1.41:8443/graphql',
+    uri: config.serverURL,
     headers: {
       // 'user-id': '6768f8e49ce0e819a8f73dfb',
       Authorization: `Bearer ${authToken}`,
