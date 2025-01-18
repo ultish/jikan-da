@@ -7,7 +7,8 @@ module.exports = function (environment) {
     rootURL: '/',
     locationType: 'history',
 
-    serverURL: 'http://localhost/graphql',
+    // serverURL: 'http://localhost/graphql',
+    serverURL: 'http://localhost:3002/graphql',
     websocketURL: 'ws://localhost/subscriptions',
     keycloakURL: 'https://192.168.1.41:18443/realms/jxhui',
 
