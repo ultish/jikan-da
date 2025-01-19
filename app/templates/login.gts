@@ -17,18 +17,18 @@ import { action } from '@ember/object';
 
 @RouteTemplate
 export default class ApplicationTemplate extends Component {
-  // testSub2 = useSubscription<
-  //   TrackedDayChangedSubscription,
-  //   TrackedDayChangedSubscriptionVariables
-  // >(this, () => [
-  //   SUBSCRIBE_TRACKED_DAY_CHANGES,
-  //   {
-  //     variables: {
-  //       month: 12,
-  //       year: 2024,
-  //     },
-  //   },
-  // ]);
+  testSub2 = useSubscription<
+    TrackedDayChangedSubscription,
+    TrackedDayChangedSubscriptionVariables
+  >(this, () => [
+    SUBSCRIBE_TRACKED_DAY_CHANGES,
+    {
+      variables: {
+        month: 12,
+        year: 2024,
+      },
+    },
+  ]);
 
   @service declare auth: AuthService;
   @service declare router: RouterService;
@@ -53,7 +53,7 @@ export default class ApplicationTemplate extends Component {
     >
       Login
     </button>
-    {{!-- {{#if this.testSub2.loading}}
+    {{#if this.testSub2.loading}}
       Connecting..
     {{else if this.testSub2.error}}
       Error!:
@@ -63,6 +63,6 @@ export default class ApplicationTemplate extends Component {
         New Message:
         {{this.testSub2.data.trackedDayChanged}}
       </div>
-    {{/if}} --}}
+    {{/if}}
   </template>
 }

@@ -26,6 +26,9 @@ importers:
       dayjs-plugin-utc:
         specifier: ^0.1.2
         version: 0.1.2
+      graphql-sse:
+        specifier: ^2.5.4
+        version: 2.5.4(graphql@16.10.0)
       oidc-client-ts:
         specifier: ^3.1.0
         version: 3.1.0
@@ -185,7 +188,7 @@ importers:
         version: 0.3.0(@babel/core@7.26.0)
       ember-primitives:
         specifier: ^0.27.2
-        version: 0.27.2(tofextsuoausugzkqlof42qmre)
+        version: 0.27.2(ee240a2838ba79a367cf3ea321ad2de1)
       ember-qunit:
         specifier: ^8.1.1
         version: 8.1.1(@ember/test-helpers@4.0.4(@babel/core@7.26.0)(@glint/template@1.5.0)(ember-source@6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@4.47.0)))(@glint/template@1.5.0)(ember-source@6.0.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.0)(rsvp@4.8.5)(webpack@4.47.0))(qunit@2.23.1)
@@ -4996,6 +4999,12 @@ packages:
     resolution: {integrity: sha512-p+XPfS4q7aIpKVcgmnZKhMNqhltk20hfXtkaIkTfjjmiKMJ5xrt5c743cL03y/K7y1rg3WrIC49xGiEQ4mxdNw==}
     peerDependencies:
       graphql: 14 - 16
+
+  graphql-sse@2.5.4:
+    resolution: {integrity: sha512-8PIGHQPv1vokYboL8KsoBomvyJCUMJCAwSp5f+bR2qVoYtPo7CYowrYV7LFiXuiirX0cxVzgUBFNa5BaI4rZ2A==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      graphql: '>=0.11 <=16'
 
   graphql-tag@2.12.6:
     resolution: {integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==}
@@ -13360,7 +13369,7 @@ snapshots:
       - '@babel/core'
       - supports-color
 
-  ember-primitives@0.27.2(tofextsuoausugzkqlof42qmre):
+  ember-primitives@0.27.2(ee240a2838ba79a367cf3ea321ad2de1):
     dependencies:
       '@babel/runtime': 7.26.0
       '@ember/test-waiters': 3.1.0
@@ -14767,6 +14776,10 @@ snapshots:
       graphql: 16.10.0
     transitivePeerDependencies:
       - encoding
+
+  graphql-sse@2.5.4(graphql@16.10.0):
+    dependencies:
+      graphql: 16.10.0
 
   graphql-tag@2.12.6(graphql@16.10.0):
     dependencies:

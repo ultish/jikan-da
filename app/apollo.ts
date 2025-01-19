@@ -8,31 +8,49 @@ import {
   InMemoryCache,
   split,
   HttpLink,
+  type Operation,
+  type FetchResult,
+  ApolloLink,
 } from '@apollo/client/core';
-import { getMainDefinition } from '@apollo/client/utilities';
+
+import { print } from '@apollo/client/utilities/index';
+import { getMainDefinition, Observable } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
+import { createClient as createSseClient } from 'graphql-sse';
+import type { ExecutionResult } from 'graphql';
 
 export default function setupApolloClient(
   context: object,
   authToken: string
 ): void {
-  // WebSocket connection to the API
-  const wsLink = new GraphQLWsLink(
-    createClient({
-      url: config.websocketURL,
+  const sseClient = createSseClient({
+    url: config.sseURL,
+    // optional parameters
+    headers: {
+      Accept: 'text/event-stream',
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache',
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
 
-      // this is used to add user-id/Authorization to the websocket header on init as the websocket conn doesn't allow custom headers
-      connectionParams: () => {
-        return {
-          headers: {
-            // 'user-id': '6768f8e49ce0e819a8f73dfb',
-          },
-          Authorization: `Bearer ${authToken}`,
-        };
-      },
-    })
-  );
+  // WebSocket connection to the API
+  // const wsLink = new GraphQLWsLink(
+  //   createClient({
+  //     url: config.websocketURL,
+
+  //     // this is used to add user-id/Authorization to the websocket header on init as the websocket conn doesn't allow custom headers
+  //     connectionParams: () => {
+  //       return {
+  //         headers: {
+  //           // 'user-id': '6768f8e49ce0e819a8f73dfb',
+  //         },
+  //         Authorization: `Bearer ${authToken}`,
+  //       };
+  //     },
+  //   })
+  // );
   // HTTP connection to the API
   const httpLink = new HttpLink({
     uri: config.serverURL,
@@ -45,6 +63,24 @@ export default function setupApolloClient(
   // Cache implementation
   const cache = new InMemoryCache();
 
+  // Create a custom SSE link extending ApolloLink
+  const sseLink = new ApolloLink((operation: Operation) => {
+    return new Observable<FetchResult>((observer: any) => {
+      const unsubscribe = sseClient.subscribe(
+        {
+          ...operation,
+          query: print(operation.query),
+        },
+        {
+          next: (data) => observer.next(data),
+          error: (error) => observer.error(error),
+          complete: () => observer.complete(),
+        }
+      );
+      return () => unsubscribe();
+    });
+  });
+
   // Split HTTP link and WebSockete link
   const splitLink = split(
     ({ query }) => {
@@ -54,7 +90,7 @@ export default function setupApolloClient(
         definition.operation === 'subscription'
       );
     },
-    wsLink,
+    sseLink,
     httpLink
   );
 

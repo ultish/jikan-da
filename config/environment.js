@@ -9,7 +9,8 @@ module.exports = function (environment) {
 
     // serverURL: 'http://localhost/graphql',
     serverURL: 'http://localhost:3002/graphql',
-    websocketURL: 'ws://localhost/subscriptions',
+    // websocketURL: 'ws://localhost/subscriptions',
+    sseURL: 'http://localhost/graphql',
     keycloakURL: 'https://192.168.1.41:18443/realms/jxhui',
 
     EmberENV: {
