@@ -46,7 +46,15 @@ export default class TabulatorComponent<T> extends Component<Signature<T>> {
       //   },
       // ],
     });
+
+    this.table?.setData;
   });
+
+  get data() {
+    const d = this.args.tableData;
+    this.table?.setData(d);
+    return d;
+  }
 
   <template>
     {{!prettier-ignore}}
@@ -60,6 +68,7 @@ export default class TabulatorComponent<T> extends Component<Signature<T>> {
       </div>
 
     </div>
+    {{this.data}}
     Sup
   </template>
 }
