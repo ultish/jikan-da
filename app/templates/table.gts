@@ -74,12 +74,19 @@ export default class TableTemplate extends Component {
     } else {
       const cached = this.trackedDaysQuery.data?.trackedDays ?? [];
 
-      cached.map((c) => {
-        // Creating a proxy to allow mutability
-        return this.createWritableProxy(c);
-      });
+      // either proxy, or clone. not sure what is ideal. apollo query will
+      // Object.freeze your data so you don't modify cache by accident.
 
-      // structuredClone is a modern deep clone, would need to test performance.
+      // proxying data (urgh changesets) requires more complexity becos
+      // we'll need to deal with nested objects, hence nested proxies.
+      // this is complex, changeset-tree hell!
+      // return cached.map((c) => {
+      //   // Creating a proxy to allow mutability
+      //   return this.createWritableProxy(c);
+      // });
+
+      // structuredClone is a modern deep clone. this works but would
+      // need to test performance when we have many objects
       return structuredClone(cached);
     }
   }
@@ -117,16 +124,40 @@ export default class TableTemplate extends Component {
 
   get data() {
     console.log('data');
-    // for (let i = 0; i < 10; i++) {
-    //   this.store.push({
-    //     id: i,
-    //     name: `hello ${i}`,
-    //     age: Math.random() * 100,
-    //     col: 'yellow',
-    //     dob: '31/01/1999',
-    //   });
-    // }
-    return this.store;
+    for (let i = 0; i < 300000; i++) {
+      let sub: any[] = [];
+      for (let j = 0; j < Math.random() * 100; j++) {
+        sub.push({
+          id: `sub-${j}`,
+          name: `sub-name-${j}`,
+        });
+      }
+
+      let x = {
+        id: i,
+        name: `hello ${i}`,
+        age: Math.random() * 100,
+        col: 'yellow',
+        dob: '31/01/1999',
+        nest1: {
+          name: 'sub1',
+          nest2: {
+            name: 'sub2',
+            nest3: {
+              name: 'sub3',
+              items: sub,
+              length: sub.length,
+            },
+          },
+        },
+      };
+      this.store.push(Object.freeze(x));
+    }
+    console.time('myFunctionTimer');
+    const cloned = structuredClone(this.store);
+    console.timeEnd('myFunctionTimer');
+
+    return cloned;
   }
 
   @action
@@ -158,6 +189,28 @@ export default class TableTemplate extends Component {
       field: 'year',
     },
   ];
+
+  columns2 = [
+    //Define Table Columns
+    { title: 'Name', field: 'name', width: 150 },
+    { title: 'Age', field: 'age' },
+    { title: 'Favourite Color', field: 'col' },
+    {
+      title: 'Date Of Birth',
+      field: 'dob',
+      sorter: 'date',
+      hozAlign: 'center',
+    },
+    {
+      title: 'Sub3 Length',
+      field: 'nest1.nest2.nest3.length',
+    },
+    {
+      title: 'Subs',
+      field: 'nest1.nest2.nest3.items',
+    },
+  ];
+
   <template>
     {{pageTitle "table"}}
 
@@ -181,6 +234,12 @@ export default class TableTemplate extends Component {
     <h1 class="text-3xl font-bold underline" {{this.subscribeToTrackedDays}}>
       Table
     </h1>
+
+    <Tabulator
+      @tableData={{this.data}}
+      @columns={{this.columns2}}
+      class="test-table"
+    />
 
     <Tabulator
       @tableData={{this.days}}

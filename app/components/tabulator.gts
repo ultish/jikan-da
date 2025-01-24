@@ -32,7 +32,7 @@ export default class TabulatorComponent<T> extends Component<Signature<T>> {
       data: this.args.tableData, //assign data to table
       layout: 'fitColumns', //fit columns to width of table (optional)
       columns: this.args.columns,
-      reactiveData: true,
+      // reactiveData: true,
       // columns: [
       //   //Define Table Columns
       //   { title: 'Name', field: 'name', width: 150 },
@@ -64,11 +64,11 @@ export default class TabulatorComponent<T> extends Component<Signature<T>> {
       }
     </style>
     <div ...attributes>
+      <span>{{this.data.length}}</span>
       <div class="my-tabulator" {{this.tableMe}}>
       </div>
 
     </div>
-    {{this.data}}
     Sup
   </template>
 }
