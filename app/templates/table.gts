@@ -2,6 +2,7 @@ import { pageTitle } from 'ember-page-title';
 import { RouteTemplate } from 'jikan-da/utils/ember-route-template';
 import Component from '@glimmer/component';
 import Tabulator from 'jikan-da/components/tabulator';
+import Gridjs from 'jikan-da/components/gridjs';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { on } from '@ember/modifier';
@@ -234,6 +235,8 @@ export default class TableTemplate extends Component {
     <h1 class="text-3xl font-bold underline" {{this.subscribeToTrackedDays}}>
       Table
     </h1>
+
+    <Gridjs />
 
     <Tabulator
       @tableData={{this.data}}

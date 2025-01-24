@@ -99,6 +99,7 @@
     "globals": "^15.14.0",
     "graphql": "^16.10.0",
     "graphql-ws": "^5.16.0",
+    "gridjs": "^6.2.0",
     "loader.js": "^4.7.0",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",

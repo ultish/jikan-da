@@ -13,5 +13,7 @@ module.exports = function (defaults) {
     'node_modules/tabulator-tables/dist/css/tabulator_materialize.min.css'
   );
 
+  app.import('node_modules/gridjs/dist/theme/mermaid.css');
+
   return maybeEmbroider(app);
 };
