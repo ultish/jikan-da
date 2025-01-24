@@ -18,6 +18,8 @@ import {
   SUBSCRIBE_TRACKED_DAY_CHANGES,
 } from 'jikan-da/graphql/tracked-days';
 
+import { h, render } from 'preact';
+
 @RouteTemplate
 export default class TableTemplate extends Component {
   @tracked
