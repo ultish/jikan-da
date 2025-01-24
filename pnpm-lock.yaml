@@ -123,6 +123,9 @@ importers:
       '@types/rsvp':
         specifier: ^4.0.9
         version: 4.0.9
+      '@types/tabulator-tables':
+        specifier: ^6.2.3
+        version: 6.2.3
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.17.0
         version: 8.18.1(@typescript-eslint/parser@8.18.1(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2))(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
@@ -270,6 +273,9 @@ importers:
       stylelint-prettier:
         specifier: ^4.1.0
         version: 4.1.0(prettier@3.4.2)(stylelint@15.11.0(typescript@5.7.2))
+      tabulator-tables:
+        specifier: ^6.3.1
+        version: 6.3.1
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -2214,6 +2220,9 @@ packages:
 
   '@types/symlink-or-copy@1.2.2':
     resolution: {integrity: sha512-MQ1AnmTLOncwEf9IVU+B2e4Hchrku5N67NkgcAHW0p3sdzPe0FNMANxEm6OJUzPniEQGkeT3OROLlCwZJLWFZA==}
+
+  '@types/tabulator-tables@6.2.3':
+    resolution: {integrity: sha512-ZeRF/WvtwFXml/4aT7kzfkHEiwbjHZdlIsjrgqcfdmpkl9GQ9XBHY6u9BblUaHX4NUiOlBeHrQKjvai6/bQH0g==}
 
   '@types/ws@8.5.13':
     resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
@@ -7649,6 +7658,9 @@ packages:
   tabster@8.2.0:
     resolution: {integrity: sha512-Gvplk/Yl/12aVFA6FPOqGcq31Qv8hbPfYO0N+6IxrRgRT6eSLsipT6gkZBYjyOwGsp6BD5XlZAuJgupfG/GHoA==}
 
+  tabulator-tables@6.3.1:
+    resolution: {integrity: sha512-qFW7kfadtcaISQIibKAIy0f3eeIXUVi8242Vly1iJfMD79kfEGzfczNuPBN/80hDxHzQJXYbmJ8VipI40hQtfA==}
+
   tailwindcss@3.4.17:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
     engines: {node: '>=14.0.0'}
@@ -10790,6 +10802,8 @@ snapshots:
       '@types/send': 0.17.4
 
   '@types/symlink-or-copy@1.2.2': {}
+
+  '@types/tabulator-tables@6.2.3': {}
 
   '@types/ws@8.5.13':
     dependencies:
@@ -17681,6 +17695,8 @@ snapshots:
     dependencies:
       keyborg: 2.6.0
       tslib: 2.8.1
+
+  tabulator-tables@6.3.1: {}
 
   tailwindcss@3.4.17:
     dependencies:

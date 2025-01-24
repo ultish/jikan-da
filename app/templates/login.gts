@@ -2,9 +2,9 @@ import { pageTitle } from 'ember-page-title';
 import { RouteTemplate } from 'jikan-da/utils/ember-route-template';
 import Component from '@glimmer/component';
 import { useSubscription } from 'glimmer-apollo';
-import type {
-  TrackedDayChangedSubscription,
-  TrackedDayChangedSubscriptionVariables,
+import {
+  type TrackedDayChangedSubscription,
+  type TrackedDayChangedSubscriptionVariables,
 } from 'jikan-da/graphql/types/graphql';
 import { SUBSCRIBE_TRACKED_DAY_CHANGES } from 'jikan-da/graphql/tracked-days';
 
@@ -53,7 +53,9 @@ export default class ApplicationTemplate extends Component {
     >
       Login
     </button>
-    {{#if this.testSub2.loading}}
+
+    {{! Sub2 }}
+    {{!-- {{#if this.testSub2.loading}}
       Connecting..
     {{else if this.testSub2.error}}
       Error!:
@@ -63,6 +65,6 @@ export default class ApplicationTemplate extends Component {
         New Message:
         {{this.testSub2.data.trackedDayChanged}}
       </div>
-    {{/if}}
+    {{/if}} --}}
   </template>
 }
