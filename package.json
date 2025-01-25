@@ -57,6 +57,7 @@
     "@tailwindcss/typography": "^0.5.15",
     "@tsconfig/ember": "^3.0.8",
     "@types/eslint__js": "^8.42.3",
+    "@types/lodash": "^4.17.14",
     "@types/qunit": "^2.19.12",
     "@types/rsvp": "^4.0.9",
     "@types/tabulator-tables": "^6.2.3",
@@ -101,6 +102,8 @@
     "graphql-ws": "^5.16.0",
     "gridjs": "^6.2.0",
     "loader.js": "^4.7.0",
+    "lodash": "^4.17.21",
+    "object-scan": "^19.0.5",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
     "preact": "^10.25.4",
@@ -142,5 +145,9 @@
     "dayjs-plugin-utc": "^0.1.2",
     "graphql-sse": "^2.5.4",
     "oidc-client-ts": "^3.1.0"
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
   }
 }

@@ -18,7 +18,13 @@ import {
   SUBSCRIBE_TRACKED_DAY_CHANGES,
 } from 'jikan-da/graphql/tracked-days';
 
-import { h, render } from 'preact';
+import { render, h } from 'preact';
+import _ from 'lodash';
+import objectScan from 'object-scan';
+
+import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
+
+import 'jikan-da/web-components/first-component';
 
 @RouteTemplate
 export default class TableTemplate extends Component {
@@ -90,7 +96,12 @@ export default class TableTemplate extends Component {
 
       // structuredClone is a modern deep clone. this works but would
       // need to test performance when we have many objects
-      return structuredClone(cached);
+
+      // return structuredClone(cached);
+
+      const x = this.extractData(cached, this.columns, 'field', 'field');
+      console.log('x', x);
+      return x;
     }
   }
 
@@ -127,7 +138,7 @@ export default class TableTemplate extends Component {
 
   get data() {
     console.log('data');
-    for (let i = 0; i < 300000; i++) {
+    for (let i = 0; i < 3000; i++) {
       let sub: any[] = [];
       for (let j = 0; j < Math.random() * 100; j++) {
         sub.push({
@@ -177,6 +188,10 @@ export default class TableTemplate extends Component {
       },
     ];
   }
+  @action
+  handleButtonClick() {
+    debugger;
+  }
 
   columns = [
     {
@@ -190,8 +205,20 @@ export default class TableTemplate extends Component {
     {
       title: 'Year',
       field: 'year',
+      formatter: (cell, formatterParams, onRender) => {
+        // we can use web components
+        return 'hello <first-component btn-class="btn btn-sm btn-primary" />';
+      },
+      cellClick: (e, cell) => {
+        this.clicked(e, cell);
+      },
     },
   ];
+
+  @action
+  clicked(e, cell) {
+    console.log(e, cell);
+  }
 
   columns2 = [
     //Define Table Columns
@@ -214,6 +241,99 @@ export default class TableTemplate extends Component {
     },
   ];
 
+  preactComponent = h('h1', null, 'Hello from Preact inside Ember!');
+
+  wtf = modifier((e) => {
+    render(this.preactComponent, e);
+  });
+
+  example = [
+    {
+      id: '123',
+      author: {
+        id: '1',
+        name: 'Paul',
+      },
+      title: 'My awesome blog post',
+      comments: [
+        {
+          id: '324',
+          commenter: {
+            id: '2',
+            name: 'Nicole',
+          },
+          replies: [
+            { id: '101', commenter: { id: '4', name: 'Alice' } },
+            { id: '102', commenter: { id: '5', name: 'Bob' } },
+          ],
+        },
+        {
+          id: '325',
+          commenter: {
+            id: '3',
+            name: 'Sam',
+          },
+          replies: [{ id: '103', commenter: { id: '6', name: 'Charlie' } }],
+        },
+      ],
+    },
+  ];
+
+  columns3 = [
+    {
+      name: 'Author',
+      property: 'author.name',
+    },
+    {
+      name: 'Title',
+      property: 'title',
+    },
+    {
+      name: 'Commenters',
+      property: 'comments.commenter.name', // Handling array of objects
+    },
+    {
+      name: 'Repliers',
+      property: 'comments.replies.commenter.name', // Handling nested arrays
+    },
+  ];
+
+  extractData = (
+    data: any[],
+    columns: any[],
+    scanProperty = 'property',
+    resultPropertyAttr = 'name'
+  ) => {
+    return data.map((d) => {
+      return columns.reduce((row, col) => {
+        // object-scan has many cool functions to flatten out deeply nested objects!
+        const values = objectScan([col[scanProperty]], {
+          useArraySelector: false,
+          rtn: 'value', // Extract values directly
+        })(d);
+        row[col[resultPropertyAttr]] =
+          values.length > 0 ? values.join(', ') : ''; // Join array elements
+        return row;
+      }, {});
+    });
+  };
+
+  get exampleFlattened() {
+    const tableRow = this.extractData(this.example, this.columns3);
+    return tableRow;
+  }
+
+  get daysFlattened() {
+    if (this.days.length) {
+      const tableRow = this.extractData(this.days, this.columns);
+
+      console.log('tableRow2', tableRow);
+      return tableRow;
+    } else {
+      return [];
+    }
+  }
+
   <template>
     {{pageTitle "table"}}
 
@@ -225,6 +345,12 @@ export default class TableTemplate extends Component {
         height: 400px
       }
     </style>
+
+    <first-component />
+
+    <div {{this.wtf}} />
+
+    <div>{{this.exampleFlattened}}</div>
 
     <button
       class="btn btn-primary btn-sm"
