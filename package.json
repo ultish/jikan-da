@@ -57,8 +57,10 @@
     "@tailwindcss/typography": "^0.5.15",
     "@tsconfig/ember": "^3.0.8",
     "@types/eslint__js": "^8.42.3",
+    "@types/lodash": "^4.17.14",
     "@types/qunit": "^2.19.12",
     "@types/rsvp": "^4.0.9",
+    "@types/tabulator-tables": "^6.2.3",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
     "@warp-drive/core-types": "~0.0.0-beta.12",
@@ -98,9 +100,13 @@
     "globals": "^15.14.0",
     "graphql": "^16.10.0",
     "graphql-ws": "^5.16.0",
+    "gridjs": "^6.2.0",
     "loader.js": "^4.7.0",
+    "lodash": "^4.17.21",
+    "object-scan": "^19.0.5",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
+    "preact": "^10.25.4",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
     "qunit": "^2.23.1",
@@ -108,6 +114,7 @@
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
     "stylelint-prettier": "^4.1.0",
+    "tabulator-tables": "^6.3.1",
     "tailwindcss": "^3.4.17",
     "tracked-built-ins": "^3.3.0",
     "tracked-toolbox": "^2.0.0",
@@ -136,6 +143,11 @@
     "d3-scale": "^4.0.2",
     "dayjs": "^1.11.13",
     "dayjs-plugin-utc": "^0.1.2",
+    "graphql-sse": "^2.5.4",
     "oidc-client-ts": "^3.1.0"
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
   }
 }
