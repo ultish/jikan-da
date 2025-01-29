@@ -17,4 +17,5 @@ Router.map(function () {
   this.route('authenticated');
   this.route('callback');
   this.route('logout-callback');
+  this.route('table');
 });

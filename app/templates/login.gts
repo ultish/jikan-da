@@ -2,9 +2,9 @@ import { pageTitle } from 'ember-page-title';
 import { RouteTemplate } from 'jikan-da/utils/ember-route-template';
 import Component from '@glimmer/component';
 import { useSubscription } from 'glimmer-apollo';
-import type {
-  TrackedDayChangedSubscription,
-  TrackedDayChangedSubscriptionVariables,
+import {
+  type TrackedDayChangedSubscription,
+  type TrackedDayChangedSubscriptionVariables,
 } from 'jikan-da/graphql/types/graphql';
 import { SUBSCRIBE_TRACKED_DAY_CHANGES } from 'jikan-da/graphql/tracked-days';
 
@@ -17,18 +17,18 @@ import { action } from '@ember/object';
 
 @RouteTemplate
 export default class ApplicationTemplate extends Component {
-  // testSub2 = useSubscription<
-  //   TrackedDayChangedSubscription,
-  //   TrackedDayChangedSubscriptionVariables
-  // >(this, () => [
-  //   SUBSCRIBE_TRACKED_DAY_CHANGES,
-  //   {
-  //     variables: {
-  //       month: 12,
-  //       year: 2024,
-  //     },
-  //   },
-  // ]);
+  testSub2 = useSubscription<
+    TrackedDayChangedSubscription,
+    TrackedDayChangedSubscriptionVariables
+  >(this, () => [
+    SUBSCRIBE_TRACKED_DAY_CHANGES,
+    {
+      variables: {
+        month: 12,
+        year: 2024,
+      },
+    },
+  ]);
 
   @service declare auth: AuthService;
   @service declare router: RouterService;
@@ -53,6 +53,8 @@ export default class ApplicationTemplate extends Component {
     >
       Login
     </button>
+
+    {{! Sub2 }}
     {{!-- {{#if this.testSub2.loading}}
       Connecting..
     {{else if this.testSub2.error}}

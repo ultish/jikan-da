@@ -16,6 +16,7 @@ interface Signature<T> {
   Blocks: {
     default: [T];
   };
+  Element: HTMLSelectElement;
 }
 
 export default class TooManyChoices<T> extends Component<Signature<T>> {
