@@ -304,6 +304,7 @@ type Query {
   timeChargeTotals(weekOfYear: WeekOfYear): [TimeChargeTotal!]
   timeCharges(chargeCodeId: ID, timeSlot: Int, trackedDayId: String): [TimeCharge!]
   trackedDay(id: ID): TrackedDay
+  trackedDays: [TrackedDay!]
   trackedDaysForMonthYear(month: Int, year: Int): [TrackedDay!]
   trackedDaysPaginated(after: String, first: Int): TrackedDayConnection
   trackedTask(trackedTaskId: ID!): TrackedTask

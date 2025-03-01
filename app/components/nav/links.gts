@@ -20,6 +20,9 @@ const NavLinks: TOC<Signature> = <template>
       <a href="/charge-codes">Charge Codes</a>
     </li>
     <li>
+      <a href="/table">Table</a>
+    </li>
+    <li>
       <NavSubLink @burgerMenu={{@burgerMenu}} />
     </li>
   </ul>

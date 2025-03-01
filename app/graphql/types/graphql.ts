@@ -415,6 +415,7 @@ export type Query = {
   timeChargeTotals?: Maybe<Array<TimeChargeTotal>>;
   timeCharges?: Maybe<Array<TimeCharge>>;
   trackedDay?: Maybe<TrackedDay>;
+  trackedDays?: Maybe<Array<TrackedDay>>;
   trackedDaysForMonthYear?: Maybe<Array<TrackedDay>>;
   trackedDaysPaginated?: Maybe<TrackedDayConnection>;
   trackedTask?: Maybe<TrackedTask>;
@@ -656,6 +657,11 @@ export type TimeChargeTotalsChangedSubscriptionVariables = Exact<{ [key: string]
 
 export type TimeChargeTotalsChangedSubscription = { __typename?: 'Subscription', timeChargeTotalsChanged?: { __typename?: 'TimeChargeTotal', id: string, value?: number | null } | null };
 
+export type TrackedDaysQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TrackedDaysQuery = { __typename?: 'Query', trackedDays?: Array<{ __typename?: 'TrackedDay', id: string, date: number, week: number, year: number }> | null };
+
 export type TrackedDayQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
@@ -861,6 +867,16 @@ export const TimeChargeTotalsChangedDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<TimeChargeTotalsChangedSubscription, TimeChargeTotalsChangedSubscriptionVariables>;
+export const TrackedDaysDocument = new TypedDocumentString(`
+    query trackedDays {
+  trackedDays {
+    id
+    date
+    week
+    year
+  }
+}
+    `) as unknown as TypedDocumentString<TrackedDaysQuery, TrackedDaysQueryVariables>;
 export const TrackedDayDocument = new TypedDocumentString(`
     query trackedDay($id: ID!) {
   trackedDay(id: $id) {

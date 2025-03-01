@@ -23,6 +23,7 @@ const documents = {
     "\n  mutation deleteQuickAction($id: ID!) {\n    deleteQuickAction(id: $id)\n  }\n": types.DeleteQuickActionDocument,
     "\n  query timeChargeTotals($weekOfYear: WeekOfYear) {\n    timeChargeTotals(weekOfYear: $weekOfYear) {\n      id\n      value\n      chargeCode {\n        id\n        name\n        sortOrder\n      }\n      trackedDay {\n        id\n        date\n        week\n      }\n    }\n  }\n": types.TimeChargeTotalsDocument,
     "\n  subscription timeChargeTotalsChanged {\n    timeChargeTotalsChanged {\n      id\n      value\n    }\n  }\n": types.TimeChargeTotalsChangedDocument,
+    "\n  query trackedDays {\n    trackedDays {\n      id\n      date\n      week\n      year\n    }\n  }\n": types.TrackedDaysDocument,
     "\n  query trackedDay($id: ID!) {\n    trackedDay(id: $id) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDayDocument,
     "\n  query trackedDaysForMonthYear($month: Int, $year: Int) {\n    trackedDaysForMonthYear(month: $month, year: $year) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.TrackedDaysForMonthYearDocument,
     "\n  mutation createTrackedDay($date: Float!, $mode: String) {\n    createTrackedDay(date: $date, mode: $mode) {\n      id\n      date\n      mode\n      week\n      year\n    }\n  }\n": types.CreateTrackedDayDocument,
@@ -66,6 +67,10 @@ export function graphql(source: "\n  query timeChargeTotals($weekOfYear: WeekOfY
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  subscription timeChargeTotalsChanged {\n    timeChargeTotalsChanged {\n      id\n      value\n    }\n  }\n"): typeof import('./graphql').TimeChargeTotalsChangedDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query trackedDays {\n    trackedDays {\n      id\n      date\n      week\n      year\n    }\n  }\n"): typeof import('./graphql').TrackedDaysDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

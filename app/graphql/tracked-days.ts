@@ -9,6 +9,17 @@ import { gql } from 'glimmer-apollo';
 //   }
 // `;
 
+export const GET_TRACKED_DAYS = gql`
+  query trackedDays {
+    trackedDays {
+      id
+      date
+      week
+      year
+    }
+  }
+`;
+
 export const GET_TRACKED_DAY_BY_ID = gql`
   query trackedDay($id: ID!) {
     trackedDay(id: $id) {

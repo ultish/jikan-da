@@ -6,7 +6,6 @@ import type {
   QueryChargeCodesArgs,
   QueryQuickActionsArgs,
   QuickActionsQuery,
-  TrackedDay,
 } from 'jikan-da/graphql/types/graphql';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
