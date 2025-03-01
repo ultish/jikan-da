@@ -12,7 +12,6 @@ import type {
 
 import { useMutation, useQuery } from 'glimmer-apollo';
 
-import TooManyChoices from 'jikan-da/components/choices';
 import {
   CREATE_CHARGE_CODE,
   GET_CHARGE_CODES,

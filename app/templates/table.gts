@@ -21,10 +21,20 @@ import {
 import { render, h } from 'preact';
 import _ from 'lodash';
 import objectScan from 'object-scan';
+import TooManyChoices from 'jikan-da/components/choices';
 
 import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
 
 import 'jikan-da/web-components/first-component';
+
+interface CC {
+  chargeCode: {
+    id: string;
+    name: string;
+    group: string | undefined;
+  };
+  selected: boolean;
+}
 
 @RouteTemplate
 export default class TableTemplate extends Component {
@@ -334,6 +344,58 @@ export default class TableTemplate extends Component {
     }
   }
 
+  get chargeCodes(): CC[] {
+    return [
+      {
+        chargeCode: {
+          id: '1',
+          name: 'Code 1',
+        },
+        selected: true,
+      },
+      {
+        chargeCode: {
+          id: '2',
+          name: 'Code 2',
+          group: 'Group 1',
+        },
+        selected: false,
+      },
+      {
+        chargeCode: {
+          id: '3',
+          name: 'Code 3',
+          group: 'Group 2',
+        },
+        selected: true,
+      },
+      {
+        chargeCode: {
+          id: '4',
+          name: 'Code 4',
+          group: 'Group 2',
+        },
+        selected: false,
+      },
+      {
+        chargeCode: {
+          id: '5',
+          name: 'Code 5',
+          group: 'Group 3',
+        },
+        selected: true,
+      },
+      {
+        chargeCode: {
+          id: '6',
+          name: 'Code 6',
+          group: 'Group 3',
+        },
+        selected: false,
+      },
+    ];
+  }
+
   <template>
     {{pageTitle "table"}}
 
@@ -364,8 +426,10 @@ export default class TableTemplate extends Component {
       Table
     </h1>
 
+    <h1>Gridjs</h1>
     <Gridjs />
 
+    <h1>Tabulator</h1>
     <Tabulator
       @tableData={{this.data}}
       @columns={{this.columns2}}
@@ -377,5 +441,12 @@ export default class TableTemplate extends Component {
       @columns={{this.columns}}
       class="test-table"
     />
+
+    <TooManyChoices @choices={{this.chargeCodes}} as |cc|>
+      <option
+        selected={{if cc.selected "selected"}}
+        value={{cc.chargeCode.id}}
+      >{{cc.chargeCode.name}}</option>
+    </TooManyChoices>
   </template>
 }

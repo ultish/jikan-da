@@ -4,9 +4,18 @@ import { modifier } from 'ember-modifier';
 import { runTask } from 'ember-lifeline';
 import { Promise } from 'rsvp';
 
+interface X {
+  group?: string | undefined | null;
+}
+
+interface Choice<T> {
+  chargeCode: T;
+  selected: boolean;
+}
+
 interface Signature<T> {
   Args: {
-    choices: T[];
+    choices: Choice<T>[];
     items?: InputChoice[];
     onAdd?: (detail: any) => void;
     onRemove?: (detail: any) => void;
@@ -14,12 +23,14 @@ interface Signature<T> {
     placeholder?: string;
   };
   Blocks: {
-    default: [T];
+    default: [Choice<T>];
   };
   Element: HTMLSelectElement;
 }
 
-export default class TooManyChoices<T> extends Component<Signature<T>> {
+export default class TooManyChoices<T extends X> extends Component<
+  Signature<T>
+> {
   CHOICES_CLASS_NAMES = {
     containerOuter: ['choices'],
     containerInner: ['choices__inner', 'custom_choices__inner'], // custom class
@@ -90,34 +101,41 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
       const { detail } = p;
       this.args.onRemove?.(detail);
     };
-    this.ele?.addEventListener('addItem', addListener);
-    this.ele?.addEventListener('removeItem', removeListener);
+
+    this.ele?.addEventListener('addItem', addListener as EventListener);
+    this.ele?.addEventListener('removeItem', removeListener as EventListener);
 
     return () => {
-      this.ele?.removeEventListener(addListener);
-      this.ele?.removeEventListener(removeListener);
+      this.ele?.removeEventListener('addItem', addListener as EventListener);
+      this.ele?.removeEventListener(
+        'removeItem',
+        removeListener as EventListener
+      );
     };
   });
 
   instance: Choices | undefined;
 
   get choices() {
-    const groups = this.args.choices.reduce((acc, c) => {
-      const { chargeCode } = c;
-      // Check if group already exists
-      const group = chargeCode.group ?? 'Ungrouped';
-      if (!acc[group]) {
-        acc[group] = { name: group, choices: [] };
-      }
-      // Push the choice to the corresponding group
-      acc[group].choices.push(c);
+    const groups = this.args.choices.reduce(
+      (acc, c) => {
+        const { chargeCode } = c;
+        // Check if group already exists
+        const group = chargeCode.group ?? 'Ungrouped';
+        if (!acc[group]) {
+          acc[group] = { name: group, choices: [] };
+        }
+        // Push the choice to the corresponding group
+        acc[group].choices.push(c);
 
-      return acc;
-    }, {});
+        return acc;
+      },
+      {} as Record<string, { name: string; choices: Choice<T>[] }>
+    );
 
     runTask(this, () => this.instance?.refresh());
     const groupedChoices = Object.values(groups);
-    // return this.args.choices;
+
     return groupedChoices;
   }
 
@@ -211,6 +229,7 @@ export default class TooManyChoices<T> extends Component<Signature<T>> {
       class="form-control"
       {{this.makeChoices}}
       data-placeholder={{@placeholder}}
+      aria-label="select choices"
     >
       {{!-- <optgroup label="Dev">
         {{#each this.choices as |c|}}
