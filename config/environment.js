@@ -7,11 +7,13 @@ module.exports = function (environment) {
     rootURL: '/',
     locationType: 'history',
 
-    serverURL: 'http://localhost/graphql',
+    serverURL: 'http://localhost:8080/graphql',
     // serverURL: 'http://localhost:3002/graphql',
-    websocketURL: 'ws://localhost/subscriptions',
-    sseURL: 'http://localhost/graphql',
+    websocketURL: 'ws://localhost:8080/subscriptions',
+    sseURL: 'http://localhost:8080/graphql',
     keycloakURL: 'https://192.168.1.41:18443/realms/jxhui',
+
+    ignoreSecurity: true,
 
     EmberENV: {
       EXTEND_PROTOTYPES: false,

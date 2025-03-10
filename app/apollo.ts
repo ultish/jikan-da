@@ -22,17 +22,23 @@ import type { ExecutionResult } from 'graphql';
 
 export default function setupApolloClient(
   context: object,
-  authToken: string
+  authToken: string | undefined = undefined
 ): void {
+  const headers = {
+    Accept: 'text/event-stream',
+    Connection: 'keep-alive',
+    'Cache-Control': 'no-cache',
+    Authorization: '',
+  };
+
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`;
+  }
+
   const sseClient = createSseClient({
     url: config.sseURL,
     // optional parameters
-    headers: {
-      Accept: 'text/event-stream',
-      Connection: 'keep-alive',
-      'Cache-Control': 'no-cache',
-      Authorization: `Bearer ${authToken}`,
-    },
+    headers,
   });
 
   // WebSocket connection to the API

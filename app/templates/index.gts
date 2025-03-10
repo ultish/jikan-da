@@ -9,8 +9,8 @@ import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import { modifier } from 'ember-modifier';
-import { TrackedObject } from 'tracked-built-ins';
 import { tracked } from '@glimmer/tracking';
+import config from 'jikan-da/config/environment';
 
 class Wow {
   @tracked x = 0;
@@ -115,6 +115,8 @@ export default class ApplicationTemplate extends Component {
               {{role}}
               <br />
             {{/each}}
+          {{else if config.ignoreSecurity}}
+            <h1 class="mb-5 text-5xl font-bold">Hello 👋 no security</h1>
           {{else}}
             <h1 class="mb-5 text-5xl font-bold">Hello 👋</h1>
             <button
