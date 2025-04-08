@@ -41,6 +41,7 @@ export default class ThemeButtons extends Component<Signature> {
   }
 
   willDestroy(): void {
+    super.willDestroy(...arguments);
     window.removeEventListener('storage', this.storageListener);
   }
 

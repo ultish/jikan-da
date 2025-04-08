@@ -82,7 +82,7 @@ export default class TaskListLayout extends Component<Signature> {
           console.log('tracked task query');
         },
       },
-    ]
+    ],
   );
 
   // So important for not refreshing the display!
@@ -213,7 +213,7 @@ export default class TaskListLayout extends Component<Signature> {
               variables: vars,
               data: {
                 trackedTasks: existingTasks.filter(
-                  (t) => t.id !== result.data?.deleteTrackedTask
+                  (t) => t.id !== result.data?.deleteTrackedTask,
                 ),
               },
             });
@@ -270,6 +270,7 @@ export default class TaskListLayout extends Component<Signature> {
             @weight="duotone"
             @color="darkorchid"
           />
+
           <span class="grow">Tracked Tasks</span>
           <button
             type="button"

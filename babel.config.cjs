@@ -41,9 +41,6 @@ module.exports = {
         regenerator: false,
       },
     ],
-
-    require.resolve('ember-concurrency/async-arrow-task-transform'),
-
     ...babelCompatSupport(),
   ],
 

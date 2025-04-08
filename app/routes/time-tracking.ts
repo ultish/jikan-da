@@ -12,7 +12,7 @@ export default class TimeTrackingRoute extends Route {
   async beforeModel() {
     if (!this.auth.isAuthenticated && !config.ignoreSecurity) {
       console.log('not authenticated');
-      this.router.transitionTo('application');
+      await this.router.transitionTo('application');
     }
   }
 

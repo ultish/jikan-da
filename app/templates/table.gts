@@ -149,7 +149,7 @@ export default class TableTemplate extends Component {
   get data() {
     console.log('data');
     for (let i = 0; i < 3000; i++) {
-      let sub: any[] = [];
+      const sub: any[] = [];
       for (let j = 0; j < Math.random() * 100; j++) {
         sub.push({
           id: `sub-${j}`,
@@ -157,7 +157,7 @@ export default class TableTemplate extends Component {
         });
       }
 
-      let x = {
+      const x = {
         id: i,
         name: `hello ${i}`,
         age: Math.random() * 100,
