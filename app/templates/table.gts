@@ -354,9 +354,13 @@ export default class TableTemplate extends Component {
             useArraySelector: false,
             rtn: 'value', // Extract values directly
           })(d);
+
+          // store the value in the row object using the field name
           const key = col[resultPropertyAttr];
           row[key] =
-            Array.isArray(values) && values.length > 0 ? values.join(', ') : '';
+            Array.isArray(values) && values.length > 0
+              ? values.sort().join(', ')
+              : '';
           return row;
         },
         {} as Record<string, string>,
@@ -479,6 +483,14 @@ export default class TableTemplate extends Component {
     <h1>
       Tabulator
     </h1>
+    <h2>
+      Flattened Data
+    </h2>
+    <Tabulator
+      @tableData={{this.exampleFlattened}}
+      @columns={{this.columns3}}
+      class="test-table"
+    />
     <Tabulator
       @tableData={{this.data}}
       @columns={{this.columns2}}
@@ -491,14 +503,6 @@ export default class TableTemplate extends Component {
       class="test-table"
     />
 
-    <h2>
-      Flattened Data
-    </h2>
-    <Tabulator
-      @tableData={{this.exampleFlattened}}
-      @columns={{this.columns3}}
-      class="test-table"
-    />
     <TooManyChoices @choices={{this.chargeCodes}} as |cc|>
       <option selected={{if cc.selected "selected"}} value={{cc.chargeCode.id}}>
         {{cc.chargeCode.name}}
