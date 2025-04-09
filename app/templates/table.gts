@@ -27,6 +27,34 @@ import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
 
 import 'jikan-da/web-components/first-component';
 
+interface Example {
+  id: string;
+  author: {
+    id: string;
+    name: string;
+  };
+  title: string;
+  comments: {
+    id: string;
+    commenter: {
+      id: string;
+      name: string;
+    };
+    replies: {
+      id: string;
+      commenter: {
+        id: string;
+        name: string;
+      };
+    }[];
+  }[];
+}
+
+interface ColumnScan {
+  property: string;
+  title: string;
+  field: string;
+}
 interface CC {
   chargeCode: {
     id: string;
@@ -257,7 +285,7 @@ export default class TableTemplate extends Component {
     render(this.preactComponent, e);
   });
 
-  example = [
+  example: Example[] = [
     {
       id: '123',
       author: {
@@ -289,47 +317,60 @@ export default class TableTemplate extends Component {
     },
   ];
 
-  columns3 = [
+  columns3: ColumnScan[] = [
     {
-      name: 'Author',
       property: 'author.name',
+      title: 'Author',
+      field: 'author',
     },
     {
-      name: 'Title',
       property: 'title',
+      title: 'Title',
+      field: 'title',
     },
     {
-      name: 'Commenters',
       property: 'comments.commenter.name', // Handling array of objects
+      title: 'Commenters',
+      field: 'commenters',
     },
     {
-      name: 'Repliers',
       property: 'comments.replies.commenter.name', // Handling nested arrays
+      title: 'Repliers',
+      field: 'repliers',
     },
   ];
 
-  extractData = (
-    data: any[],
-    columns: any[],
-    scanProperty = 'property',
-    resultPropertyAttr = 'name'
-  ) => {
+  extractData<T>(
+    data: T[],
+    columns: Array<ColumnScan>,
+    scanProperty: keyof ColumnScan = 'property',
+    resultPropertyAttr: keyof ColumnScan = 'field',
+  ) {
     return data.map((d) => {
-      return columns.reduce((row, col) => {
-        // object-scan has many cool functions to flatten out deeply nested objects!
-        const values = objectScan([col[scanProperty]], {
-          useArraySelector: false,
-          rtn: 'value', // Extract values directly
-        })(d);
-        row[col[resultPropertyAttr]] =
-          values.length > 0 ? values.join(', ') : ''; // Join array elements
-        return row;
-      }, {});
+      return columns.reduce(
+        (row, col) => {
+          // object-scan has many cool functions to flatten out deeply nested objects!
+          const values = objectScan([col[scanProperty]], {
+            useArraySelector: false,
+            rtn: 'value', // Extract values directly
+          })(d);
+          const key = col[resultPropertyAttr];
+          row[key] =
+            Array.isArray(values) && values.length > 0 ? values.join(', ') : '';
+          return row;
+        },
+        {} as Record<string, string>,
+      );
     });
-  };
+  }
 
   get exampleFlattened() {
-    const tableRow = this.extractData(this.example, this.columns3);
+    const tableRow = this.extractData(
+      this.example,
+      this.columns3,
+      'property',
+      'field',
+    );
     return tableRow;
   }
 
@@ -412,7 +453,11 @@ export default class TableTemplate extends Component {
 
     <div {{this.wtf}} />
 
-    <div>{{this.exampleFlattened}}</div>
+    <div>
+      {{#each this.exampleFlattened as |x|}}
+        {{log "x" x}}
+      {{/each}}
+    </div>
 
     <button
       class="btn btn-primary btn-sm"
@@ -426,10 +471,14 @@ export default class TableTemplate extends Component {
       Table
     </h1>
 
-    <h1>Gridjs</h1>
-    <Gridjs />
+    {{! <h1>
+      Gridjs
+    </h1>
+    <Gridjs /> }}
 
-    <h1>Tabulator</h1>
+    <h1>
+      Tabulator
+    </h1>
     <Tabulator
       @tableData={{this.data}}
       @columns={{this.columns2}}
@@ -442,11 +491,18 @@ export default class TableTemplate extends Component {
       class="test-table"
     />
 
+    <h2>
+      Flattened Data
+    </h2>
+    <Tabulator
+      @tableData={{this.exampleFlattened}}
+      @columns={{this.columns3}}
+      class="test-table"
+    />
     <TooManyChoices @choices={{this.chargeCodes}} as |cc|>
-      <option
-        selected={{if cc.selected "selected"}}
-        value={{cc.chargeCode.id}}
-      >{{cc.chargeCode.name}}</option>
+      <option selected={{if cc.selected "selected"}} value={{cc.chargeCode.id}}>
+        {{cc.chargeCode.name}}
+      </option>
     </TooManyChoices>
   </template>
 }
