@@ -8,15 +8,39 @@ import {
   InMemoryCache,
   split,
   HttpLink,
+  type Operation,
+  type FetchResult,
+  ApolloLink,
 } from '@apollo/client/core';
-import { getMainDefinition } from '@apollo/client/utilities';
+
+import { print } from '@apollo/client/utilities/index';
+import { getMainDefinition, Observable } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
+import { createClient as createSseClient } from 'graphql-sse';
+import type { ExecutionResult } from 'graphql';
 
 export default function setupApolloClient(
   context: object,
-  authToken: string
+  authToken: string | undefined = undefined
 ): void {
+  const headers = {
+    Accept: 'text/event-stream',
+    Connection: 'keep-alive',
+    'Cache-Control': 'no-cache',
+    Authorization: '',
+  };
+
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`;
+  }
+
+  const sseClient = createSseClient({
+    url: config.sseURL,
+    // optional parameters
+    headers,
+  });
+
   // WebSocket connection to the API
   const wsLink = new GraphQLWsLink(
     createClient({
@@ -33,6 +57,7 @@ export default function setupApolloClient(
       },
     })
   );
+
   // HTTP connection to the API
   const httpLink = new HttpLink({
     uri: config.serverURL,
@@ -45,6 +70,24 @@ export default function setupApolloClient(
   // Cache implementation
   const cache = new InMemoryCache();
 
+  // Create a custom SSE link extending ApolloLink
+  // const sseLink = new ApolloLink((operation: Operation) => {
+  //   return new Observable<FetchResult>((observer: any) => {
+  //     const unsubscribe = sseClient.subscribe(
+  //       {
+  //         ...operation,
+  //         query: print(operation.query),
+  //       },
+  //       {
+  //         next: (data) => observer.next(data),
+  //         error: (error) => observer.error(error),
+  //         complete: () => observer.complete(),
+  //       }
+  //     );
+  //     return () => unsubscribe();
+  //   });
+  // });
+
   // Split HTTP link and WebSockete link
   const splitLink = split(
     ({ query }) => {
@@ -54,6 +97,7 @@ export default function setupApolloClient(
         definition.operation === 'subscription'
       );
     },
+    // sseLink,
     wsLink,
     httpLink
   );

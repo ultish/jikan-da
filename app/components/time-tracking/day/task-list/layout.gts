@@ -82,7 +82,7 @@ export default class TaskListLayout extends Component<Signature> {
           console.log('tracked task query');
         },
       },
-    ]
+    ],
   );
 
   // So important for not refreshing the display!
@@ -213,7 +213,7 @@ export default class TaskListLayout extends Component<Signature> {
               variables: vars,
               data: {
                 trackedTasks: existingTasks.filter(
-                  (t) => t.id !== result.data?.deleteTrackedTask
+                  (t) => t.id !== result.data?.deleteTrackedTask,
                 ),
               },
             });
@@ -234,17 +234,9 @@ export default class TaskListLayout extends Component<Signature> {
   deleteTask() {}
 
   <template>
-    {{!prettier-ignore}}
     <style>
+      
       #tick-container {
-        {{!-- position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 300px;
-        display: flex;
-        flex-direction: row; --}}
-
         .tick-hour {
           width: 100px;
           min-width: 100px;
@@ -257,10 +249,11 @@ export default class TaskListLayout extends Component<Signature> {
         }
       }
       #time-container {
-        {{!-- position: absolute;
+        {{! position: absolute;
         left: 0;
-        width: 300px; --}}
+        width: 300px; }}
       }
+
     </style>
     <div {{onResize this.onResize}} class="h-full relative" ...attributes>
       <header {{this.setHeaderHeight}}>
@@ -270,7 +263,10 @@ export default class TaskListLayout extends Component<Signature> {
             @weight="duotone"
             @color="darkorchid"
           />
-          <span class="grow">Tracked Tasks</span>
+
+          <span class="grow">
+            Tracked Tasks
+          </span>
           <button
             type="button"
             class="btn btn-neutral text-neutral-content hover:btn-accent hover:text-accent-content btn-sm"
@@ -303,7 +299,6 @@ export default class TaskListLayout extends Component<Signature> {
               @deleteTrackedTaskMutation={{this.deleteTrackedTaskMutation}}
             />
           {{else}}
-
             <div class="text-xs pt-4 italic pl-8">
               Add a new Tracked Task...
               <PhArrowBendRightUp class="inline" />

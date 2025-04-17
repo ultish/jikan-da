@@ -1,4 +1,4 @@
-import type { CodegenConfig } from '@graphql-codegen/cli'
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   schema: 'http://localhost:8080/graphql',
@@ -9,16 +9,16 @@ const config: CodegenConfig = {
       preset: 'client',
       config: {
         documentMode: 'string',
-        useTypeImports: true // makes it work with @graphql-typed-document-node/core
-      }
+        useTypeImports: true, // makes it work with @graphql-typed-document-node/core
+      },
     },
     'schema.graphql': {
       plugins: ['schema-ast'],
       config: {
-        includeDirectives: true
-      }
-    }
-  }
-}
+        includeDirectives: true,
+      },
+    },
+  },
+};
 
-export default config
+export default config;
