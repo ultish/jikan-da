@@ -17,6 +17,13 @@ export type Scalars = {
   _FieldSet: { input: any; output: any; }
 };
 
+export type Cat = Pet & {
+  __typename?: 'Cat';
+  id: Scalars['ID']['output'];
+  lives?: Maybe<Scalars['Int']['output']>;
+  name: Scalars['String']['output'];
+};
+
 export type ChargeCode = {
   __typename?: 'ChargeCode';
   code: Scalars['String']['output'];
@@ -35,6 +42,13 @@ export enum DayMode {
   HolRdo = 'HOL_RDO',
   Normal = 'NORMAL'
 }
+
+export type Dog = Pet & {
+  __typename?: 'Dog';
+  chicken?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+};
 
 export enum ErrorDetail {
   /**
@@ -381,7 +395,6 @@ export type MutationUpdateQuickActionArgs = {
 export type MutationUpdateTrackedDayArgs = {
   id: Scalars['ID']['input'];
   mode?: InputMaybe<DayMode>;
-  trackedTaskIds?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -394,7 +407,6 @@ export type MutationUpdateTrackedTaskArgs = {
 
 
 export type MutationUpdateUserArgs = {
-  trackedDayIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   userId: Scalars['ID']['input'];
 };
 
@@ -406,10 +418,16 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']['output']>;
 };
 
+export type Pet = {
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   _service: _Service;
   chargeCodes?: Maybe<Array<ChargeCode>>;
+  pets?: Maybe<Array<Pet>>;
   quickAction?: Maybe<QuickAction>;
   quickActions?: Maybe<Array<QuickAction>>;
   timeChargeTotals?: Maybe<Array<TimeChargeTotal>>;
@@ -623,6 +641,26 @@ export type UpdateChargeCodeMutationVariables = Exact<{
 
 export type UpdateChargeCodeMutation = { __typename?: 'Mutation', updateChargeCode?: { __typename?: 'ChargeCode', id: string, name: string, code: string, description?: string | null, expired: boolean, group?: string | null, sortOrder?: number | null } | null };
 
+export type PetsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PetsQuery = { __typename?: 'Query', pets?: Array<{ __typename: 'Cat', lives?: number | null, id: string, name: string } | { __typename: 'Dog', chicken?: boolean | null, id: string, name: string }> | null };
+
+export type CatFragmentFragment = { __typename?: 'Cat', id: string, name: string, lives?: number | null } & { ' $fragmentName'?: 'CatFragmentFragment' };
+
+export type DogFragmentFragment = { __typename?: 'Dog', id: string, name: string, chicken?: boolean | null } & { ' $fragmentName'?: 'DogFragmentFragment' };
+
+export type PetsFragQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PetsFragQuery = { __typename?: 'Query', pets?: Array<(
+    { __typename?: 'Cat', id: string, name: string }
+    & { ' $fragmentRefs'?: { 'CatFragmentFragment': CatFragmentFragment } }
+  ) | (
+    { __typename?: 'Dog', id: string, name: string }
+    & { ' $fragmentRefs'?: { 'DogFragmentFragment': DogFragmentFragment } }
+  )> | null };
+
 export type QuickActionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -739,16 +777,37 @@ export class TypedDocumentString<TResult, TVariables>
   implements DocumentTypeDecoration<TResult, TVariables>
 {
   __apiType?: DocumentTypeDecoration<TResult, TVariables>['__apiType'];
+  private value: string;
+  public __meta__?: Record<string, any> | undefined;
 
-  constructor(private value: string, public __meta__?: Record<string, any> | undefined) {
+  constructor(value: string, __meta__?: Record<string, any> | undefined) {
     super(value);
+    this.value = value;
+    this.__meta__ = __meta__;
   }
 
   toString(): string & DocumentTypeDecoration<TResult, TVariables> {
     return this.value;
   }
 }
-
+export const CatFragmentFragmentDoc = new TypedDocumentString(`
+    fragment CatFragment on Cat {
+  ... on Cat {
+    id
+    name
+    lives
+  }
+}
+    `, {"fragmentName":"CatFragment"}) as unknown as TypedDocumentString<CatFragmentFragment, unknown>;
+export const DogFragmentFragmentDoc = new TypedDocumentString(`
+    fragment DogFragment on Dog {
+  ... on Dog {
+    id
+    name
+    chicken
+  }
+}
+    `, {"fragmentName":"DogFragment"}) as unknown as TypedDocumentString<DogFragmentFragment, unknown>;
 export const ChargeCodesDocument = new TypedDocumentString(`
     query chargeCodes {
   chargeCodes {
@@ -803,6 +862,48 @@ export const UpdateChargeCodeDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<UpdateChargeCodeMutation, UpdateChargeCodeMutationVariables>;
+export const PetsDocument = new TypedDocumentString(`
+    query pets {
+  pets {
+    id
+    name
+    __typename
+    ... on Cat {
+      lives
+    }
+    ... on Dog {
+      chicken
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<PetsQuery, PetsQueryVariables>;
+export const PetsFragDocument = new TypedDocumentString(`
+    query petsFrag {
+  pets {
+    id
+    name
+    ... on Cat {
+      ...CatFragment
+    }
+    ... on Dog {
+      ...DogFragment
+    }
+  }
+}
+    fragment CatFragment on Cat {
+  ... on Cat {
+    id
+    name
+    lives
+  }
+}
+fragment DogFragment on Dog {
+  ... on Dog {
+    id
+    name
+    chicken
+  }
+}`) as unknown as TypedDocumentString<PetsFragQuery, PetsFragQueryVariables>;
 export const QuickActionsDocument = new TypedDocumentString(`
     query quickActions {
   quickActions {

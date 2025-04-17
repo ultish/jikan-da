@@ -23,7 +23,7 @@ import _ from 'lodash';
 import objectScan from 'object-scan';
 import TooManyChoices from 'jikan-da/components/choices';
 
-import PhPencil from 'ember-phosphor-icons/components/ph-pencil';
+import Pets from 'jikan-da/components/pets';
 
 import 'jikan-da/web-components/first-component';
 
@@ -443,6 +443,8 @@ export default class TableTemplate extends Component {
 
   <template>
     {{pageTitle "table"}}
+
+    <Pets />
 
     {{outlet}}
 
